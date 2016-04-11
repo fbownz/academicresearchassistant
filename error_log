@@ -1,0 +1,1 @@
+[11-Apr-2016 13:25:15 Africa/Nairobi] PHP Fatal error:  Call to undefined method Illuminate\Database\Console\Migrations\MigrateCommand::asText() in /home/academicresearch/academicresearchassistant/vendor/psy/psysh/src/Psy/Command/HelpCommand.php on line 60

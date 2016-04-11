@@ -14,7 +14,7 @@ class UpdateOrderTableChangeDatetimeToInteger extends Migration
     {
          Schema::table('orders', function($table)
         {
-            $table->timestamp('deadline')->change();
+            $table->dateTime('deadline')->change();
             
         });
     }

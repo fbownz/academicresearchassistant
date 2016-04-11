@@ -14,7 +14,7 @@ class AddFieldsToUsersTable extends Migration
     {
         Schema::table('users', function($table)
         {
-            $table->string('first_name')->nullable()->change();
+            $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('phone1')->nullable();
             $table->string('phone2')->nullable();
@@ -32,7 +32,6 @@ class AddFieldsToUsersTable extends Migration
             $table->string('ni_admin')->nullable();
             $table->string('picha_ya_id')->nullable();
             $table->string('prof_pic')->default('https://pbs.twimg.com/profile_images/708415697798500353/eseXMvaB_400x400.png')->nullable();
-            $table->string('password');
             $table->softDeletes();
 
         });

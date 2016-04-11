@@ -16,10 +16,12 @@ class CreateMessagesTable extends Migration
             $table->increments('id');
             $table->integer('sender_id')->unsigned();
             $table->integer('receiver_id')->unsigned();
-            $table->integer('order_id')->unsigned();
+            $table->integer('unread')->default(1);
+            $table->integer('order_id')->unsigned()->nullable();
             $table->string('subject');
             $table->text('body');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('messages', function($table){

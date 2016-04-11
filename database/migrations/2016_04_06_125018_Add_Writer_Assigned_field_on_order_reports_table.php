@@ -12,9 +12,15 @@ class AddWriterAssignedFieldOnOrderReportsTable extends Migration
      */
     public function up()
     {
-        Schema::table('order_reports',function ($table)
+        Schema::create('order_reports',function ($table)
         {
-            $table->integer('writer_assigned')->unsigned()->default(0);
+            $table->increments('id');
+            $table->integer('order_id');
+            $table->string('order_status');
+            $table->integer('user_id');
+            $table->integer('writer_assigned')->unsigned()->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

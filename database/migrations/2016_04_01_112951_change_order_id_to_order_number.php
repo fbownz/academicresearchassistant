@@ -14,7 +14,7 @@ class ChangeOrderIdToOrderNumber extends Migration
     {
         Schema::table('orders', function($table)
         {
-        $table->renameColumn('order_id', 'order_no');
+        $table->string('order_no')->nullable();
         });
     }
 

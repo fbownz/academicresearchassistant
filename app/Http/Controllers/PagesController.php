@@ -158,4 +158,3 @@ class PagesController extends Controller
         return back()->with('message', 'Reply posted successfully');
     }
 }
-
