@@ -14,7 +14,7 @@ class AddFileUrlOnOrderDeliveryReports extends Migration
     {
         Schema::table('order_delivery_reports', function($table)
         {
-            $table->dropcolumn('file_url')->default('no_url_specified');
+            $table->string('file_url')->nullable();
             
         });
     }
