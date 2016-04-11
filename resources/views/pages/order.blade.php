@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('body')
-<!-- Calculates the hours remaining and convert the deadline to a Carbon instance for easier reading u know -->
+<!-- Calculates the hours remaining and convert the deadline to a Carbon instance for easier reading -->
 <?php 
 	use Carbon\Carbon;
 	use App\User; 
