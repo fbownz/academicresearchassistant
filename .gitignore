@@ -4,3 +4,6 @@
 Homestead.yaml
 Homestead.json
 .env
+
+error_log
+bootstrap/cache

@@ -151,7 +151,7 @@
                             <? $user = User::find($Order_report->user_id); ?>
                             {{$user->first_name}} {{$user->last_name}}  
                             @if($Order_report->writer_assigned)
-                            and assigned to {{User::find($Order_report->writer_assigned)}}
+                            and assigned to {{User::find($Order_report->writer_assigned)->first_name}}
                             @endif
                              on {{$Order_report->updated_at->format('F j, Y H:i A')}} </div>
                     @endforeach
