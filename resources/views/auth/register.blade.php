@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+@include('errors')
+@include('flash')
 <form role="form" method="POST" action="{{ url('/register') }}">
     {!! csrf_field() !!}
       <div class="form-group {{ $errors->has('first_name') ? ' has-error' : '' }} has-feedback">
@@ -52,7 +54,7 @@
         <div class="col-xs-8">
           <div class="checkbox icheck {{ $errors->has('checkbox') ? ' has-error' : '' }}">
             <label>
-              <input type="checkbox" name="checkbox"> I agree to the <a href="#">terms</a>
+              <input type="checkbox" name="checkbox"> I agree to the <a href="/terms">terms and policy</a>
               @if ($errors->has('password_confirmation'))
             <span class="help-block">
                 <strong>{{ $errors->first('checkbox') }}</strong>

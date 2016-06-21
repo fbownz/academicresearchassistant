@@ -63,10 +63,15 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
+	//We set a random string for our Confirmation Code
+
+	
+		
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+	        
         ]);
     }
 }

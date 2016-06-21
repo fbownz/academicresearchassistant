@@ -543,19 +543,26 @@
 					<div class="form-group col-md-6">
                 		<label>Enter the Deadline:</label> <span>In hours</span>
 
-	                <div class="input-group">
-	                  <div class="input-group-addon">
-	                    <i class="fa fa-calendar"></i>
-	                  </div>
-	                  <input type="number" name="delivery_time" id="deadline_"class="form-control"
-	                  @if (strpos($_SERVER['REQUEST_URI'], "edit") !== false) 
-	            					value="{{$order->delivery_time}}"
+		                <div class="input-group">
+		                  <div class="input-group-addon">
+		                    <i class="fa fa-calendar"></i>
+		                  </div>
+		                  <input type="number" name="delivery_time" id="delivery_time"class="form-control"
+		                  @if (strpos($_SERVER['REQUEST_URI'], "edit") !== false) 
+		            					value="{{$order->delivery_time}}"
 
 
-	            				@endif Required="Required">
-	                </div>
-                <!-- /.input group -->
+		            				@endif Required="Required">
+		                </div>
+	                <!-- /.input group -->
               		</div>
+              		<div class="form-group col-md-6">
+              			{{Form::label('client_deadline', 'Enter Client Deadline')}}
+              			{{Form::number('client_deadline', $order->client_delivery_time, array('class'=>'form-control',
+              														  'required' =>'required',
+              														  'placeholder' =>'Enter the client delivery time in hours'))}}
+              		</div>
+
 					<div class="form-group col-md-6">
 						<label>Enter The Total</label> <small> (In $)</small>
 						<input type="text" name="total" class="form-control" placeholder="Enter The Total Here..." 
@@ -591,16 +598,17 @@
 
             				@endif Required="Required">
 					</div>
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-12">
 						<label>Enter Attachment's URL here</label>
-						<input type="text" name="attachment" class="form-control" placeholder="Enter the URL to the order's attachment here..."
+						<input type="text" name="attachment" class="form-control" placeholder="http://45.35.151.135/~writemyessay/wp-content/uploads/gravity_forms/2-117cddc86d5d1ba3100da15129516b21/2016/03/Final-paper-outline-11.docx"
 						 @if (strpos($_SERVER['REQUEST_URI'], "edit") !== false) 
             					value="{{$order->attachment}}"
 
 
             				@endif>
+            				<span class="text-small">Replace the "https://writemyacademicessay.com/" with "http://45.35.151.135/~writemyessay/"</span>
 					</div>
-					<div class="form-group col-md-6">
+					<div class="form-group col-md-12">
 						<label>Enter Order Title:</label>
 						<input type="text" name="title" class="form-control" placeholder="Enter Title Here..."
 						@if (strpos($_SERVER['REQUEST_URI'], "edit") !== false) 

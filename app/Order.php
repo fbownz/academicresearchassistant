@@ -16,7 +16,7 @@ class Order extends Model
 
     }
     public function order_reports(){
-    	return $this->hasMany(order_report::class);
+    	return $this->hasMany(Order_report::class);
     }
 
     public function order_delivery_reports(){
@@ -33,8 +33,26 @@ class Order extends Model
 
       return $this->belongsTo(User::class);
     }
+
+    
     public function messages(){
 
         return $this->hasMany(Message::class);
+    }
+    public function earning()
+    {
+      return $this->hasOne(Earning::class);
+    }
+    public function notifications(){
+      return $this->hasMany(Notification::class);
+    }
+    public function fines()
+    {
+      return $this->hasMany(Fine::class);
+    }
+    
+    public function bonuses()
+    {
+        return $this->hasMany(Bonus::class);
     }
 }

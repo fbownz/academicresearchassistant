@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
-
+@include('flash')
 <form role="form" method="POST" action="{{ url('/login') }}">
      {!! csrf_field() !!}
       <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }} has-feedback">
@@ -37,7 +36,7 @@
         </div>
         <div class="col-xs-12">
             <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
-            <a class="btn btn-link" href="{{ url('/register') }}">Register New Account</a>
+            <!-- <a class="btn btn-link" href="{{ url('/register') }}">Register New Account</a> -->
         </div>
         
         
