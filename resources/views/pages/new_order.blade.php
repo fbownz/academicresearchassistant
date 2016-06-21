@@ -558,7 +558,7 @@
               		</div>
               		<div class="form-group col-md-6">
               			{{Form::label('client_deadline', 'Enter Client Deadline')}}
-              			{{Form::number('client_deadline', $order->client_delivery_time, array('class'=>'form-control',
+              			{{Form::number('client_deadline', null, array('class'=>'form-control',
               														  'required' =>'required',
               														  'placeholder' =>'Enter the client delivery time in hours'))}}
               		</div>

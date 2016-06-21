@@ -480,7 +480,7 @@
 				@endforeach
           	</div>
 			<!-- Bid on this order -->
-			@if($order->status == "Available" && Auth::user()->ni_admin !== 1 && Auth::user()->verified == 1 && Auth::user()->status == 1 )
+			@if($order->status == "Available" && Auth::user()->ni_admin !== 1 && Auth::user()->verified == 1 && Auth::user()->status == "1" )
 			<div class="box box-success" id="bidonthis">
 				<div class="box-header with-border">
 					<h4><i class="fa fa-pencil"></i>

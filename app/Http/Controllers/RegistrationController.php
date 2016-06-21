@@ -65,7 +65,7 @@ class RegistrationController extends Controller
     	$user->email = $request->email;
     	$user->first_name = $request->first_name;
     	$user->last_name = $request->last_name;
-    	$user->password = $request->password;
+    	$user->password = bcrypt($request->password);
         $user->confirmation_code = $confirmation_code;
 
     	$user->ip = $request->getClientIp();
