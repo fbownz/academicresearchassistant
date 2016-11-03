@@ -2,55 +2,6 @@
 
 @section('body')
 <?php use Carbon\Carbon; 
-use App\Order; 
-use App\User;
-use App\Earning;
-
-	if(Auth::user()->ni_admin)
-		{
-			$ap_orders = Earning::orderBy('created_at', 'desc')->paginate(50) ;
-			$no_approved= count(Earning::where('created_at', '>=', Carbon::now()->startOfMonth())->get());
-			$re_orders = Order::where('status','Active-Revision')->orderBy('created_at', 'desc')->paginate(50);
-			$no_revision = count(Order::where('status','Active-Revision')->get());
-			$av_orders = Order::where('status','Available')->orderBy('created_at', 'desc')->paginate(50);
-			$no_available = count(Order::where('status','Available')->get());
-			$act_orders = Order::where('status','Active')->orderBy('created_at', 'desc')->paginate(50) ;
-			$no_active = count(Order::where('status','Active')->get());
-
-			// I have removed the need to show delivered orders for the beginning of the month
-			// ->where('created_at', '>=', Carbon::now()->startOfMonth())
-			$del_orders = Order::where('approved', null)->where('status', 'Delivered')->orderBy('updated_at', 'desc')->paginate(50) ;
-			
-			// I deleted the request for beginning of the month
-			$no_delivered = count(Order::where('approved', null)->where('status', 'Delivered')->get());
-
-			
-			$lt_orders = Order::where('user_id','>', 1)->where('is_late',1)->orderBy('created_at', 'desc')->paginate(50);
-			$no_late = count(Order::where('created_at', '>=', Carbon::now()->startOfMonth())->where('user_id','>', 1)->where('is_late',1)->get());
-		}
-		else
-		{
-			$ap_orders= Auth::user()->earnings()->orderBy('created_at', 'desc')->paginate(50);
-			$no_approved = count(Auth::user()->earnings()->where('created_at', '>=', Carbon::now()->startOfMonth())->get());
-        	$re_orders = Auth::user()->orders()->where('status','Active-Revision')->orderBy('created_at', 'desc')->paginate(50);
-        	$no_revision = count(Auth::user()->orders()->where('status','Active-Revision')->get());
-			$av_orders = Order::where('status','Available')->orderBy('created_at', 'desc')->paginate(50);
-			$no_available = count(Order::where('status','Available')->get());
-			$act_orders = Auth::user()->orders()->where('status','Active')->get();
-			//Draft orders
-			$act_draft_orders = Auth::user()->orders()->where('status','Draft')->get();
-
-			// I merged the active orders with the draft on the writers side in order to show draft and Active orders too
-			$act_orders = $act_orders->toBase()->merge($act_draft_orders)->sortByDesc('created_at');
-			$act_orders = $act_orders->values()->all();
-
-			$no_active = count(Auth::user()->orders()->where('status','Active')->get());
-        	$del_orders = Auth::user()->orders()->where('status','Delivered')->orderBy('created_at', 'desc')->paginate(50);
-        	$no_delivered = count(Auth::user()->orders()->where('status','Delivered')->get());
-			$lt_orders = Auth::user()->orders()->where('is_late','1')->orderBy('created_at', 'desc')->paginate(50);
-			$no_late = count(Auth::user()->orders()->where('is_late','1')->get());
-        }
-	                               
 ?>
 
 
@@ -71,12 +22,12 @@ use App\Earning;
                  <? $message = Session('message'); ?>
                 {{$message}}
               </div>
-              @elseif(Session::has('error'))
-              <div class="alert alert-danger alert-dismissible">
+              @elseif(Session::has('warning'))
+              <div class="alert alert-warning alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
-                <h4><i class="icon fa fa-info"></i>Error!</h4>
-                 <? $error = Session('error'); ?>
-                {{$error}}
+                <h4><i class="icon fa fa-warning"></i>Alert!</h4>
+                 <? $warning = Session('warning'); ?>
+                {{$warning}}
               </div>
               @endif
               

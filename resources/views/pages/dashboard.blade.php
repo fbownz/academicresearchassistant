@@ -235,7 +235,7 @@
 
 
                   <div class="box-footer clearfix">
-                      <a class="btn btn-sm btn-default btn-flat pull-left" href="/orders" >View All Available Orders
+                      <a class="btn btn-sm btn-default btn-flat pull-left" href="/find_work" >Available Orders/Find Work
                       </a>
                    </div>
                    @else

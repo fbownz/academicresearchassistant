@@ -8,11 +8,14 @@ use App\Http\Requests;
 use App\Order;
 use App\Earning;
 use App\Fine;
+use App\Message;
 use App\Http\Controllers\PagesController;
 use App\User;
+use App\Notification;
 use Carbon\Carbon;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Earning_reports_controller;
+use Illuminate\Support\Facades\Auth;
 
 class EarningsController extends Controller
 {
@@ -103,6 +106,55 @@ class EarningsController extends Controller
     {
                     
 
+         if (Auth::user()->ni_admin )
+        {
+            $prof_comp_array = 0;
+            $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+            $messages_no = $list_messages->count();
+
+            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+            $notifications_no = $list_bid_accepted->count();
+            // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+            $order_msg_no = $list_order_message->count();
+
+            // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+            $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+            $number_tasks =$list_tasks->count() ;
+         
+        }
+        else
+        {
+             
+          $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+          $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+          $messages_no = $list_messages->count();
+
+          $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+          $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+          // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+           $notifications_no = $list_bid_accepted->count();
+           $order_msg_no = $list_order_message->count();
+          
+          // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+
+
+          $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+          $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+          $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+          $number_tasks =$list_tasks->count() ;
+
+        }
+
 
     	return View('pages.earnings',[ 
  		'site_title' => PagesController::$site_title,
@@ -112,11 +164,18 @@ class EarningsController extends Controller
         'list_notifications' =>PagesController::$list_notifications,
         'number_tasks' =>PagesController::$number_tasks,
         'list_tasks' => PagesController::$list_tasks,
-        
-        
         'user_description' => PagesController::$user_description,
         'join_date_text' => PagesController::$join_date_text,
         'version_no' => PagesController::$version_no,
+        'messages_no' => $messages_no,
+        'list_messages' => $list_messages,
+        'order_msg_no' => $order_msg_no,
+        'list_order_message' => $list_order_message,
+        'notifications_no' => $notifications_no,
+        'list_bid_accepted' => $list_bid_accepted,
+        'list_tasks' => $list_tasks,
+        'number_tasks' => $number_tasks,
+        'prof_comp_array' => $prof_comp_array,
         ]);
     }
     public function approve(User $user)

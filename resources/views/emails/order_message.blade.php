@@ -18,19 +18,16 @@
             <div class="box box-success">
                 <div class="box-header no-border">
                     <h4>Greetings {{$user->first_name}},,</h4>
-                    You have received a new message relating to Order #{{$order->order_no}}<br>
+                    You have received a new message on Order #{{$order->order_no}}<br>
 
                 </div>
                 <div class="box-body">
-				Please make sure that you take into account any new instructions while completing the assignment. 
-				<a href="http://academicresearchassistants.com/orders/{{$order->id}}#order-message"> View your Message</a>
-				</p>
-				<hr>
-				<p>
-				Remember that the complete product for <b>Order #{{$order->order_no}} should be delivered by {{$order->deadline}}.</b> 
-				Please make deliberate efforts to complete the order in a timely manner. <br/>
-                
-                    
+    				Please make sure that you take into account any new instructions while completing the assignment. 
+                    <a href="http://academicresearchassistants.com/orders/{{$order->id}}/notifications/{{$notification->id}}}#order-message"> Click here to view your message</a>
+    				<p>
+    				Remember that the complete product for <b>Order #{{$order->order_no}} should be delivered by {{$order->deadline}}.</b> 
+    				Please make deliberate efforts to complete the order in a timely manner. <br/> 
+                    <hr>   
                 </div>
                 <div class="box-footer">
                     Regards <br>

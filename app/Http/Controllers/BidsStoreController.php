@@ -16,23 +16,26 @@ class BidsStoreController extends Controller
         $this->middleware('auth');
 
     }
-    public function index()
-    {
-        return view('pages.bids',[
-         'site_title' => PagesController::$site_title,
-        'page_title' => PagesController::$page_title='My Bids',
-        'page_description' =>PagesController::$page_title='A snapshot of all your orders',
-        'notifications_no' =>PagesController::$notifications_no,
-        'list_notifications' =>PagesController::$list_notifications,
-        'number_tasks' =>PagesController::$number_tasks,
-        'list_tasks' => PagesController::$list_tasks,
+
+    
+    // I saw no need for the index() cause it's repetitive
+    // public function index()
+    // {
+    //     return view('pages.bids',[
+    //      'site_title' => PagesController::$site_title,
+    //     'page_title' => PagesController::$page_title='My Bids',
+    //     'page_description' =>PagesController::$page_title='A snapshot of all your orders',
+    //     'notifications_no' =>PagesController::$notifications_no,
+    //     'list_notifications' =>PagesController::$list_notifications,
+    //     'number_tasks' =>PagesController::$number_tasks,
+    //     'list_tasks' => PagesController::$list_tasks,
         
         
-        'user_description' => PagesController::$user_description,
-        'join_date_text' => PagesController::$join_date_text,
-        'version_no' => PagesController::$version_no,
-        ]);
-    }
+    //     'user_description' => PagesController::$user_description,
+    //     'join_date_text' => PagesController::$join_date_text,
+    //     'version_no' => PagesController::$version_no,
+    //     ]);
+    // }
     
     public static function store(Request $request)
     {

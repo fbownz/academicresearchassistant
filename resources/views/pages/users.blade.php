@@ -16,7 +16,7 @@
 	              </div>
 	            </div>
             	<div class="box-body">
-            		<table class="table table-bordered table-striped">
+            		<table class="table table-bordered table-striped" id="users_table">
             			<thead>
             				<tr>
             					<th>Writer</th>
@@ -25,17 +25,44 @@
             					<th>Delivered</th>
             					<th>Approved</th>
             					<th>Late</th>
+                                <th>Bank</th>
+                                <th>Account Name</th>
+                                <th>Acc Number</th>
+
             				</tr>
             			</thead>
             			<tbody>
+                            
             				@foreach($users as $user)
+                            <?
+                                if ($user->b_details->count()) {
+                                    $b_name = $user->b_details->first()->b_name;
+                                    $a_name = $user->b_details->first()->a_name;
+                                    $a_number = $user->b_details->first()->a_number;
+                                }
+                                else{
+                                    $b_name ='';
+                                    $a_name = "";
+                                    $a_number ='';
+                                }
+                            ?>
             				<tr>
-            					<td>{{$user->first_name}}</td>
+            					<td>
+                                    <a href="/writer/{{$user->id}}">
+                                    <span style="padding:3px;">
+                                        <img src="{{$user->prof_pic_url}}" style="max-width:50px;">
+                                    </span>
+                                    {{$user->first_name}}
+                                    </a>
+                                </td>
             					<td>{{$user->orders->where('status','Active')->count()}}</td>
             					<td>{{$user->orders->where('status','Active-Revision')->count()}}</td>
             					<td>{{$user->orders->where('is_complete',1)->count()}}</td>
             					<td>{{$user->orders->where('approved', 1)->count()}}</td>
             					<td>{{$user->orders->where('is_late',1)->count()}}</td>
+                                <td>{{$b_name}}</td>
+                                <td>{{$a_name}}</td>
+                                <td>{{$a_number}}</td>
             				</tr>
             				@endforeach
             			</tbody>

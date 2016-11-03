@@ -3,7 +3,11 @@
 @section('body')
 <!-- Main content -->
     <section class="content">
-      <? use Carbon\Carbon;
+      <? 
+      // use Carbon\Carbon;
+
+      // $date_added = Carbon::parse("$user->created_at")->toFormattedDateString();
+
       ?> 
 
       <div class="row">
@@ -15,24 +19,23 @@
               <img class="profile-user-img img-responsive img-circle" src="{{$user->prof_pic_url}}" alt="Your profile picture">
 
               <h3 class="profile-username text-center">{{$user->first_name}} {{$user->last_name}}</h3>
+              <div class="text-center">{{$user->name}}</div>
+              
               <!-- We'll use the space to define User levels and status -->
               <!-- <p class="text-muted text-center">Software Engineer</p> -->
+              <p class="text-muted">{{$user->description}}</p>
 
               <ul class="list-group list-group-unbordered">
+                
                 <li class="list-group-item">
-                  <b>Bids</b> <a href="/order_bids" class="pull-right">{{$user->bids()->whereHas('order',function($q)
-                                                                      {
-                                                                        $q->where('status','Available');
-                                                                      })->count()}}
-                                </a>
+                 <b><i class="fa fa-calendar margin-r-5"></i>Member Since:</b> <div class="pull-right text-muted">{{$user->created_at->format('F j, Y')}}</div>
                 </li>
                 <li class="list-group-item">
                   <b>Orders completed</b> <a class="pull-right">{{$user->orders->where('approved', 1)->count()}}</a>
-                  
                 </li>
               </ul>
 
-              <a href="#settings" class="btn btn-primary btn-block"><b>Edit Profile</b></a>
+              <!-- <a href="#settings" class="btn btn-primary btn-block"><b>Edit Profile</b></a> -->
             </div>
             <!-- /.box-body -->
           </div>
@@ -58,14 +61,7 @@
 
               <p class="text-muted">{{$user->address}}</p>
               <hr>
-              <strong> <i class="fa fa-calendar margin-r-5"></i> Member since</strong>
-              <p class="text-muted">{{$user->created_at->format('F j, Y')}}</p>
-              <hr>
-              <strong><i class="fa fa-file-text-o margin-r-5"></i> Notes</strong>
-
-              <p>
-                {{$user->description}}
-              </p>
+              
             </div>
             <!-- /.box-body -->
           </div>
@@ -151,12 +147,13 @@
                       <strong>{{$user->orders->where('is_late', 1)->count()}}</strong>
                     </div>
                   </div>    
-                @if($subject_infos)
+                @if($subject_infos >5)
                 <hr>
                 <div class="box-title">Summary of Orders done
                 </div>
                   @foreach($subject_infos as $subject_info)
                   <!-- We create colors for the labels --> 
+                  <? $label_color = 'label-primary'; ?>
                    @if($subject_info->total/$user->orders->count() < 0.25)
                       <? $label_color = 'label-warning'; ?>
                     @elseif($subject_info->total/$user->orders->count() < 0.50 )
@@ -167,7 +164,7 @@
                       <? $label_color = 'label-success'; ?>
                    @endif
                   <div class="col-md-6">
-                  <div class="label {{$label_color}} ">{{$subject_info->subject}}</div>
+                  <div class="label {{$label_color}}">{{$subject_info->subject}}</div>
                   <span class="text-muted">{{$subject_info->total}}</span>
                   </div>
                   @endforeach
@@ -462,7 +459,7 @@
                       <div class="text-muted col-md-8">
                         <strong>{{$b_detail->a_number}}</strong>
                       </div>
-                      <a href="#edit" class="btn btn-success col-sm-4">Edit Bank Account</a>
+                      <!-- <a href="#edit" class="btn btn-success col-sm-4">Edit Bank Account</a> -->
                       <a href="/user/billing/{{$b_detail->id}}/delete/" class="btn btn-danger col-sm-4 pull-right">Delete Bank Account</a>
                     </div>
                     @endforeach
@@ -523,9 +520,9 @@
                @if($user->b_details->count() > 0)
                   <div class="box box-primary collapsed-box">
                       <div class="box-header with-border">
-                        <h4 class="box-title">Edit Bank Details</h4>
+                        <h4 class="box-title" data-widget="collapse">Edit Bank Details</h4>
 
-                        <div class="box-tools pull-right">
+                        <div class="box-tools ">
                           <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
                           </button>
                         </div>

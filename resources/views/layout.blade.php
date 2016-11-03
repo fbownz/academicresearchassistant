@@ -1,54 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<?     
-use App\User;
-use Carbon\Carbon;
-use App\Notification;
-use App\Http\Controllers\NotificationController;
-use App\Message;
+<!--   Hello there...
+  @fbownz
+  PEACE
+  -->
 
-if (Auth::user()->ni_admin )
-{
-$list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
-$messages_no = $list_messages->count();
-
-$list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
-$list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
-
-$list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-$notifications_no = $list_notifications->count();
-
-$list_notifications = $list_notifications->sortByDesc('created_at');
-
-$list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
-$number_tasks =$list_tasks->count() ;
- 
-}
-else
-{
-     
-  $prof_comp_array = NotificationController::profileComplete(Auth::user());
-
-  $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
-  $messages_no = $list_messages->count();
-
-  $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
-  $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
-
-  $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-  $notifications_no = $list_notifications->count();
   
-  $list_notifications = $list_notifications->sortByDesc('created_at');
-
-  $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
-  $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
-
-  $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
-  $number_tasks =$list_tasks->count() ;
-
-}
-?>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{{$page_title}} | {{$site_title}}</title>
@@ -56,7 +14,7 @@ else
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="/css/bootstrap/css/bootstrap.min.css">
-  @if (strpos($_SERVER['REQUEST_URI'], "orders") !== false ||strpos($_SERVER['REQUEST_URI'], "mailbox") !== false ||strpos($_SERVER['REQUEST_URI'], "u_bids") !== false )
+  @if (strpos($_SERVER['REQUEST_URI'], "users") !== false || strpos($_SERVER['REQUEST_URI'], "mailbox") !== false || strpos($_SERVER['REQUEST_URI'], "u_bids") !== false || strpos($_SERVER['REQUEST_URI'], "earnings") !== false || strpos($_SERVER['REQUEST_URI'], "find_work") !== false)
   <!-- datattables css -->
   <link rel="stylesheet" href="/css/plugins/datatables/dataTables.bootstrap.css">
   @endif
@@ -69,7 +27,7 @@ else
   <link rel="stylesheet" href="/css/AdminLTE.min.css">
   <link rel="stylesheet" href="/css/skins/skin-green.min.css">
 
-      @if (strpos($_SERVER['REQUEST_URI'], "new") !== false)
+      @if (strpos($_SERVER['REQUEST_URI'], "new") !== false || strpos($_SERVER['REQUEST_URI'], "orders") !== false)
         <!--<link rel="stylesheet" type="text/css" href="/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">-->
         <link rel="stylesheet" href="/css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
         @elseif(strpos($_SERVER['REQUEST_URI'], "readmail") !== false || strpos($_SERVER['REQUEST_URI'], "compose") !== false )
@@ -86,7 +44,16 @@ else
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+
+  <!--[if lt IE 8]>
+			<div class="outdated-browser-tip">You are using an <strong>outdated</strong> browser. Please <a href="http://www.microsoft.com/download/internet-explorer.aspx">upgrade your browser</a> to improve your experience.</div>
+	<![endif]-->
 </head>
+
+<? 
+use App\User;
+?>
+
 <body class="hold-transition skin-green sidebar-mini">
 <div class="wrapper">
 
@@ -110,7 +77,7 @@ else
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-          <!-- Messages: style can be found in dropdown.less-->
+          <!-- inbox menu -->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-envelope-o"></i>
@@ -143,7 +110,7 @@ else
                         @else
                         {{$sender->first_name}}
                         @endif
-                        <small><i class="fa fa-clock-o"></i>{{$list_message->created_at->format('F j, H:i A')}}</small>
+                        <small><i class="fa fa-clock-o"></i>{{$list_message->created_at->format('M j, H:i A')}}</small>
                       </h4>
                       <p>{{$list_message->subject}}</p>
                     </a>
@@ -157,22 +124,80 @@ else
             </ul>
           </li>
 
-          
+          <!-- We start order messages notifications here -->
           <li class="dropdown notifications-menu">
             <!-- Menu toggle button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">@if($notifications_no > 0){{$notifications_no}}@endif</span>
+              <i class="fa fa-comments-o"></i>
+              <span class="label label-primary">@if($order_msg_no){{$order_msg_no}}@endif</span>
             </a>
             <!-- Notifications Menu -->
             
             <ul class="dropdown-menu">
-              <li class="header">You have {{$notifications_no}} new notifications</li>
+              <li class="header">You have {{$order_msg_no}} new Order messages</li>
               <li>
                 <!-- Inner Menu: contains the notifications -->
-                @if($notifications_no > 0)
+                @if($order_msg_no)
                 <ul class="menu">
-                  @foreach($list_notifications as $notification)
+                  @foreach($list_order_message as $notification)
+                  
+                  <!-- start notification -->
+                  <li> 
+                    <a href="/orders/{{$notification->order_id}}/notifications/{{$notification->id}}#order-message">
+                      @if(count($notification->order)>0)
+                        <?
+                          $icon = "fa-comments";
+                        ?>
+                      @else
+                        <?
+                          $icon = "fa-warning";
+                        ?>
+                      @endif
+                      <i class="fa {{$icon}} text-aqua"></i>
+                     
+                     @if($notification->type == 'order_message')
+                       @if(count($notification->order) > 0)
+                        New message on #{{$notification->order->order_no}} 
+                       @else
+                        No order found
+                       @endif
+
+                       <!-- start of Admin Notification Messages -->
+                     @elseif($notification->type == 'admin_order_message')
+                       @if(count($notification->order) > 0)
+                        New message on #{{$notification->order->order_no}} 
+                       @else
+                        No order found
+                       @endif
+                       <!-- end of Admin Notification Messages -->
+                     @endif
+                    </a>
+                  </li>
+                  <!-- end notification -->
+                  @endforeach
+                </ul>
+                @endif
+              </li>
+              <!-- <li class="footer"><a href="#">View all</a></li> -->
+            </ul>
+          </li>
+
+          <!-- Start of normal notifications -->
+          <li class="dropdown notifications-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o" aria-hidden="true"></i>
+              <span class="label label-warning">@if($notifications_no){{$notifications_no}}@endif</span>
+            </a>
+            <!-- Notifications Menu -->
+            
+            <ul class="dropdown-menu">
+              <li class="header">You have {{$notifications_no}} notifications</li>
+              <li>
+                <!-- Inner Menu: contains the notifications -->
+                @if($notifications_no)
+                <ul class="menu">
+                  @foreach($list_bid_accepted as $notification)
                   
                   <li><!-- start notification -->
                     <a href="/orders/{{$notification->order_id}}/notifications/{{$notification->id}}#@if($notification->type == 'admin_order_message')order-message @elseif($notification->type == 'order_message')order-message @endif">
@@ -227,8 +252,7 @@ else
                 @endif
               </li>
               <!-- <li class="footer"><a href="#">View all</a></li> -->
-            </ul>
-            
+            </ul>  
           </li>
           
           <!-- Tasks Menu -->
@@ -258,7 +282,11 @@ else
                         percentage 
                       -->
                       <?
-                        $percentage_no = $list_task->order->notifications->where('status',0)->where('type', $list_task->type)->count() / $list_task->order->notifications->where('status',0)->count() * 100;
+                        
+                        $order_task = $list_task->order;
+                        if ($order_task) {
+                          $percentage_no = $list_task->order->notifications->where('status',0)->where('type', $list_task->type)->count() / $list_task->order->notifications->where('status',0)->count() * 100;
+                        }
                       ?>
                         <small class="pull-right">{{round($percentage_no)}}%</small>
                         @if($list_task->type == 'order_revision')
@@ -400,16 +428,22 @@ else
             </a>
             <ul class="treeview-menu">
               <li class="
+              @if (strpos($_SERVER['REQUEST_URI'], "find_work") !== false) 
+              active
+              @endif">
+              <a href="/find_work"><i class="fa fa-circle-o"></i>Find Work</a></li>
+              <li class=class="
               @if (strpos($_SERVER['REQUEST_URI'], "orders") !== false) 
               active
               @endif">
-              <a href="/orders"><i class="fa fa-circle-o"></i>All Orders</a></li>
+                <a href="/orders/"><i class="fa fa-circle"></i>All Orders</a>
+              </li>
               @if(Auth::user()->ni_admin)
               <li class="
               @if (strpos($_SERVER['REQUEST_URI'], "new_order") !== false) 
               active
               @endif">
-              <a href="/new_order"><i class="fa fa-circle-o"></i>Add new Order</a></li>
+              <a href="/new_order"><i class="fa fa-plus-circle"></i>Add new Order</a></li>
               <li class="
               @if (strpos($_SERVER['REQUEST_URI'], "order_bids") !== false) 
               active
@@ -500,10 +534,11 @@ else
               @if(Auth::user()->ni_admin != 1 &&  $prof_comp_array['count'] > 0)
               
               <div class="alert alert-warning alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
-                <h4><i class="icon fa fa-info"></i>Kindly Complete your Profile</h4>
+                	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                	<h4><i class="icon fa fa-info"></i>Kindly Complete your Profile</h4>
                 
-                <ol>
+                	<ol>
+                  <li class="label label-info" font-size=100%>You need to complete the steps below in order to bid for jobs</li>
                   @if($prof_comp_array['b_detail'] == 0)
                   <li  class="label label-info" font-size=100%><a href="/user/profile">Add your Bank Details</a></li>
                   @endif
@@ -519,10 +554,32 @@ else
                   @if($prof_comp_array['cv'] == 0)
                   <li class="label label-info" font-size=100%><a href="/user/profile">Upload your CV/Resume</a></li>
                   @endif
-                </ol>
+                	</ol>
 
               </div>
               @endif
+              
+              <!-- This notification is to let guys know that the minimum amount to be paid to the bank is KSh5000 -->
+              @if(Auth::user()->bids->count() > 0 && $page_title == "Earnings")
+              <div class="alert alert-warning alert-dismissible">
+                	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                	<h4><i class="icon fa fa-info"></i>Earning Policy Update</h4>
+                
+                	<ol>
+                  		<li class="label label-info" font-size=100%>Kindly note that the minimum earning amount that qualifies for a payment is $50 <a href="http://academicresearchassistants.com/terms#payment">Learn more</a></li>
+                	</ol>
+
+              </div>
+              @endif
+
+              @if(Session::has('error'))
+          <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                <h4><i class="icon fa fa-info"></i>Error!</h4>
+                 <? $error = Session('error'); ?>
+                {{$error}}
+              </div>
+      @endif
     </section>
 
     @yield('body')
@@ -542,6 +599,10 @@ else
 <!-- REQUIRED JS SCRIPTS -->
 
 <!-- jQuery 2.1.4 -->
+    <script type="text/javascript">
+      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+        heap.load("2580214040");
+  </script>
 <script src="/css/plugins/jQuery/jQuery-2.1.4.min.js"></script>
 <!-- Moments required to run the datepicker plugin -->
 @if (strpos($_SERVER['REQUEST_URI'], "new") !== false)
@@ -554,13 +615,10 @@ else
 <script src="/css/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/css/js/app.min.js"></script>
-@if (strpos($_SERVER['REQUEST_URI'], "orders") !== false) 
+@if (strpos($_SERVER['REQUEST_URI'], "mailbox") !== false || strpos($_SERVER['REQUEST_URI'], "users") !== false || strpos($_SERVER['REQUEST_URI'], "earnings") !== false || strpos($_SERVER['REQUEST_URI'], "find_work") !== false) 
 
 <script src="/css/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/css/plugins/datatables/dataTables.bootstrap.min.js"></script>
-@elseif (strpos($_SERVER['REQUEST_URI'], "mailbox") !== false)
-<script src="/css/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/css/plugins/datatables/dataTables.bootstrap.min.js"></script>  
+<script src="/css/plugins/datatables/dataTables.bootstrap.min.js"></script> 
 @endif
 @if(strpos($_SERVER['REQUEST_URI'], "update_user") !== false)
 <script src="/css/plugins/select2/select2.full.min.js"></script>
@@ -606,39 +664,15 @@ else
   </script>
 @endif
 
-  @if (strpos($_SERVER['REQUEST_URI'], "orders") !== false) 
-  <script>
-  $(document).ready (function () {
-    $('#all_orders_table').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": true,
-      "ordering": true,
-      "info": false,
-      "autoWidth": false,
-    });
-  });
-  $(document).ready (function () {
-    $('#active_orders_table').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": true,
-      "ordering": true,
-      "info": false,
-      "autoWidth": false,
-    });
-  });
-  $(document).ready (function () {
-    $('#u_bids').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": true,
-      "ordering": true,
-      "info": false,
-      "autoWidth": false,
-    });
-  });
-</script>
+  @if (strpos($_SERVER['REQUEST_URI'], "orders") !== false ) 
+    <script src="/css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+    <!-- Messages editor -->
+    <script>
+      $(function () {
+        //Add text editor
+        $("#compose-textarea").wysihtml5();
+      });
+    </script>
   @elseif (strpos($_SERVER['REQUEST_URI'], "mailbox") !== false)
   <script>
   $(document).ready( function () {
@@ -660,9 +694,68 @@ else
     });
 } );
 </script>
-@elseif(strpos($_SERVER['REQUEST_URI'], "readmail") !== false || strpos($_SERVER['REQUEST_URI'], "compose") !== false )
+@elseif(strpos($_SERVER['REQUEST_URI'], "users") !== false)
+    <script>
+      $(document).ready( function () {
+        $('#users_table').DataTable({
+          "paging": true,
+          "lengthChange": true,
+          "searching": true,
+          "sort": true ,
+          "info": true,
+          "autoWidth": true,
+        });
+      } );
+  </script>
+@elseif(strpos($_SERVER['REQUEST_URI'], "find_work") !== false)
+    <script>
+      $(document).ready( function () {
+        $('#availabe_orders').DataTable({
+          "paging": true,
+          "lengthChange": true,
+          "searching": true,
+          "sort": true ,
+          "autoWidth": true,
+        });
+      } );
+  </script>
+@elseif(strpos($_SERVER['REQUEST_URI'],"earnings") !== false)
+    <script>
+      $(document).ready( function () {
+        $('#active_writers_table').DataTable({
+          "paging": true,
+          "lengthChange": true,
+          "searching": true,
+          "sort": true ,
+          "info": true,
+        });
+      } );
+    </script>
+    <script>
+      $(document).ready( function () {
+        $('#pe_earnings_table').DataTable({
+          "paging": true,
+          "lengthChange": true,
+          "searching": true,
+          "sort": true ,
+          "info": true,
+        });
+      } );
+    </script>
+    <script>
+      $(document).ready( function () {
+        $('#pa_earnings_table').DataTable({
+          "paging": true,
+          "lengthChange": true,
+          "searching": true,
+          "sort": true ,
+          "info": true,
+        });
+      } );
+    </script>
+@elseif(strpos($_SERVER['REQUEST_URI'], "readmail") !== false || strpos($_SERVER['REQUEST_URI'], "compose") !== false)
 <script src="/css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
-<!-- Page Script -->
+<!-- Messages editor -->
 <script>
   $(function () {
     //Add text editor
@@ -671,9 +764,5 @@ else
 </script>
   @endif      
 
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. Slimscroll is required when using the
-     fixed layout. -->
 </body>
 </html>
