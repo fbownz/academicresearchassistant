@@ -286,9 +286,9 @@
     </ol>
 
   </div>
-  <div class="box-header with-border">
+  <div class="box-header with-border" id="payment">
     <div class="box-title">
-      <h4>PAYMENT TERMS AND CONDITIONS</h4>
+      <h4 >PAYMENT TERMS AND CONDITIONS</h4>
     </div>
   </div>
   <div class="box-body">
@@ -324,26 +324,27 @@
         </thead>
         <tbody>
           <tr>
-            <td>Paypal</td>
-            <td>$10</td>
+            <td>Paypal*</td>
+            <td>$20</td>
             <td>$1</td>
             <td>Immedietly</td>
           </tr>
           <tr>
             <td>Wire Transfer</td>
-            <td>$100</td>
-            <td>$50, $100, $300 - $15 fee to be deducted;<br>$400 - No Fee</td>
-            <td>5-7 Business days</td>
+            <td>$50</td>
+            <td>$1</td>
+            <td>2-3 Business days</td>
           </tr>
         </tbody>
       </table>
+      <b>Paypal is only available for International writers who do not have a Kenyan Bank account.</b>
       <b>* Intermediary bank might charge additional withdrawal fees from the receipent. In this case, extra fees may be shouldered by the Writer.</b>
       <li><b>PAYMENT PROCESSING</b></li>
       <ol>
         <li>To have the Earnings processed, the Writer needs to submit the required Payment Details to the Account and have it verified with the Billing Department at least five (5) days before the Payout Dates to ensure payment delivery. In case Payment Details are not timely submitted, incorrect or are not yet verified, the Company reserves the right to postpone the payout of the Earnings until the necessary requirements are fulfilled. Obtainment of payment account is a sole resposibilty of the recipient. The Company does not cover any expenses or offer assistance with the third party account obtainment and/or maintenance of the account.</li>
         <li>Writers are responsible for submitting valid Payment Details. If the payment is sent using invalid or incorrect Payment Details or the payment is not recognized by the sender's or recepeint's bank, all extra charges applied by bank will be shouldered by the Writer.</li>
-        <li>All non-US based Writers are obliged to submit Payment Details for an alternative payment method.</li>
-        <li>U3. US based Writers are required to submit their Social Security Number to their Account profiles, if their transferred earnings for one calendar year equal or over $600 according to Federal Governent of the United States (1099 series). The Company will be able to process Earnings only after the number is submitted. The information will be stored safely in the System and will never be disclosed to any third party.</li>
+        <li>All non-Kenyan based Writers are obliged to submit their paypal accounts.</li>
+        <!-- <li>U3. US based Writers are required to submit their Social Security Number to their Account profiles, if their transferred earnings for one calendar year equal or over $600 according to Federal Governent of the United States (1099 series). The Company will be able to process Earnings only after the number is submitted. The information will be stored safely in the System and will never be disclosed to any third party.</li> -->
       </ol>
     </ol>
     <div class="box-title">

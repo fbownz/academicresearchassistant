@@ -1,7 +1,6 @@
 @extends('layout')
 
 @section('body')
-<!-- Calculates the hours remaining and convert the deadline to a Carbon instance for easier reading -->
 <?php 
 	use Carbon\Carbon;
 	use App\User; 
@@ -13,7 +12,11 @@
 	?>
 <section class="content">
 	<div class="row">
+		@if($order->status == 'Available' && ! Auth::User()->ni_admin )
+		<div class="col-md-12">
+		@else
 		<div class="col-md-8">
+		@endif
 			@if(count($errors))
 			@foreach($errors->all() as $error)
               <div class="alert alert-danger alert-dismissible">
@@ -40,92 +43,162 @@
               </div>
 			@endif
 
-			@if(Auth::user()->ni_admin == 1 || Auth::user()->id == $order->user_id)
-			@if (count($order->notes)>0)
-			<div class="box box-success direct-chat direct-chat-primary " id="order-message">
-				<div class="box-header with-border">
-					<h4><i class="fa fa-envelope-o"></i>
-						Order Messages
-					</h4>
-					<div class="box-tools pull-right">
-						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                		</button>
+			<!-- Bid on this order -->
+			@if ($order->status == "Not-Available")
+					<div class="box bg-yellow">
+						<div class="box-body">
+							This order is currently Not Available for bidding.
+						</div>
 					</div>
+					@endif
+			@if($order->status == "Available" && Auth::user()->ni_admin !== 1 && Auth::user()->verified == 1 && Auth::user()->status == "1" )
+				<div class="box box-success" id="bidonthis">
+					<div class="box-header with-border">
+						<h4><i class="fa fa-pencil"></i>
+							Bid on this Order
+						</h4>
+						<div class="box-tools pull-right">
+							
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+	                		</button>
+						</div>
+					</div>
+					{{ Form::open(array('url'=>'bid-order')) }}
+					<div class="box-body">
+						<input type="hidden" name="order_id" value="{{$order->id}}">
+						<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
+						<input type="number" class="form-control" name="bid_ammount" Required="required" placeholder="Enter your total bid ammount here in $..." />
+						<input type="text" class="form-control" name="bid_msg" Required="required" placeholder="Add a Message with your bid..."/>
+					</div>
+					<div class="box-footer">
+						{{ Form::submit('Bid on this job',array('class'=>'btn btn-success')) }}
+					</div>
+					
+					  {{ Form::close() }}
 				</div>
-				<div class="box-body ">
-					<div class="direct-chat-messages">
-					@foreach($order->notes as $note)
-					<? $postedat = Carbon::parse($note->created_at);
-					$when = $postedat->diffForHumans() ;
-					$user = User::find($note->user_id);
-					$msg_profpic = $user->prof_pic_url; 
-					?>
-					<div class="direct-chat-msg
-						@if($user->ni_admin)
-						right
-						@endif
-						">
-						<div class="direct-chat-info clearfix">
-		                    <span class="direct-chat-name text-light-blue 
-		                    @if($user->ni_admin)
-								pull-right
-								@else
-								pull-left
-								@endif
-		                    ">
-		                    @if($user->ni_admin)
-								Admin
-								@else
-								{{$user->first_name}}
-								@endif </span>
-		                    <span class="direct-chat-timestamp @if($user->ni_admin)
-								pull-left
-								@else
-								pull-right
-								@endif"><!-- {{$note->created_at->format('F j, Y H:i A')}} -->
-								{{$when}}
-							</span>
-                  		</div>
-					<img class="direct-chat-img" src="{{$msg_profpic}}" alt="{{$user->id}} Prof Pic">
-					<div class="direct-chat-text">
-		                    {{$note->body}} 
-	                </div>
-	              	
-					</div>
-                    	@endforeach
-                    </div>		
-            	</div>
-			</div>
+
 			@endif
 
-			
-			<div class="box box-success">
-				<div class="box-header with-border">
-					<h4><i class="fa fa-pencil"></i>
-						@if(Auth::user()->ni_admin)
-						Add a message to the Writer
-						@else
-						Add a message to the admin on this order
-						@endif
-					</h4>
-					<div class="box-tools pull-right">
-						
-						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                		</button>
+			@if(Auth::user()->ni_admin == 1 || Auth::user()->id == $order->user_id)
+				@if (count($order->notes)>0)
+					<div class="box box-success direct-chat direct-chat-primary " id="order-message">
+						<div class="box-header with-border">
+							<h4><i class="fa fa-envelope-o"></i>
+								Order Messages
+							</h4>
+							<div class="box-tools pull-right">
+								<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+		                		</button>
+							</div>
+						</div>
+						<div class="box-body ">
+							<div class="direct-chat-messages">
+								@foreach($order->notes as $note)
+								<? $postedat = Carbon::parse($note->created_at);
+								$when = $postedat->diffForHumans() ;
+								$user = User::find($note->user_id);
+								$msg_profpic = $user->prof_pic_url; 
+								?>
+								<div class="direct-chat-msg
+									@if($user->ni_admin)
+									right
+									@endif
+									">
+									<div class="direct-chat-info clearfix">
+					                    <span class="direct-chat-name text-light-blue 
+					                    @if($user->ni_admin)
+											pull-right
+											@else
+											pull-left
+											@endif
+					                    ">
+
+					                    @if($user->ni_admin)
+				                    		@if(Auth::user()->ni_admin)
+				                    			{{$user->first_name}} {{$user->last_name}}
+				                    		@else
+				                    		Admin
+				                    		@endif
+
+										@else
+											{{$user->name}}
+										@endif </span>
+					                    <span class="direct-chat-timestamp @if($user->ni_admin)
+											pull-left
+											@else
+											pull-right
+											@endif"><!-- {{$note->created_at->format('F j, Y H:i A')}} -->
+											{{$when}}
+										</span>
+			                  		</div>
+									<img class="direct-chat-img" src="{{$msg_profpic}}" alt="{{$user->id}} Prof Pic">
+									<div class="direct-chat-text">
+						                    {!! $note->body !!} 
+					                </div>
+					                @if($note->attachment_name)
+						                <div class="attachment-block clearfix">
+						                		<a href="/order/msg_file/{{$note->original_attachment_name}}">
+						                		<i class="fa fa-file success"></i>
+						                			{{$note->original_attachment_name}}
+						                		</a>
+						                </div>
+					                @endif
+								</div>
+		                    	@endforeach
+		                    </div>		
+		            	</div>
 					</div>
-				</div>
-				{{ Form::open(array('url'=>'/new-note')) }}
-				<div class="box-body">
-					<input type="hidden" name="order_id" value="{{$order->id}}">
-					<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
-					<textarea class="textarea form-control" name="body" placeholder="Enter you Message here" style="width: 100%; height: 50px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
-				</div>
-				<div class="box-footer">
-					{{ Form::submit('Add Message',array('class'=>'btn btn-success')) }}
-				</div>
+				@endif
+				<div class="box box-success">
+					<div class="box-header with-border">
+						<h4><i class="fa fa-pencil"></i>
+							@if(Auth::user()->ni_admin)
+							Add a message to the Writer
+							@else
+							Add a message to the admin on this order
+							@endif
+						</h4>
+						<div class="box-tools pull-right">
+							
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+	                		</button>
+						</div>
+					</div>
+					{{ Form::open(array('url'=>'/new-note', 'files'=>true)) }}
+					<div class="box-body">
+						<input type="hidden" name="order_id" value="{{$order->id}}">
+						<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
+						
+						<div class="form-group">
+	                		{!! Form::textarea('body', null, array('id'=>'compose-textarea',
+	                                                        'class'=>'form-control',
+	                                                        'required' => 'required',
+	                                                        'style'=>'height:150px',
+	                                                        'placeholder'=>'Enter your Message here')) 
+	                        !!}
+	              		</div>
+
+						@if(Auth::user()->ni_admin)
+						<div class="form-group col-md-6">
+						  {{ Form::label('msg_file','Select a File to send with this message') }}
+						  {{ Form::file('msg_file',array('class'=>'form-control')) }}
+						  @if ($errors->has('file'))
+					            <span class="help-block">
+					                <strong>{{ $errors->first('file') }}</strong>
+					            </span>
+			        	  @endif
+					  	</div>
+					  	@endif
+
+					</div>
+					<div class="box-footer">
+						{{ Form::submit('Add Message',array('class'=>'btn btn-success')) }}
+					</div>
+					
+					  {{ Form::close() }}
 				
-				  {{ Form::close() }}
-			</div>
+				</div>
+
 			@endif
 
 
@@ -180,10 +253,19 @@
 					        <div class="col-md-7 col-sm-6">{{$order->style}}</div>
 					        <div class="col-md-5 col-sm-6"><strong>Language:</strong></div>
 					        <div class="col-md-7 col-sm-6">English</div>
-					        @if(Auth::user()->ni_admin)
-					        <div class="col-md-5 col-sm-6"><strong>Client's Deadline:</strong></div>
-					        <div class="col-md-7 col-sm-6">{{$client_deadline->format('F j, Y H:i A')}}</div>
-					        @endif
+						        @if(Auth::user()->ni_admin)
+
+						        	<div class="col-md-5 col-sm-6"><strong>Client's Deadline:</strong></div>
+							        @if($order->approved !== 1 && $order->is_late ==1)
+										<div class="col-md-7 col-sm-6 text-red lead"><i class="fa fa-clock-o"></i> {{$client_deadline->format('F j, Y H:i A')}}</div>
+							        
+							        @else
+							        	<div class="col-md-7 col-sm-6 text-green"><i class="fa fa-clock-o"></i> {{$client_deadline->format('F j, Y H:i A')}}</div>
+							        @endif
+						        
+						        @endif
+				      		<div class="col-md-5 col-sm-6"><strong>Country of Origin</strong></div>
+				      		<div class="col-md-5 col-sm-6">{{$order->client_country}}</div>
 						</div>
 	
 				</div>
@@ -191,12 +273,20 @@
 
 							<div class="col-md-12">
 								@if($order->attachment)
-								<div class="col-md-12">
-									<a href="{{$order->attachment}}" class=" btn btn-success">
-										<i class="icon fa fa-download"></i>
-										Click here to Download File Attachment
-									</a>
-								</div>
+									@if($order->id < 540)
+										<a href="{{$order->attachment}}" class=" btn btn-success">
+											<i class="icon fa fa-download"></i>
+											Click here to Download File Attachment
+										</a>
+									@else
+									<div class="col-md-12">
+										<a href="/orderFile/{{$order->id}}" class="btn btn-success">
+											<i class="icon fa fa-download"></i>
+											{{$order->attachment}}
+										</a>
+									</div>
+									@endif
+
 								@endif
 								<div class="col-sm-12"><strong>Title:</strong></div>
 						        <div class="col-sm-12 attachment-block">{{$order->title}}</div>
@@ -220,37 +310,100 @@
 			
 
 			@if (Auth::user()->ni_admin ==1 && count($order->Order_reports)>0)
-			<div class="box box-default box-solid">
-				<div class="box-header with-border">
-					<h4><i class="fa fa-hourglass"></i>
-						Order Status Activity
-					</h4>
-					<div class="box-tools pull-right">
-						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                		</button>
+				<div class="box box-default box-solid">
+					<div class="box-header with-border">
+						<h4><i class="fa fa-hourglass"></i>
+							Order Status Activity
+						</h4>
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+	                		</button>
+						</div>
 					</div>
-				</div>
-				<div class="box-body">
-					@foreach($order->Order_reports as $Order_report)
-					<? $user = User::find($Order_report->user_id); ?>
-					@if($Order_report->created_at->diffInMinutes($order->created_at,false) > -2 )
-					<div class="attachment-block">Added by {{$user->first_name}} {{$user->last_name}} 
-						on {{$Order_report->updated_at->format('F j, Y H:i A')}} 
+					<div class="box-body">
+						@foreach($order->Order_reports as $Order_report)
+						<? $user = User::find($Order_report->user_id); ?>
+						@if($Order_report->created_at->diffInMinutes($order->created_at,false) > -2 )
+						<div class="attachment-block">Added by {{$user->first_name}} {{$user->last_name}} 
+							on {{$Order_report->updated_at->format('F j, Y H:i A')}} 
+						</div>
+						@else
+	                            <div class="attachment-block">Marked as {{$Order_report->order_status}} by 
+	                            
+	                            {{$user->first_name}} {{$user->last_name}}  
+	                            @if($Order_report->writer_assigned)
+	                            and assigned to {{User::find($Order_report->writer_assigned)->first_name}}
+	                            @endif
+	                             on {{$Order_report->updated_at->format('F j, Y H:i A')}} </div>
+	                     @endif
+	                    @endforeach
 					</div>
-					@else
-                            <div class="attachment-block">Marked as {{$Order_report->order_status}} by 
-                            
-                            {{$user->first_name}} {{$user->last_name}}  
-                            @if($Order_report->writer_assigned)
-                            and assigned to {{User::find($Order_report->writer_assigned)->first_name}}
-                            @endif
-                             on {{$Order_report->updated_at->format('F j, Y H:i A')}} </div>
-                     @endif
-                    @endforeach
+					
 				</div>
-				
-			</div>
 			@endif
+
+			@if($order->status == 'Available')
+				<div class="box box-success">
+			@else
+				<div class="box box-success collapsed-box">
+			@endif
+		            <div class="box-header with-border">
+		              <h3 class="box-title">Bids placed on this Order {{count($bids)}}</h3>
+
+		              <div class="box-tools pull-right">
+		                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+		                </button>
+		              </div>
+		              <!-- /.box-tools -->
+		            </div>
+	            	<!-- /.box-header -->
+
+		            <div class="box-body">
+		              @foreach($bids as $bid)
+						<? 
+							$bid_user = $bid->user;
+							if ($bid->id & 1) 
+							{
+								$a = "left" ;
+								$b = "right";
+							}
+
+							else
+							{
+								$a = "right";
+								$b = "left";
+							}
+						?>
+						<div class="box-body direct-chat-msg {{$a}}">
+							<div class="direct-chat-info clearfix">
+			                    <span class="direct-chat-name control-label text-light-blue pull-{{$a}}">
+			                    	<a href="/writer/{{$bid_user->id}}">
+			                    	@if(Auth::user()->ni_admin ==1)
+			                    		{{$bid_user->first_name}} {{$bid_user->last_name}}
+			                    	@else
+			                    		{{$bid_user->name}}
+		                    		@endif
+			                    	</a>
+			                    </span>
+			                    <span class="direct-chat-timestamp pull-{{$b}}">{{$bid->created_at->format('F j, Y H:i A')}}</span>
+		                  	</div>
+							<img class="direct-chat-img" src="{{$bid_user->prof_pic_url}}" alt="{{$bid_user->id}} Prof Pic">
+							<div class="direct-chat-text">
+				                    ${{$bid->bid_ammount}}<br/>
+				                    {{$bid->bid_msg}}   
+			              	</div>
+		                      @if($bid->user_id == Auth::user()->id)
+		                      <a class="btn btn-danger pull-right btn-xs" href="../../bids/delete/{{$bid->id}}">
+									Delete
+								</a>
+							@endif
+			              	
+						</div>
+					  @endforeach
+		            </div>
+		            <!-- /.box-body -->
+	            </div>
+
 			@if(Auth::user()->ni_admin && count($order->fines))
 
 				<div class="box box-danger box-solid"  id="fines">
@@ -281,7 +434,11 @@
 			@endif
 
 		</div>
-		<div class="col-md-4 ">
+		@if($order->status == 'Available' && ! Auth::User()->ni_admin)
+		<div class="col-md-12">
+		@else
+		<div class="col-md-4">
+		@endif
 			@if(Auth::user()->ni_admin == 1 || Auth::user()->id == $order->user_id)
 			<div class="box box-success">
 				<div class="box-header with-border">
@@ -293,7 +450,7 @@
                 		</button>
 					</div>
 				</div>
-				@if($order->status == "Available" || $order->status == "Not Available")
+				@if($order->status == "Available" || $order->status == "Not-Available")
 				<div class="box-body">
 					No Writer assigned Yet
 				</div>
@@ -348,26 +505,15 @@
 					</div>
 					<div class="form-group col-md-12">
 						<label>Select Order Status</label>
-						<select type="text" name="status" class="form-control">
-							<?
-							$options =[
-							'Active',
-							'Active-Revision']; 
-							?>
-							@foreach($options as $option)
-							<option value="{{$option}}" 
-        					@if ($option == $order->status)
-        					Selected="selected"
-        					@endif
-							>{{$option}}</option>
-							@endforeach
+						<select type="text" name="status" class="form-control" >
+							<option value="Active" selected="selected">Active</option>
+							<option value="Active-Revision">Active-Revision</option>
+							<option value="Available">Available</option>
 						</select>
 					</div>
 					<div class="form-group col-md-12">
-						<label>Select Writer</label> <br>
-						<small>Assign order to a particular writer</small>
-						<select name="writer" class="form-control" 
-						Required="required">
+						<label>Select Writer</label> 
+						<select name="writer" class="form-control" Required="required" placeholder="Assign order to a particular writer">
 							@foreach($writers as $writer)
 							<option value="{{$writer->id}}"
 								@if($writer->id == $order->user_id)
@@ -376,17 +522,17 @@
 								>{{$writer->first_name}} {{$writer->last_name}}</option>
 							@endforeach
 						</select>					</div>
-					<button class="btn btn-success" type="submit" >Update
-                  	</button>
-                  	</form> 
-				</div>
+						<button class="btn btn-success" type="submit" >Update
+	                  	</button>
+	                  	</form> 
+					</div>
 			</div>
 			<!-- Add more time/hours  -->
 
 			<div class="box box-success" id="moretime">
 				<div class="box-header with-border">
 					<h4><i class="fa fa-pencil"></i>
-						Add more hours to this order
+						Update order deadline
 					</h4>
 					<div class="box-tools pull-right">
 						
@@ -397,17 +543,26 @@
 				{{ Form::open(array('url'=>'add-hours')) }}
 				<input type="hidden" name="order_id" value="{{$order->id}}">
 				<div class="box-body">
-					<div class="form-group">
-						<input type="number" name="hours" id="more_hours" class="form-control" required="required" placeholder="Enter the number of hours">
-						
-					</div>
+					<div class="form-group col-md-6">
+	                		<label>Enter new Deadline:</label> <!-- <span>In hours</span> -->
+
+			                <div class="input-group">
+			                  <div class="input-group-addon">
+			                    <i class="fa fa-calendar-plus-o"></i>
+			                  </div>
+			                  <input type="datetime-local" name="deadline" id="deadline" class="form-control"
+				                  	value="{{$order->deadline}}" Required="Required">
+			                </div>
+		                <!-- /.input group -->
+	              		</div>
 				</div>
 				<div class="box-footer">
-					{{ Form::submit('Add more hours to this order',array('class'=>'btn btn-success')) }}
+					{{ Form::submit('Update Order deadline',array('class'=>'btn btn-success')) }}
 				</div>
 				
 				  {{ Form::close() }}
 			</div>
+
 
 			@elseif($order->is_complete == 1 && $order->approved == 1)
 			<div class="box box-success">
@@ -440,73 +595,7 @@
 				</div>
 			</div>
 			@endif
-			<!-- Bids made on this order -->
-			<div class="box box-success direct-chat-success">
-				<div class="box-header with-border">
-					<h4 class="box-title">Bids placed on this Order {{count($bids)}}</h4>
-				</div>
-				@if($order->status !== "Available" || $order->status == "Not-Available")
-					<div class="box-body">
-						This Order 
-						@if($order->status == "Active" || $order->status == "Active-Revision")
-						is currently
-						@else
-						was
-						@endif
-						 awarded to <span class="text-light-blue"> @if($order->user->name) {{$order->user->name}} @else writer {{$order->user->id}} @endif  </span>
-					</div>
-				@endif
-				@foreach($bids as $bid)
-				<? $bid_user = $bid->user;?>
-				<div class="box-body direct-chat-msg right">
-					<div class="direct-chat-info clearfix">
-                    <span class="direct-chat-name control-label text-light-blue pull-right">@if($bid_user->name){{$bid_user->name}}@else Writer {{$bid_user->id}} @endif</span>
-                    <span class="direct-chat-timestamp pull-left">{{$bid->created_at->format('F j, Y H:i A')}}</span>
-                  </div>
-					<img class="direct-chat-img" src="{{$bid_user->prof_pic_url}}" alt="{{$bid_user->id}} Prof Pic">
-					<div class="direct-chat-text">
-		                    ${{$bid->bid_ammount}}<br/>
-		                    {{$bid->bid_msg}}   
-	              	</div>
-	              	     <!-- <a class="btn btn-primary btn-xs" href="../../bids/{{$bid->id}}/edit" >Edit
-                      </a> -->
-                      @if($bid->user_id == Auth::user()->id)
-                      <a class="btn btn-danger pull-right btn-xs" href="../../bids/delete/{{$bid->id}}">
-							Delete
-						</a>
-					@endif
-	              	
-				</div>
-				@endforeach
-          	</div>
-			<!-- Bid on this order -->
-			@if($order->status == "Available" && Auth::user()->ni_admin !== 1 && Auth::user()->verified == 1 && Auth::user()->status == "1" )
-			<div class="box box-success" id="bidonthis">
-				<div class="box-header with-border">
-					<h4><i class="fa fa-pencil"></i>
-						Bid on this Order
-					</h4>
-					<div class="box-tools pull-right">
-						
-						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                		</button>
-					</div>
-				</div>
-				{{ Form::open(array('url'=>'bid-order')) }}
-				<div class="box-body">
-					<input type="hidden" name="order_id" value="{{$order->id}}">
-					<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
-					<input type="number" class="form-control" name="bid_ammount" Required="required" placeholder="Enter your total bid ammount here in $..." />
-					<input type="text" class="form-control" name="bid_msg" Required="required" placeholder="Add a Message with your bid..."/>
-				</div>
-				<div class="box-footer">
-					{{ Form::submit('Bid on this job',array('class'=>'btn btn-success')) }}
-				</div>
-				
-				  {{ Form::close() }}
-			</div>
-
-			@endif
+			
 
 			@if(Auth::user()->ni_admin==1 || $order->user_id == Auth::user()->id && $order->approved !==1)
 			<!-- Deliver order widget -->

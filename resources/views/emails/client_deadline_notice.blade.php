@@ -5,9 +5,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <link rel="stylesheet" href="http://academicresearchassistants.com//css/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="http://academicresearchassistants.com//css/AdminLTE.min.css">
-        <link rel="stylesheet" href="http://academicresearchassistants.com//css/skins/skin-green.min.css">
 
     </head>
     <body class="skin-green">
@@ -17,13 +14,15 @@
             </div>
             <div class="box box-success">
                 <div class="box-header no-border">
-                    <h4>Greetings Admin,</h4>
-                    This is to notify you that you have received a new message on Order <b>#{{$order->order_no}}</b>.<br>
+                    <h4>Greetings {{$admin->first_name}},</h4>
+                    The client deadline for Order <b>#{{$order->order_no}}</b> has elapsed.<br>
+
 
                 </div>
                 <div class="box-body">
                     <p>
-                    	<a href="http://academicresearchassistants.com/orders/{{$order->id}}/notifications/{{$notification->id}}#order-message">Click this link to view the order</a>
+                        Please follow this link to check whether the order was uploaded by the writer and delivered to the client successfully.
+                        <a href="http://academicresearchassistants.com/orders/{{$order->id}}">Click this link to view the order</a><br><br>
                     </p>
                 
                     

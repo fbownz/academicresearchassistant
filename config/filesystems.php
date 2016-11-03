@@ -52,6 +52,11 @@ return [
             'driver' => 'local',
             'root' => storage_path('app/orders'),
         ],
+        
+        'msg_files' =>[
+            'driver' => 'local',
+            'root' => storage_path('app/msg_files'),
+        ],
 
         'public' => [
             'driver' => 'local',

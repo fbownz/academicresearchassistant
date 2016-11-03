@@ -209,7 +209,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
 
     ],
-    //We use the Africa is talking API to be able to send out sms notifications to Users
+    //We use the configs below in order to send out sms notifications to Users
     //Added by Morgan Emali
     'africa_is_talking_apikey' =>'bf2bfcf64de3ff65e7a5802e9d9f48867b1b19d2561d34711045aaa3b7667d3d',
     'africa_is_talking_username' => 'webonmobi',

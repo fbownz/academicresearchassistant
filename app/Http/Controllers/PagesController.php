@@ -11,23 +11,25 @@ use App\Message;
 use Carbon\Carbon;
 use App\User;
 use App\Notification;
+use App\Http\Controllers\NotificationController;
 use Mail;
+use Illuminate\Support\Facades\Auth;
 
 
 class PagesController extends Controller
 {
-     public function __construct()
-    {
-        $this->middleware('auth');
-
-    }
-
+    
 
     public static $site_title ='Academic Research Assistants';
     public static $page_title;
     public static $page_description;
+    public static $ingine_no;
+    public static $list_messages;
+    public static $messages_no;
+    public static $order_msg_no;
     public static $notifications_no;
     // private $notification_text; We will use the number of notification in the text instead
+    public static $list_bid_accepted;
     public static $list_notifications;
     public static $number_tasks;
     // private $tasks_text; We will use the number of tasks in the text string instead
@@ -38,11 +40,69 @@ class PagesController extends Controller
 
 
 
+     public function __construct()
+    {
+        $this->middleware('auth');
+
+    }
 
 
 
     public function dashboard()
     {
+         if (Auth::user()->ni_admin )
+        {
+            $prof_comp_array = 0;
+            $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+            $messages_no = $list_messages->count();
+
+            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+            // $notifications_no = $list_bid_accepted->count();
+
+            // I used $list_bid_accepted the same as non-admins so as not to have a difficult time to display them on the layout
+
+            // on 4/10/2016 I changed notifications_no = 0 so as to make sure there are no bid notifications on the side of the admin
+            $notifications_no = 0;
+
+
+            $order_msg_no = $list_order_message->count();
+
+            // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+            $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+            $number_tasks =$list_tasks->count() ;
+         
+        }
+        else
+        {
+             
+          $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+          $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+          $messages_no = $list_messages->count();
+
+          $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+          $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+          // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+           $notifications_no = $list_bid_accepted->count();
+           $order_msg_no = $list_order_message->count();
+          
+          // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+
+
+          $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+          $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+          $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+          $number_tasks =$list_tasks->count() ;
+
+        }
     	
         $earnings = Earning::all();
 
@@ -58,17 +118,75 @@ class PagesController extends Controller
             'list_notifications' =>self::$list_notifications,
             'number_tasks' =>self::$number_tasks,
             'list_tasks' => self::$list_tasks,
-            'list_notifications' => self::$list_notifications,
             'user_description' => self::$user_description,
             'join_date_text' => self::$join_date_text,
             'version_no' => self::$version_no,
             'orders'=> $orders,
+            'messages_no' => $messages_no,
+            'list_messages' => $list_messages,
+            'order_msg_no' => $order_msg_no,
+            'list_order_message' => $list_order_message,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
 
             ]);
 
     }
+
     public function bids()
     {
+        if (Auth::user()->ni_admin )
+        {
+            $prof_comp_array = 0;
+            $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+            $messages_no = $list_messages->count();
+
+            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+            $notifications_no = $list_bid_accepted->count();
+            // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+            $order_msg_no = $list_order_message->count();
+
+            // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+            $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+            $number_tasks =$list_tasks->count() ;
+         
+        }
+        else
+        {
+             
+          $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+          $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+          $messages_no = $list_messages->count();
+
+          $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+          $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+          // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+           $notifications_no = $list_bid_accepted->count();
+           $order_msg_no = $list_order_message->count();
+          
+          // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+
+
+          $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+          $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+          $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+          $number_tasks =$list_tasks->count() ;
+
+        }
+
         $orders =Order::where('status', 'Available')->orderBy('created_at', 'desc')->get();
 
         Return view('pages.read_bids', [
@@ -79,14 +197,23 @@ class PagesController extends Controller
             'list_notifications' =>self::$list_notifications,
             'number_tasks' =>self::$number_tasks,
             'list_tasks' => self::$list_tasks,
-            'list_notifications' => self::$list_notifications,
             'user_description' => self::$user_description,
             'join_date_text' => self::$join_date_text,
             'version_no' => self::$version_no,
             'order_bids'=> $orders  ,
+            'messages_no'=> $messages_no,
+            'list_messages' => $list_messages,
+            'order_msg_no' => $order_msg_no,
+            'list_order_message' => $list_order_message,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
 
             ]);
     }
+
     // We use this function to view all the messages table
     public function mailbox(Request $request)
     {
@@ -94,6 +221,24 @@ class PagesController extends Controller
      
        if($request->user()->ni_admin)
             {
+                $prof_comp_array = 0;
+                $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+                $messages_no = $list_messages->count();
+
+                $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+                $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+                // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+                $notifications_no = $list_bid_accepted->count();
+                // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+                $order_msg_no = $list_order_message->count();
+
+                // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+                $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+                $number_tasks =$list_tasks->count() ;
           
               $messages = Message::where('for_admin',1)
               ->where('unread', 0)
@@ -101,12 +246,36 @@ class PagesController extends Controller
               ->groupBy('subject')
               ->get();
 
-              $unread_msgs = Message::where('for_admin', 1)->where('unread', 1)->get();
+              $unread_msgs = Message::all()->where('for_admin', 1)->where('unread', 1)->sortByDesc('created_at');
             }
         elseif(!$request->user()->ni_admin)
           {
+
+                  $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+                  $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+                  $messages_no = $list_messages->count();
+
+                  $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+                  $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+                  // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+                   $notifications_no = $list_bid_accepted->count();
+                   $order_msg_no = $list_order_message->count();
+                  
+                  // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+
+
+                  $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+                  $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+                  $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+                  $number_tasks =$list_tasks->count() ;
+
+
                 $messages = Message::where('user_id',$request->user()->id)
-                ->where('unread', 0)
+                  ->where('unread', 0)
                   ->orderBy('created_at', 'desc')
                   ->groupBy('subject')
                   ->get();
@@ -124,31 +293,82 @@ class PagesController extends Controller
             'list_notifications' =>self::$list_notifications,
             'number_tasks' =>self::$number_tasks,
             'list_tasks' => self::$list_tasks,
-            'list_notifications' => self::$list_notifications,
             'user_description' => self::$user_description,
             'join_date_text' => self::$join_date_text,
             'version_no' => self::$version_no,
             'messages' => $messages,
             'unread_msgs' => $unread_msgs,
+            'messages_no'=> $messages_no,
+            'list_messages' => $list_messages,
+            'order_msg_no' => $order_msg_no,
+            'list_order_message' => $list_order_message,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
 
 
         ]);
     }
+
     public function sentbox(Request $request)
     {
-        $messages = Message::where('sender_id', $request->user()->id)
-              ->orderBy('created_at', 'desc')
-              ->paginate(20);
 
         
        if($request->user()->ni_admin)
             {
+
               $unread_msgs = Message::where('for_admin', 1)->where('unread', 1)->get();
+
+              $messages = Message::where('for_admin',0)
+              ->orderBy('created_at', 'desc')
+              ->paginate(50);
+
+                $prof_comp_array = 0;
+                $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+                $messages_no = $list_messages->count();
+
+                $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+                $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            
+                $notifications_no = $list_bid_accepted->count();
+                // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+                $order_msg_no = $list_order_message->count();
+
+                $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+                $number_tasks =$list_tasks->count() ;
             }
         elseif($request->user()->ni_admin == null)
           {
 
                 $unread_msgs = $request->user()->messages->where('unread', 1)->sortByDesc('created_at')->groupBy('subject');
+
+                $messages = Message::where('sender_id', $request->user()->id)
+              ->orderBy('created_at', 'desc')
+              ->paginate(50);
+
+              $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+              $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+              $messages_no = $list_messages->count();
+
+              $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+               $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+              // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+              $notifications_no = $list_bid_accepted->count();
+              $order_msg_no = $list_order_message->count();
+          
+              // $list_notifications = $list_notifications->sortByDesc('created_at');
+              $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+              $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+              $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+              $number_tasks =$list_tasks->count() ;
           }
 
         Return view('pages.messages_sent',[
@@ -159,16 +379,25 @@ class PagesController extends Controller
             'list_notifications' =>self::$list_notifications,
             'number_tasks' =>self::$number_tasks,
             'list_tasks' => self::$list_tasks,
-            'list_notifications' => self::$list_notifications,
             'user_description' => self::$user_description,
             'join_date_text' => self::$join_date_text,
             'version_no' => self::$version_no,
             'messages' => $messages,
             'unread_msgs' => $unread_msgs,
+            'messages_no'=> $messages_no,
+            'list_messages' => $list_messages,
+            'order_msg_no' => $order_msg_no,
+            'list_order_message' => $list_order_message,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
 
 
             ]);
     }
+
     public function readmail(Request $request, Message $message)
     {
         if(!$request->user()->ni_admin)
@@ -194,6 +423,23 @@ class PagesController extends Controller
                 $inbox_thread = Message::where('subject',$message->subject)->where('user_id', $message->user_id)->get();                
               }
 
+
+              $prof_comp_array = 0;
+              $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+              $messages_no = $list_messages->count();
+
+              $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+              $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+              $notifications_no = $list_bid_accepted->count();
+              // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+              $order_msg_no = $list_order_message->count();
+
+              $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+              $number_tasks =$list_tasks->count() ;
+
               $unread_msgs = Message::where('for_admin', 1)->where('unread', 1)->get();
             }
         elseif($request->user()->ni_admin == null)
@@ -207,8 +453,25 @@ class PagesController extends Controller
                      $message->update(); 
                 }
 
-                $unread_msgs = $request->user()->messages->where('unread', 1)->sortByDesc('created_at')->groupBy('subject');
-                
+                $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+                $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+                $messages_no = $list_messages->count();
+
+                $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+                $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+  
+                $notifications_no = $list_bid_accepted->count();
+                $order_msg_no = $list_order_message->count();
+
+                $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+                $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+                $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+                $number_tasks =$list_tasks->count() ;
+
+
+                $unread_msgs = $request->user()->messages->where('unread', 1)->sortByDesc('created_at')->groupBy('subject');      
           }
 
           $mail_thread = $sent_thread->toBase()->merge($inbox_thread)->sortBy('created_at');
@@ -223,7 +486,6 @@ class PagesController extends Controller
             'list_notifications' =>self::$list_notifications,
             'number_tasks' =>self::$number_tasks,
             'list_tasks' => self::$list_tasks,
-            'list_notifications' => self::$list_notifications,
             'user_description' => self::$user_description,
             'join_date_text' => self::$join_date_text,
             'version_no' => self::$version_no,
@@ -232,8 +494,19 @@ class PagesController extends Controller
             'mail_thread' => $mail_thread,
             // 'from_email' => $from_email,
             // 'from_name' => $from_name,
+            'messages_no'=> $messages_no,
+            'list_messages' => $list_messages,
+            'order_msg_no' => $order_msg_no,
+            'list_order_message' => $list_order_message,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
             ]);
     }
+
+
     public function store_reply(Request $request)
     {
         $this->validate($request,
@@ -303,21 +576,65 @@ class PagesController extends Controller
     {
         if($request->user()->ni_admin)
             {
-              $unread_msgs = Message::where('for_admin', 1)->where('unread', 1)->get();
-              $writers = User::where('ni_admin', null)->where('status', '1')->where('verified',1)->orderBy('first_name')->get();
+                    $unread_msgs = Message::where('for_admin', 1)->where('unread', 1)->get();
+                    $writers = User::where('ni_admin', null)->where('status', '1')->where('verified',1)->orderBy('first_name')->get();
+
+                    $prof_comp_array = 0;
+                    $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+                    $messages_no = $list_messages->count();
+
+                    $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+                    $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+                    
+                    $notifications_no = $list_bid_accepted->count();
+                    // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+                    $order_msg_no = $list_order_message->count();
+
+                    $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+                    $number_tasks =$list_tasks->count() ;
             }
         elseif($request->user()->ni_admin == null)
           {
 
                 $unread_msgs = $request->user()->messages->where('unread', 1)->sortByDesc('created_at')->groupBy('subject');
                 $writers = 0;
+
+                $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+                $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+                $messages_no = $list_messages->count();
+
+                $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+                $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+                $notifications_no = $list_bid_accepted->count();
+                $order_msg_no = $list_order_message->count();
+          
+                $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+                $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+                $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+                $number_tasks =$list_tasks->count() ;
           }
+
         Return view('pages.compose',[
             'site_title' =>self::$site_title,
             'page_title' => self::$page_title='Compose',
             'page_description' => $unread_msgs->count().' Unread Messages',
             'version_no' => self::$version_no,
             'writers' => $writers,
+            'messages_no'=> $messages_no,
+            'list_messages' => $list_messages,
+            'list_order_message' => $list_order_message,
+            'order_msg_no' => $order_msg_no,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
             ]);
             
     }
@@ -333,7 +650,9 @@ class PagesController extends Controller
             ]);
         $user_request = $request->user();
 
-        // We check if the user is an admin and then mark the message as for admin
+        // We confirm that the user isn't an admin
+        // and make the message to be sent to admins
+
         if (!$user_request->ni_admin)
             {
                 $message = new Message;
@@ -373,15 +692,15 @@ class PagesController extends Controller
 
                         $m->to($email_to, $email_name)->subject($subject);
                     });
-                return back()->with ('message','Message to '.$department .' department sent successfully');
+                return redirect('sentbox')->with ('message','Message to '.$department .' department sent successfully');
 
             }
-            elseif($request->user()->ni_admin)
+        elseif($request->user()->ni_admin)
             {
                 if($request->writer == "all writers")
                 {
 
-                    $writers = User::where('ni_admin', null)->get();
+                    $writers = User::where('ni_admin', null)->where('status', '1')->where('verified',1)->get();
                     foreach($writers as $writer)
                     {
                         $message = new Message;
@@ -402,7 +721,7 @@ class PagesController extends Controller
                             $m->to($writer->email, $writer->first_name)->subject($subject);
                         });
                     }
-                    return back()->with ('message','Message to All writers sent successfully');
+                    return redirect('sentbox')->with ('message','Message to All writers sent successfully');
                 }
                 elseif($request->writer == "active writers")
                 {
@@ -431,7 +750,7 @@ class PagesController extends Controller
                         }
                         
                     }
-                    return back()->with ('message','Message to Active writers sent successfully');
+                    return redirect('sentbox')->with ('message','Message to Active writers sent successfully');
                 }
 
                 elseif($request->writer == "inactive writers")
@@ -461,7 +780,7 @@ class PagesController extends Controller
                         }
                         
                     }
-                    return back()->with ('message','Message to Inactive writers sent successfully');
+                    return redirect('sentbox')->with ('message','Message to Inactive writers sent successfully');
                 }
                 else
                 {
@@ -484,7 +803,7 @@ class PagesController extends Controller
                         $m->to($writer->email, $writer->first_name)->subject($subject);
                     });
 
-                    return back()->with ('message','Message to '.$writer->first_name.' sent successfully'); 
+                    return redirect('sentbox')->with ('message','Message to '.$writer->first_name.' sent successfully'); 
                 }
                 
             }
@@ -495,6 +814,56 @@ class PagesController extends Controller
     public function allusers()
     {
         $users = User::where('ni_admin', null)->get();
+         if (Auth::user()->ni_admin )
+        {
+            $prof_comp_array = 0;
+            $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+            $messages_no = $list_messages->count();
+
+            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+            $notifications_no = $list_bid_accepted->count();
+            // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+            $order_msg_no = $list_order_message->count();
+
+            // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+            $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+            $number_tasks =$list_tasks->count() ;
+         
+        }
+        else
+        {
+             
+          $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+          $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+          $messages_no = $list_messages->count();
+
+          $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+          $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+          // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+           $notifications_no = $list_bid_accepted->count();
+           $order_msg_no = $list_order_message->count();
+          
+          // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+
+
+          $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+          $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+          $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+          $number_tasks =$list_tasks->count() ;
+
+        }
+
+
 
         Return view('pages.users',[
             'site_title' =>self::$site_title,
@@ -504,11 +873,21 @@ class PagesController extends Controller
             'list_notifications' =>self::$list_notifications,
             'number_tasks' =>self::$number_tasks,
             'list_tasks' => self::$list_tasks,
-            'list_notifications' => self::$list_notifications,
             'version_no' => self::$version_no,
             'users' => $users,
+            'messages_no'=> $messages_no,
+            'list_messages' => $list_messages,
+            'list_order_message' => $list_order_message,
+            'order_msg_no' => $order_msg_no,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
             ]);
     }
+
+
     public function profile(Request $request)
     {
         $user = $request -> user();
@@ -526,7 +905,57 @@ class PagesController extends Controller
             $a_number = $user->b_details->first()->a_number;
         }
 
-        $subject_infos = $subject_infos = DB::table('orders')->where('user_id',$user->id)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
+
+        $subject_infos = DB::table('orders')->where('user_id',$user->id)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
+
+         if (Auth::user()->ni_admin )
+        {
+            $prof_comp_array = 0;
+            $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+            $messages_no = $list_messages->count();
+
+            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+            $notifications_no = $list_bid_accepted->count();
+            // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+            $order_msg_no = $list_order_message->count();
+
+            // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+            $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+            $number_tasks =$list_tasks->count() ;
+         
+        }
+        else
+        {
+             
+          $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+          $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+          $messages_no = $list_messages->count();
+
+          $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+          $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+          // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+           $notifications_no = $list_bid_accepted->count();
+           $order_msg_no = $list_order_message->count();
+          
+          // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+
+
+          $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+          $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+          $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+          $number_tasks =$list_tasks->count() ;
+
+        }
 
         Return view('pages.profile',[
             'site_title'=> self::$site_title,
@@ -544,10 +973,140 @@ class PagesController extends Controller
             'b_b_name' => $b_b_name,
             'a_name'=>$a_name,
             'a_number' => $a_number,
+            'messages_no'=> $messages_no,
+            'list_messages' => $list_messages,
+            'list_order_message' => $list_order_message,
+            'order_msg_no' => $order_msg_no,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
             ]);
     }
+
+
+    public function viewWriterProfile(Request $request, User $user)
+    {
+        // We confirm that the person viewing requesting the user's profile is an admin or client (should come later on)
+        if(! $request->user()->ni_admin){
+            // return back()->with ('error', 'You are not authorised to view that page. Contact support for assistance'); 
+            Return redirect('find_work')->with('error',"We are still working on a new writer profile page in the mean time... Find some work below :)");
+        }
+
+            $prof_comp_array = 0;
+            $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+            $messages_no = $list_messages->count();
+
+            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+            $notifications_no = $list_bid_accepted->count();
+            // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+            $order_msg_no = $list_order_message->count();
+
+            // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+            $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+            $number_tasks =$list_tasks->count() ;
+
+            $b_name = '';
+            $b_b_name = '';
+            $a_name = '';
+            $a_number = '';
+
+        if($user->b_details->count() > 0)
+        {
+            $b_name = $user->b_details->first()->b_name;
+            $b_b_name = $user->b_details->first()->b_b_name;
+            $a_name = $user->b_details->first()->a_name;
+            $a_number = $user->b_details->first()->a_number;
+        }
+
+        $subject_infos = DB::table('orders')->where('user_id',$user->id)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
+
+        Return view('pages.profile',[
+            'site_title'=> self::$site_title,
+            'page_title' => self::$page_title= $user->first_name."'s Account",
+            'page_description' =>self::$page_description= $user->first_name."'s Account details",
+            'notifications_no' =>self::$notifications_no,
+            'list_notifications' =>self::$list_notifications,
+            'number_tasks' =>self::$number_tasks,
+            'list_tasks' => self::$list_tasks,
+            'version_no' => self::$version_no,
+            'user' => $user,
+            'subject_infos' => $subject_infos,
+            'b_name' => $b_name,
+            'b_b_name' => $b_b_name,
+            'a_name'=>$a_name,
+            'a_number' => $a_number,
+            'list_order_message' => $list_order_message,
+            'messages_no'=> $messages_no,
+            'order_msg_no' => $order_msg_no,
+            'list_messages' => $list_messages,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
+            ]);
+
+    }
+
     public function fines_policy()
     {
+         if (Auth::user()->ni_admin )
+        {
+            $prof_comp_array = 0;
+            $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
+            $messages_no = $list_messages->count();
+
+            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
+
+
+            // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+            $notifications_no = $list_bid_accepted->count();
+            // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+
+            $order_msg_no = $list_order_message->count();
+
+            // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+            $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
+            $number_tasks =$list_tasks->count() ;
+         
+        }
+        else
+        {
+             
+          $prof_comp_array = NotificationController::profileComplete(Auth::user());
+
+          $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
+          $messages_no = $list_messages->count();
+
+          $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
+          $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
+
+          // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
+           $notifications_no = $list_bid_accepted->count();
+           $order_msg_no = $list_order_message->count();
+          
+          // $list_notifications = $list_notifications->sortByDesc('created_at');
+
+
+
+          $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
+          $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
+
+          $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
+          $number_tasks =$list_tasks->count() ;
+
+        }
+
         Return view('pages.finesPolicy',[
             'site_title'=> self::$site_title,
             'page_title' => self::$page_title='Fines Policy',
@@ -558,6 +1117,26 @@ class PagesController extends Controller
             'list_tasks' => self::$list_tasks,
             'list_notifications' => self::$list_notifications,
             'version_no' => self::$version_no,
+           'list_order_message' => $list_order_message,
+            'messages_no'=> $messages_no,
+            'order_msg_no' => $order_msg_no,
+            'list_messages' => $list_messages,
+            'notifications_no' => $notifications_no,
+            'list_bid_accepted' => $list_bid_accepted,
+            'list_tasks' => $list_tasks,
+            'number_tasks' => $number_tasks,
+            'prof_comp_array' => $prof_comp_array,
             ]);
     }
+    // public function activateUsers()
+    // {
+    //     $users = User::all()->where('status',null);
+    //     foreach ($users as $user) 
+    //         {
+    //             $user->status = '1';
+    //             $user->verified = 1;
+    //             $user->update();
+    //         }
+    //     return 'All is well Brother';
+    // }
 }

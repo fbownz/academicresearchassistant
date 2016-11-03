@@ -17,13 +17,16 @@
             </div>
             <div class="box box-success">
                 <div class="box-header no-border">
-                    <h4>Greetings Admin,</h4>
-                    This is to notify you that you have received a new message on Order <b>#{{$order->order_no}}</b>.<br>
+                    <h4>Greetings {{$user->first_name}},</h4>
+                    This is to notify you that the delivery time for order <b>#{{$order->order_no}}</b> has been updated<br>
 
                 </div>
                 <div class="box-body">
                     <p>
-                    	<a href="http://academicresearchassistants.com/orders/{{$order->id}}/notifications/{{$notification->id}}#order-message">Click this link to view the order</a>
+                    	In light of this, you are advised to visit the order page and take note of the changes <br>
+						<a href="http://academicresearchassistants.com/orders/{{$order->id}}">Click this link to view the order</a><br><br>
+						<hr>
+						Please get in touch with the Quality Assurance Department if you need any further assistance or clarification.
                     </p>
                 
                     
