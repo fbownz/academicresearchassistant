@@ -48,9 +48,38 @@ return [
             'root' => storage_path('app'),
         ],
 
+        'orders' => [
+            'driver' => 'local',
+            'root' => storage_path('app/orders'),
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
+            'visibility' => 'public',
+        ],
+
+        'avatars' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/avatars'),
+            'visibility' => 'public',
+        ],
+
+        'vipande' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/vipande'),
+            'visibility' => 'public',
+        ],
+
+        'resumes' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/resumes'),
+            'visibility' => 'public',
+        ],
+
+        'certs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/certs'),
             'visibility' => 'public',
         ],
 

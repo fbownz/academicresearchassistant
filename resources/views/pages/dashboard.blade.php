@@ -4,81 +4,164 @@
 
     <!-- Main content -->
     <section class="content">
-
       <?php 
-        use Carbon\Carbon; 
-        $a_orders = $orders->where('status','Available')->all();
-        $no_of_orders = count($a_orders);
+        use Carbon\Carbon;
+        use App\Bid;
+        use App\Order;
+        use App\Earning;
+        use App\Message;
+        
 
-      $ac_orders = DB::table('orders')->where([
-                    ['status','Active'],
-                    ['user_id',Auth::user()->id],
-                    ])->paginate(5);
-      $no_of_available = count($ac_orders);
-      $approved_orders = DB::table('orders')->where([
-                    ['approved','1'],
-                    ['user_id',Auth::user()->id],
-                    ]);
-      
-      $total_pending = Auth::user()->earnings->where('paid','0')->sum('total');
-      $total_paid = Auth::user()->earnings->where('paid', '1')->sum('total');
-      $unread_messages = Auth::user()->messages->where('unread' ,'1')->count();
-      $total_messages = Auth::user()->messages->count();
+            $a_orders = Order::where('status','Available')->paginate(5); 
+           // No_Available Orders
+            $no_of_orders = Order::where('status','Available')->count();
+
+        if (Auth::user()->ni_admin == 0) 
+        {
+            
+            //Active Orders
+            $ac_orders = Auth::user()->orders()->where('status','Active')->paginate(5);
+            $no_of_active = Auth::user()->orders()->where('status','Active')->count();
+
+            // Delivered orders
+            $comp_orders = Auth::user()->orders()->where('status','Delivered')->get();
+            $no_comp_orders = Auth::user()->orders()->where('status','Delivered')->count() ;
+
+            // Approved orders (Orders that have been paid )
+            $app_orders = Auth::user()->earnings()->get();
+            $no_App_orders = Auth::user()->earnings()->count();
+
+
+          // We go through relationships with laravel Eloquent ORM 
+          // We get pending orders
+          $my_pending_bids= Bid::with('user','order');
+          $no_my_active_bids=count($my_pending_bids->whereHas('user',function($q)
+          {
+            $q->where('id',Auth::user()->id);
+          })
+          ->whereHas('order',function($q)
+          {
+            $q->where('status','Available');
+          })
+          ->get());
+
+          
+          
+          $total_pending_approved = Auth::user()->earnings->where('paid',0)->sum('total');
+          $total_paid = Auth::user()->earnings->where('paid', 1)->sum('total');
+          $unread_messages = Auth::user()->messages->where('unread' ,'1')->count();
+          $total_messages = Auth::user()->messages->count();
+        }
+        else
+        {
+          //Active Orders
+          $ac_orders =  Order::where('status','Active')->get();
+          $no_of_active = Order::where('status', 'Active')->count();
+
+          //Delivered Orders
+          $comp_orders = Order::where('status','Delivered')->get();
+          $no_comp_orders = Order::where('status','Delivered')->count();
+
+          //Approved Orders
+          $app_orders = Earning::all();
+          $no_App_orders = Earning::count();
+
+          // We go through relationships with laravel Eloquent ORM 
+          // We get pending orders
+          $my_pending_bids= Bid::with('order');
+          $no_my_active_bids=count($my_pending_bids->whereHas('order',function($q)
+          {
+            $q->where('status','Available');
+          })
+          ->get());
+
+          //Totals
+          $total_pending_approved = Earning::where('paid',0)->sum('total');
+          $total_paid = Earning::where('paid',1)->sum('total');
+          $unread_messages = Message::where('unread','1')->count();
+          $total_messages = Message::count();
+        }
+         
       ?>
 
-      <div class="row 
-      @if (strpos($_SERVER['REQUEST_URI'], "q") !== false) 
-            hide
-            @endif 
-            ">
-        <div class="col-md-4 col-sm-6 col-xs-12">
+
+      <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
           <div class="info-box bg-blue">
-            <span class="info-box-icon"><a href={{url('orders')}}><i class="fa fa-list"></i></a></span>
+            <span class="info-box-icon"><a href={{url('/u_bids')}}><i class="fa fa-book"></i></a></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Orders</a></span>
-              <span class="info-box-number">{{$no_of_orders}} Available</span>
+              <span class="info-box-text">@if(Auth::user()->ni_admin)
+                Current Bids 
+                @else 
+                My Current bids 
+                @endif
+                </span>
+              <span class="info-box-number">{{$no_my_active_bids}} Bids</span>
               <div class="progress">
                 <div class="progress-bar" style="width: 40%"></div>
               </div>
                 <span class="progress-description">
-                  <b>{{$no_of_available}}</b> Active
+                  <b><a @if(Auth::user()->ni_admin)
+                    href ="/order_bids"
+                    @else
+                    href="/u_bids"
+                    @endif
+                    >View all Bids</a></b>
                 </span>
             </div>
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="info-box bg-green">
-            <span class="info-box-icon"><a href={{url('earnings')}}><i class="fa fa-money"></i></a></span>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-blue">
+            <span class="info-box-icon"><i class="fa fa-list"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Pending Payout</span>
-              <span class="info-box-number">${{$total_pending}}</span>
+              <span class="info-box-text">Orders in Progress</span>
+              <span class="info-box-number">{{$no_of_active}}</span>
               <div class="progress">
                 <div class="progress-bar" style="width: 60%"></div>
               </div>
                 <span class="progress-description">
-                  <b>${{$total_paid}}</b> Total Earned
+                  <b>{{$no_comp_orders}}</b> Completed
                 </span>
             </div>
             <!-- /.info-box-content -->
           </div>
           <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
-          <div class="info-box bg-red">
-            <span class="info-box-icon"><a href={{url('inbox')}}><i class="fa fa-envelope-o"></i></a></span>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-blue">
+            <span class="info-box-icon"><i class="fa fa-list"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text">Inbox</span>
-              <span class="info-box-number">{{$unread_messages}} Unread </span>
+              <span class="info-box-text">Past Orders</span>
+              <span class="info-box-number">{{$no_App_orders}}</span>
               <div class="progress">
                 <div class="progress-bar" style="width: 40%"></div>
               </div>
                 <span class="progress-description">
-                  <b>{{$total_messages}}</b> Messages
+                  <b>Approved orders</b>
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+          <div class="info-box bg-green">
+            <span class="info-box-icon"><a href="/earnings"><i class="fa fa-money"></i></a></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text"><sup>*</sup>Earnings</span>
+              <span class="info-box-number">${{$total_pending_approved}} Pending</span>
+              <div class="progress">
+                <div class="progress-bar" style="width: 40%"></div>
+              </div>
+                <span class="progress-description">
+                  <b>${{$total_paid}} Earned</b>
                 </span>
             </div>
             <!-- /.info-box-content -->
@@ -104,7 +187,7 @@
             <div class="box-body">
               <div class="col-md-7 col-xs-12 col-sd-12 col-lg-7">
                   <div class="box-group" id="all_orders">
-                  <h4 class="box-title">Available Orders</h4>
+                  <h4 class="box-title">Recent Orders</h4>
                       <!-- Start iterating through the order data from the orderscontroller -->
                   @if(count($a_orders)!=0)
                   @foreach($a_orders as $order)
@@ -142,8 +225,8 @@
                                   
                                   
                                       <div class="box-footer clearfix">
-                                        <a class="btn btn-sm btn-success btn-flat pull-left" href="orders/{{$order->id}}" >View Order</a>
-                                        <a class="btn btn-sm btn-success btn-flat pull-right" href="orders/{{$order->id}}" >Place Bid</a>
+                                        <a class="btn btn-sm btn-success btn-flat pull-left" href="/orders/{{$order->id}}" >View Order</a>
+                                        <a class="btn btn-sm btn-success btn-flat pull-right" href="/orders/{{$order->id}}#bidonthis" >Place Bid</a>
                                       </div>
                                  </div>
                             </div>    
@@ -199,7 +282,7 @@
                                       <div class="col-sm-6"><strong>Order Total:</strong></div>
                                       <div class="col-sm-6 text-green">${{$order->compensation}}</div>
                                       <div class="box-footer clearfix">
-                                        <a class="btn btn-sm btn-success btn-flat pull-left" href="orders/{{$order->id}}" >View Order</a>
+                                        <a class="btn btn-sm btn-success btn-flat pull-left" href="/orders/{{$order->id}}" >View Order</a>
                                       </div>
                                  </div>
                             </div>    
@@ -209,7 +292,7 @@
 
                   
                   <div class="box-footer clearfix">
-                      <a class="btn btn-sm btn-default btn-flat pull-left" href="#" >View All Active Orders
+                      <a class="btn btn-sm btn-default btn-flat pull-left" href="/orders#pending" >View All Active Orders
                       </a>
                    </div>
                    @else
@@ -228,7 +311,6 @@
           </div>
           <!-- /.box -->
         <!-- /.col -->
-      </div>
     </section>
   <!-- /.content-wrapper -->
 

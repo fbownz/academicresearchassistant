@@ -30,9 +30,10 @@
 <body class="hold-transition register-page">
 <div class="register-box">
   <div class="register-logo">
-    <a href="#"><b>Academic</b>ResearchAssistants</a>
+    <a href="#"><b>Acdemic</b>ResearchAssistants</a>
   </div>
-
+@include('errors')
+@include('flash')
   <div class="register-box-body">
     <p class="login-box-msg">Register a new account</p>
 

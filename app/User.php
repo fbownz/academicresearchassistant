@@ -41,5 +41,29 @@ class User extends Authenticatable
 
         return $this->hasMany(Message::class);
     }
+    public function order_delivery_reports()
+    {
+        return $this->hasMany(Order_delivery_report::class);
+    }
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+    public function earning_reports()
+    {
+        return $this->hasMany(Earning_report::class);
+    }
+    public function b_details()
+    {
+        return $this->hasMany(B_detail::class);
+    }
+    public function fines()
+    {
+        return $this->hasMany(Fine::class);
+    }
+    public function bonuses()
+    {
+        return $this->hasMany(Bonus::class);
+    }
 
 }

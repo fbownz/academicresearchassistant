@@ -10,4 +10,8 @@ class Order_delivery_report extends Model
 
     	return $this->belongsTo(Order::class);
     }
+    public function user()
+    {
+    	return $this->belongsTo(User::class);
+    }
 }
