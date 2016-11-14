@@ -188,14 +188,19 @@ class EarningsController extends Controller
         }
 
 
-        //We mark all the fines as 0 to show that they have already been effective in the payment
+        //We mark all the fines as 0 to show that they have already been effective in the payments
         foreach($user->fines->where('status', 1) as $fine)
         {
             $fine->status = 0;
             $fine->update();
         }
 
+<<<<<<< HEAD
         foreach ($user->earnings->where('paid',0) as $earning) 
+=======
+        // I want to only update unpaid earnings of a particular user
+        foreach ($user->earnings->where('paid', '0' ) as $earning) 
+>>>>>>> 7a776378e37f20b78ffde107e45744474ed2f9b0
         {
             $earning->paid = 1;
             $earning->paid_date = Carbon::now();

@@ -597,7 +597,7 @@
 			@endif
 			
 
-			@if(Auth::user()->ni_admin==1 || $order->user_id == Auth::user()->id && $order->approved !==1)
+			@if(Auth::user()->ni_admin==1 || $order->user_id == Auth::user()->id )
 			<!-- Deliver order widget -->
 			<div class="box box-success">
 				<div class="box-header with-border">

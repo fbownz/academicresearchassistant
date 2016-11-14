@@ -4,6 +4,8 @@
 Homestead.yaml
 Homestead.json
 .env
+.env.example
+.DS_Store
 
 error_log
 bootstrap/cache
