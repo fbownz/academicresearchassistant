@@ -195,7 +195,7 @@ class EarningsController extends Controller
             $fine->update();
         }
 
-        foreach ($user->earnings as $earning) 
+        foreach ($user->earnings->where('paid',0) as $earning) 
         {
             $earning->paid = 1;
             $earning->paid_date = Carbon::now();
