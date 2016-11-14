@@ -9,3 +9,5 @@ Homestead.json
 
 error_log
 bootstrap/cache
+/config
+
