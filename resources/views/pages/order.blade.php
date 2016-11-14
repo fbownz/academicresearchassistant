@@ -602,7 +602,8 @@
 			<div class="box box-success">
 				<div class="box-header with-border">
 					<h4><i class="fa fa-upload"></i>
-						Deliver Order
+					<!-- Added a deliver or update order text -->
+						Deliver/Update Order
 					</h4>
 					<div class="box-tools pull-right">
 						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
