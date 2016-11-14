@@ -195,12 +195,8 @@ class EarningsController extends Controller
             $fine->update();
         }
 
-<<<<<<< HEAD
+    // I want to only update unpaid earnings of a particular user
         foreach ($user->earnings->where('paid',0) as $earning) 
-=======
-        // I want to only update unpaid earnings of a particular user
-        foreach ($user->earnings->where('paid', '0' ) as $earning) 
->>>>>>> 7a776378e37f20b78ffde107e45744474ed2f9b0
         {
             $earning->paid = 1;
             $earning->paid_date = Carbon::now();
