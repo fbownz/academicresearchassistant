@@ -1,6 +1,5 @@
-/vendor
-/node_modules
-public*
+vendor/*
+node_modules/*
 storage/*
 Homestead.yaml
 Homestead.json
@@ -9,7 +8,6 @@ Homestead.json
 .DS_Store
 config/*
 error_log
-bootstrap/cache
 server.php
 package.json
 gulpfile.js
@@ -20,3 +18,4 @@ public/*
 database/factories/*
 database/seeds/*
 bootstrap/*
+gulpfile.js
