@@ -988,7 +988,7 @@ class PagesController extends Controller
 
     public function viewWriterProfile(Request $request, User $user)
     {
-        // We confirm that the person viewing requesting the user's profile is an admin or client (should come later on)
+        // We confirm that the person requesting the user's profile is an admin or client (should come later on)
         if(! $request->user()->ni_admin){
             // return back()->with ('error', 'You are not authorised to view that page. Contact support for assistance'); 
             Return redirect('find_work')->with('error',"We are still working on a new writer profile page in the mean time... Find some work below :)");
@@ -998,7 +998,10 @@ class PagesController extends Controller
             $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
             $messages_no = $list_messages->count();
 
-            $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            // $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
+            // I have disabled the need to show bid notifications on the writers profile page because they are many and only the client should see this. 
+
+            $list_bid_accepted = "";
             $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
 
 
