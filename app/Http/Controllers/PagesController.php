@@ -1001,7 +1001,7 @@ class PagesController extends Controller
             // $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
             // I have disabled the need to show bid notifications on the writers profile page because they are many and only the client should see this. 
 
-            $list_bid_accepted = "";
+            $list_bid_accepted = [];
             $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
 
 
