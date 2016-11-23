@@ -1001,12 +1001,12 @@ class PagesController extends Controller
             // $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
             // I have disabled the need to show bid notifications on the writers profile page because they are many and only the client should see this. 
 
-            $list_bid_accepted = [];
+            $list_bid_accepted = 0;
             $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
 
 
             // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-            $notifications_no = $list_bid_accepted->count();
+            $notifications_no = 0;
             // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
 
             $order_msg_no = $list_order_message->count();
