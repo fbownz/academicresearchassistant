@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Http\Response;
 use Validator;
 
+use App\User;
 use App\Http\Requests;
 
 class UserController extends Controller
@@ -152,7 +153,7 @@ class UserController extends Controller
             return "You are not an admin to do that";
         } else {
             
-            $user = App\User::findorfail($id);
+            $user = User::findorfail($id);
         
             $disk='vipande';
             $file_name = $user->picha_ya_id;
