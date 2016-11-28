@@ -146,7 +146,7 @@ class UserController extends Controller
 
         // return $file->mime;
     }
-    // A function for the Admins to download user's details.
+    // A function for the Admins to download user's vipande.
     public function admin_download_id(Request $request, $id){
         
         if (!$request->user()->ni_admin) {
@@ -158,6 +158,52 @@ class UserController extends Controller
             $disk='vipande';
             $file_name = $user->picha_ya_id;
             $mime = $user->picha_ya_id_mime;
+
+
+            $file = Storage::disk($disk)->get($file_name);
+
+                return (new Response($file, 200))
+                    ->header('Content-Type',$mime);
+
+        }
+        
+    }
+
+    // A function for the Admins to download user's cv.
+    public function admin_download_cv(Request $request, $id){
+        
+        if (!$request->user()->ni_admin) {
+            return "You are not an admin to do that";
+        } else {
+            
+            $user = User::findorfail($id);
+        
+            $disk='resumes';
+            $file_name = $user->resume;
+            $mime = $user->resume_mime;
+
+
+            $file = Storage::disk($disk)->get($file_name);
+
+                return (new Response($file, 200))
+                    ->header('Content-Type',$mime);
+
+        }
+        
+    }
+
+    // A function for the Admins to download user's cert.
+    public function admin_download_cert(Request $request, $id){
+        
+        if (!$request->user()->ni_admin) {
+            return "You are not an admin to do that";
+        } else {
+            
+            $user = User::findorfail($id);
+        
+            $disk='certs';
+            $file_name = $user->certificate;
+            $mime = $user->certificate_mime;
 
 
             $file = Storage::disk($disk)->get($file_name);
