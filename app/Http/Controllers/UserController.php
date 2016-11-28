@@ -118,6 +118,9 @@ class UserController extends Controller
             $disk='vipande';
             $file_name = $request->user()->picha_ya_id;
             $mime = $user->picha_ya_id_mime;
+
+            // test
+            return $file_name;
         }
         elseif ($dl == 'cv') 
         {
