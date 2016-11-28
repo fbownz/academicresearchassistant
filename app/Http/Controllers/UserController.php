@@ -145,5 +145,27 @@ class UserController extends Controller
 
         // return $file->mime;
     }
+    // A function for the Admins to download user's details.
+    public function admin_download_id(Request $request, $id){
+        
+        if (!$request->user()->ni_admin) {
+            return "You are not an admin to do that";
+        } else {
+            
+            $user = App\User::findorfail($id);
+        
+            $disk='vipande';
+            $file_name = $user->picha_ya_id;
+            $mime = $user->picha_ya_id_mime;
+
+
+            $file = Storage::disk($disk)->get($file_name);
+
+                return (new Response($file, 200))
+                    ->header('Content-Type',$mime);
+
+        }
+        
+    }
 
 }

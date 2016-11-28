@@ -20,10 +20,10 @@
             			<thead>
             				<tr>
             					<th>Writer</th>
-            					<th>Processing</th>
-            					<th>Revision</th>
             					<th>Delivered</th>
             					<th>Approved</th>
+                                <th>Processing</th>
+                                <th>Revision</th>
             					<th>Late</th>
                                 <th>ID</th>
                                 <th>CV</th>
@@ -44,10 +44,10 @@
                                     {{$user->first_name}}
                                     </a>
                                 </td>
+                                <td>{{$user->orders->where('is_complete',1)->count()}}</td>
+                                <td>{{$user->orders->where('approved', 1)->count()}}</td>
             					<td>{{$user->orders->where('status','Active')->count()}}</td>
             					<td>{{$user->orders->where('status','Active-Revision')->count()}}</td>
-            					<td>{{$user->orders->where('is_complete',1)->count()}}</td>
-            					<td>{{$user->orders->where('approved', 1)->count()}}</td>
             					<td>{{$user->orders->where('is_late',1)->count()}}</td>
                                 <td><a href="/writer/admin_id_download/{{$user->id}}"> 
                                     {{$user->first_name}}'s ID
