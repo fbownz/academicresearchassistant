@@ -25,27 +25,16 @@
             					<th>Delivered</th>
             					<th>Approved</th>
             					<th>Late</th>
-                                <th>Bank</th>
-                                <th>Account Name</th>
-                                <th>Acc Number</th>
+                                <th>ID</th>
+                                <th>CV</th>
+                                <th>Certificate</th>
 
             				</tr>
             			</thead>
             			<tbody>
                             
             				@foreach($users as $user)
-                            <?
-                                if ($user->b_details->count()) {
-                                    $b_name = $user->b_details->first()->b_name;
-                                    $a_name = $user->b_details->first()->a_name;
-                                    $a_number = $user->b_details->first()->a_number;
-                                }
-                                else{
-                                    $b_name ='';
-                                    $a_name = "";
-                                    $a_number ='';
-                                }
-                            ?>
+                            
             				<tr>
             					<td>
                                     <a href="/writer/{{$user->id}}">
@@ -60,9 +49,19 @@
             					<td>{{$user->orders->where('is_complete',1)->count()}}</td>
             					<td>{{$user->orders->where('approved', 1)->count()}}</td>
             					<td>{{$user->orders->where('is_late',1)->count()}}</td>
-                                <td>{{$b_name}}</td>
-                                <td>{{$a_name}}</td>
-                                <td>{{$a_number}}</td>
+                                <td><a href="/writer/admin_id_download/{{$user->id}}"> 
+                                    {{$user->first_name}}'s ID
+                                    </a>
+                                </td>
+                                <td><a href="/writer/admin_cv_download/{{$user->id}}"> 
+                                    {{$user->first_name}}'s CV
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/writer/admin_cert_download/{{$user->id}}"> 
+                                    {{$user->first_name}}'s Certificate
+                                    </a>
+                                </td>
             				</tr>
             				@endforeach
             			</tbody>
