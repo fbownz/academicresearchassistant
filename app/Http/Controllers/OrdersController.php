@@ -43,7 +43,7 @@ class OrdersController extends Controller
     // On Fri 27th May I removed "&& $order->status != "Active-Revision"" so as to update the time on active-revision orders
     foreach ($orders as $order) 
     {
-        if ($order->status != "Completed" && $order->status != "Delivered"  && $order->status != "Available" && $order->approved != 1 && order->status != "Cancelled") {
+        if ($order->status != "Completed" && $order->status != "Delivered"  && $order->status != "Available" && $order->approved != 1 && $order->status != "Cancelled") {
 
             if (!$order->notifications()->where('type','order_past_client_deadline')->count() ) {
                 
