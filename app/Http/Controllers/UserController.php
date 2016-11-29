@@ -139,12 +139,19 @@ class UserController extends Controller
         }
 
         // $file_uploaded =Order_delivery_report::where('file_name','=', $file_name)->firstOrFail(); Testing not sure yet
-        $file = Storage::disk($disk)->get($file_name);
+
+        // We check if the file to be downloaded is available then give an error and stop if it isn't found
+        if (!$file_name) {
+            
+            return back()->with("error", "Sorry we couldn't find your " .$dl." Kindly upload it one more time");
+        } else {
+            $file = Storage::disk($disk)->get($file_name);
 
         return (new Response($file, 200))
             ->header('Content-Type',$mime);
-
-        // return $file->mime;
+        }
+        
+        
     }
     // A function for the Admins to download user's vipande.
     public function admin_download_id(Request $request, $id){
