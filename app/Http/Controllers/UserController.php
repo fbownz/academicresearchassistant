@@ -160,7 +160,7 @@ class UserController extends Controller
             $mime = $user->picha_ya_id_mime;
 
             if (!$file_name) {
-                return "No id found for the User, Has he uploaded his ID?"
+                return "No id found for the User, Has he uploaded his ID?";
             } else {
                 $file = Storage::disk($disk)->get($file_name);
 
@@ -186,7 +186,7 @@ class UserController extends Controller
             $mime = $user->resume_mime;
 
             if (!$file_name) {
-                return "No resume found for the User, Has he uploaded his Resume?"
+                return "No resume found for the User, Has he uploaded his Resume?";
             } else {
                 $file = Storage::disk($disk)->get($file_name);
 
@@ -213,7 +213,7 @@ class UserController extends Controller
             $mime = $user->certificate_mime;
 
             if (!$file) {
-                return "No Cert found for the User, Has the writer uploaded their Cert?"
+                return "No Cert found for the User, Has the writer uploaded their Cert?";
             } else {
                 $file = Storage::disk($disk)->get($file_name);
 
