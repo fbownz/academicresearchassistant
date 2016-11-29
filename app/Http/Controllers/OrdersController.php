@@ -264,8 +264,10 @@ class OrdersController extends Controller
 
 
             // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-            $notifications_no = $list_bid_accepted->count();
-            // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+            // $notifications_no = $list_bid_accepted->count();
+
+            // I changed the notifications_no to 0 in order to show less notifications for admins
+            $notifications_no = 0
 
             $order_msg_no = $list_order_message->count();
 
@@ -343,7 +345,7 @@ class OrdersController extends Controller
 
 
             // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-            $notifications_no = $list_bid_accepted->count();
+            $notifications_no = 0;
             // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
 
             $order_msg_no = $list_order_message->count();
@@ -625,7 +627,7 @@ class OrdersController extends Controller
 
 
             // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-            $notifications_no = $list_bid_accepted->count();
+            $notifications_no = 0;
             // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
 
             $order_msg_no = $list_order_message->count();
@@ -989,7 +991,7 @@ class OrdersController extends Controller
 
 
             // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-            $notifications_no = $list_bid_accepted->count();
+            $notifications_no = 0;
             // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
 
             $order_msg_no = $list_order_message->count();
@@ -1273,7 +1275,7 @@ class OrdersController extends Controller
 
 
             // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
-            $notifications_no = $list_bid_accepted->count();
+            $notifications_no = 0;
             // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
 
             $order_msg_no = $list_order_message->count();
