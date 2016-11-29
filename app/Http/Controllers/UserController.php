@@ -162,6 +162,8 @@ class UserController extends Controller
 
             $file = Storage::disk($disk)->get($file_name);
 
+            return $file;
+
                 return (new Response($file, 200))
                     ->header('Content-Type',$mime);
 
