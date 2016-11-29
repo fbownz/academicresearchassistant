@@ -220,7 +220,7 @@ class UserController extends Controller
             $file_name = $user->certificate;
             $mime = $user->certificate_mime;
 
-            if (!$file) {
+            if (!$file_name) {
                 return back()->with('error', 'No Cert found for '.$user->first_name. 'Has the writer uploaded their Cert?');
 
             } else {
