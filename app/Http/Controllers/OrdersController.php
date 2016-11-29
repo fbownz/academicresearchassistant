@@ -43,7 +43,7 @@ class OrdersController extends Controller
     // On Fri 27th May I removed "&& $order->status != "Active-Revision"" so as to update the time on active-revision orders
     foreach ($orders as $order) 
     {
-        if ($order->status != "Completed" && $order->status != "Delivered"  && $order->status != "Available" && $order->approved != 1) {
+        if ($order->status != "Completed" && $order->status != "Delivered"  && $order->status != "Available" && $order->approved != 1 && order->status != "Cancelled") {
 
             if (!$order->notifications()->where('type','order_past_client_deadline')->count() ) {
                 
@@ -109,8 +109,11 @@ class OrdersController extends Controller
             $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
             $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
 
-            $notifications_no = $list_bid_accepted->count();
+            // made changes on 29th Nov 2016 so as to remove bid notifications for admins
+            // $notifications_no = $list_bid_accepted->count();
             // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
+            $notifications_no = 0;
+
 
             $order_msg_no = $list_order_message->count();
 
