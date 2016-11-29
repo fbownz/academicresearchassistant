@@ -150,7 +150,7 @@ class UserController extends Controller
     public function admin_download_id(Request $request, $id){
         
         if (!$request->user()->ni_admin) {
-            return "You are not an admin to do that";
+            return back()->with('error', 'You are not an admin to do that');
         } else {
             
             $user = User::findorfail($id);
@@ -160,7 +160,7 @@ class UserController extends Controller
             $mime = $user->picha_ya_id_mime;
 
             if (!$file_name) {
-                return "No id found for the User, Has he uploaded his ID?";
+                return back()->with('error', 'No id found for '.$user->first_name .', Has the writer uploaded their ID?');
             } else {
                 $file = Storage::disk($disk)->get($file_name);
 
@@ -176,7 +176,8 @@ class UserController extends Controller
     public function admin_download_cv(Request $request, $id){
         
         if (!$request->user()->ni_admin) {
-            return "You are not an admin to do that";
+
+            return back()->with('error', "You are not an admin to do that");
         } else {
             
             $user = User::findorfail($id);
@@ -186,7 +187,7 @@ class UserController extends Controller
             $mime = $user->resume_mime;
 
             if (!$file_name) {
-                return "No resume found for the User, Has he uploaded his Resume?";
+                return back()->with('error', 'No resume found for ' .$user->first_name. ', Has the writer uploaded their Resume?');
             } else {
                 $file = Storage::disk($disk)->get($file_name);
 
@@ -203,7 +204,7 @@ class UserController extends Controller
     public function admin_download_cert(Request $request, $id){
         
         if (!$request->user()->ni_admin) {
-            return "You are not an admin to do that";
+            return back()->with('error', 'You are not an admin to do that');
         } else {
             
             $user = User::findorfail($id);
@@ -213,7 +214,8 @@ class UserController extends Controller
             $mime = $user->certificate_mime;
 
             if (!$file) {
-                return "No Cert found for the User, Has the writer uploaded their Cert?";
+                return back()->with('error', 'No Cert found for '.$user->first_name. 'Has the writer uploaded their Cert?');
+
             } else {
                 $file = Storage::disk($disk)->get($file_name);
 

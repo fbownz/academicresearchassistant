@@ -15,7 +15,6 @@ class bController extends Controller
             ['b_name'=>'required',
             'b_b_name'=>'required',
             'a_name'=>'required',
-            'a_name'=>'required',
             'a_number'=>'required',
             ]); 
 
