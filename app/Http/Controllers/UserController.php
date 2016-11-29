@@ -159,14 +159,15 @@ class UserController extends Controller
             $file_name = $user->picha_ya_id;
             $mime = $user->picha_ya_id_mime;
 
-
-            $file = Storage::disk($disk)->get($file_name);
-
-            return $file;
+            if (!$file_name) {
+                return "No id found for the User, Has he uploaded his ID?"
+            } else {
+                $file = Storage::disk($disk)->get($file_name);
 
                 return (new Response($file, 200))
                     ->header('Content-Type',$mime);
-
+                
+            }
         }
         
     }
@@ -184,11 +185,15 @@ class UserController extends Controller
             $file_name = $user->resume;
             $mime = $user->resume_mime;
 
-
-            $file = Storage::disk($disk)->get($file_name);
+            if (!$file_name) {
+                return "No resume found for the User, Has he uploaded his Resume?"
+            } else {
+                $file = Storage::disk($disk)->get($file_name);
 
                 return (new Response($file, 200))
                     ->header('Content-Type',$mime);
+            }
+            
 
         }
         
@@ -207,11 +212,14 @@ class UserController extends Controller
             $file_name = $user->certificate;
             $mime = $user->certificate_mime;
 
-
-            $file = Storage::disk($disk)->get($file_name);
+            if (!$file) {
+                return "No Cert found for the User, Has the writer uploaded their Cert?"
+            } else {
+                $file = Storage::disk($disk)->get($file_name);
 
                 return (new Response($file, 200))
-                    ->header('Content-Type',$mime);
+                    ->header('Content-Type',$mime);  
+            } 
 
         }
         
