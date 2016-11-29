@@ -267,7 +267,7 @@ class OrdersController extends Controller
             // $notifications_no = $list_bid_accepted->count();
 
             // I changed the notifications_no to 0 in order to show less notifications for admins
-            $notifications_no = 0
+            $notifications_no = 0; 
 
             $order_msg_no = $list_order_message->count();
 
