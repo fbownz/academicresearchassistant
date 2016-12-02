@@ -156,7 +156,7 @@ class UserController extends Controller
     // A function for the Admins to download user's vipande.
     public function admin_download_id(Request $request, $id){
         
-        if (!$request->user()->ni_admin) {
+        if ($request->user()->id != $id || !$request->user()->ni_admin) {
             return back()->with('error', 'You are not an admin to do that');
         } else {
             
@@ -182,7 +182,7 @@ class UserController extends Controller
     // A function for the Admins to download user's cv.
     public function admin_download_cv(Request $request, $id){
         
-        if (!$request->user()->ni_admin) {
+        if ($request->user()->id != $id || !$request->user()->ni_admin) {
 
             return back()->with('error', "You are not an admin to do that");
         } else {
@@ -210,7 +210,7 @@ class UserController extends Controller
     // A function for the Admins to download user's cert.
     public function admin_download_cert(Request $request, $id){
         
-        if (!$request->user()->ni_admin) {
+        if ($request->user()->id != $id || !$request->user()->ni_admin) {
             return back()->with('error', 'You are not an admin to do that');
         } else {
             
