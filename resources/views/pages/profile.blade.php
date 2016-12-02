@@ -74,8 +74,6 @@
                  <? $message = Session('message'); ?>
                 {{$message}}
               </div>
-
-            
       @endif
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
