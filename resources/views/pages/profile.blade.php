@@ -337,7 +337,7 @@
                 <div class="form-group">
                   <label class="col-sm-3 control-label pull-left text-olive" for="prof_pic">
                     @if($user->prof_pic_url !== null)
-                      <img src="{{$user->prof_pic_url}}" class="user-image" width="100" alt="{{$user()->first_name}} Image">
+                      <img src="{{$user->prof_pic_url}}" class="user-image" width="100" alt="{{$user->first_name}}'s Image">
                       @else
                       Upload a new Prof Pic
                     @endif
