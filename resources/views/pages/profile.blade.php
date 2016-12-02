@@ -27,13 +27,34 @@
 
               <ul class="list-group list-group-unbordered">
                 <li class="list-group-item">
-                  <b> <i class="fa fa-user margin-r-5"></i>Username:</b> <span class="pull-right text-muted">{{$user->username}}</span>
+                  <b> <i class="fa fa-user margin-r-5"></i>Username:</b> <span class="pull-right text-muted">{{$user->name}}</span>
                 </li>
                 <li class="list-group-item">
                  <b><i class="fa fa-calendar margin-r-5"></i>Member Since:</b> <div class="pull-right text-muted">{{$user->created_at->format('F j, Y')}}</div>
                 </li>
                 <li class="list-group-item">
                   <b> <i class="fa fa-pencil"></i> Orders completed</b> <a class="pull-right">{{$user->orders->where('approved', 1)->count()}}</a>
+                </li>
+                <li class="list-group-item">
+                  <b><i class="fa fa-id-cap-o margin-r-5"></i>
+                    <a href="/writer/admin_id_download/{{$user->id}}"> 
+                      Download my ID
+                    </a>
+                  </b>
+                </li>
+                <li class="list-group-item">
+                  <b><i class="fa fa-graduation-cap margin-r-5"></i>
+                    <a href="/writer/admin_cert_download/{{$user->id}}">
+                      Download my Certificate
+                    </a>
+                  </b>
+                </li>
+                <li class="list-group-item">
+                  <b><i class="fa fa-pdf-o margin-r-5"></i>
+                    <a href="/writer/admin_cv_download/{{$user->id}}">
+                      Download my CV
+                    </a>
+                  </b>
                 </li>
               </ul>
 
@@ -85,7 +106,13 @@
               <div class="active tab-pane" id="experience">
                 <div class="box box-solid">
                   <div class="box-body">
+                      <div class="box-title">
+                          <div class="box-header">
+                              <h3 class="box-title" style="color: #3c8dbc;">About Me</h3>
+                          </div>
+                        </div>
                       <span >{{$user->description}}</span>
+                      <br>
                       <div class="form-group">
                         <div class="col-md-4">
                           <strong>Orders Approved</strong>
@@ -125,10 +152,11 @@
                         <div class="text-muted col-md-8">
                           <strong>{{$user->orders->where('status','Active')->count()}}</strong>
                         </div>
-                      </div>   
+                      </div>
+                      <br>   
                       @if($subject_infos >5)
                         <div class="box-title">
-                          <div class="box-header">
+                          <div class="box-header with-border">
                               <h3 class="box-title" style="color: #3c8dbc;">A Summary of all Subjects done</h3>
                           </div>
                         </div>
@@ -150,8 +178,8 @@
                           </div>
                         @endforeach
                       @endif
-                      <div class="box-header with-border">
-                          <h3 class="box-title"> <i class="fa fa-user margin-r-5"></i>More details about Me</h3>
+                      <div class="box-title with-border">
+                          <h3 > <i class="fa fa-user margin-r-5"></i>More details about Me</h3>
                       </div>
                       <div class="box-body">
                         <span class="col-md-4">
@@ -515,7 +543,7 @@
                   
                 </div>
                 <!-- Edit Bank Detail -->
-               @if($user->b_details->count() > 0)
+               @if($user->id == Auth::user()->id && $user->b_details->count() > 0)
                   <div class="box box-primary collapsed-box">
                       <div class="box-header with-border">
                         <h4 class="box-title" data-widget="collapse">Edit Bank Details</h4>
