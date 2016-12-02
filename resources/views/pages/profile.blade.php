@@ -111,7 +111,7 @@
                               <h3 class="box-title" style="color: #3c8dbc;">About Me</h3>
                           </div>
                         </div>
-                      <span >{{$user->description}}</span>
+                      <span class='col-md-12'>{{$user->description}} <p> </p></span>
                       <br>
                       <div class="form-group">
                         <div class="col-md-4">
@@ -153,7 +153,7 @@
                           <strong>{{$user->orders->where('status','Active')->count()}}</strong>
                         </div>
                       </div>
-                      <br>   
+                      <p> </p>   
                       @if($subject_infos >5)
                         <div class="box-title">
                           <div class="box-header with-border">
@@ -177,8 +177,10 @@
                             <span class="text-muted">{{$subject_info->total}}</span>
                           </div>
                         @endforeach
+                        <p> </p>
                       @endif
-                      <div class="box-title with-border">
+                      <div class="box-title">
+                      <div class="box-header with-border"></div> 
                           <h3 > <i class="fa fa-user margin-r-5"></i>More details about Me</h3>
                       </div>
                       <div class="box-body">
