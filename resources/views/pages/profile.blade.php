@@ -36,7 +36,7 @@
                   <b> <i class="fa fa-pencil"></i> Orders completed</b> <a class="pull-right">{{$user->orders->where('approved', 1)->count()}}</a>
                 </li>
                 <li class="list-group-item">
-                  <b><i class="fa fa-id-cap-o margin-r-5"></i>
+                  <b><i class="fa fa-id-card-o margin-r-5"></i>
                     <a href="/writer/admin_id_download/{{$user->id}}"> 
                       Download my ID
                     </a>
@@ -50,7 +50,7 @@
                   </b>
                 </li>
                 <li class="list-group-item">
-                  <b><i class="fa fa-pdf-o margin-r-5"></i>
+                  <b><i class="fa fa-download margin-r-5"></i>
                     <a href="/writer/admin_cv_download/{{$user->id}}">
                       Download my CV
                     </a>
@@ -180,9 +180,9 @@
                         <p> </p>
                       @endif
                       <div class="box-title">
-                          <div class="box-header with-border">
-                              <h3 class="box-title" style="color: #3c8dbc" > <i class="fa fa-user margin-r-5"></i>More details about Me</h3>
-                          </div> 
+                          <div class="box-header with-border"></div>
+                              <h4 class="box-title" style="color: #3c8dbc" > <i class="fa fa-user margin-r-5"></i>More details about Me</h4>
+
                       </div>
                       <div class="box-body">
                         <span class="col-md-4">
