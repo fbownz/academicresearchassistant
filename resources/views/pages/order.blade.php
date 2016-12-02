@@ -460,19 +460,21 @@
 						Name:
 					</div>
 					<div class="col-md-8">
-						<b>{{User::find($order->user_id)->first_name}} {{User::find($order->user_id)->last_name}}</b>
+						<b><a href="/writer/{{$order->user_id}}">
+						{{User::findorfail($order->user_id)->first_name}} {{User::find($order->user_id)->last_name}}
+						</a></b>
 					</div>
 					<div class="col-md-4">
 						Email:
 					</div>
 					<div class="col-md-8">
-						<b>{{User::find($order->user_id)->email}}</b>
+						<b>{{User::findorfail($order->user_id)->email}}</b>
 					</div>
 					<div class="col-md-4">
-						Phone Number:
+						Phone:
 					</div>
 					<div class="col-md-8">
-						<b>{{User::find($order->user_id)->phone1}}</b>
+						<b>{{User::findorfail($order->user_id)->phone1}}</b>
 					</div>
 				</div>
 				@endif

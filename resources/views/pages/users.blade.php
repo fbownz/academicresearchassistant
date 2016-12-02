@@ -25,10 +25,6 @@
                                 <th>Processing</th>
                                 <th>Revision</th>
             					<th>Late</th>
-                                <th>ID</th>
-                                <th>CV</th>
-                                <th>Certificate</th>
-
             				</tr>
             			</thead>
             			<tbody>
