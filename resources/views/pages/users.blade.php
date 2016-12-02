@@ -49,19 +49,6 @@
             					<td>{{$user->orders->where('status','Active')->count()}}</td>
             					<td>{{$user->orders->where('status','Active-Revision')->count()}}</td>
             					<td>{{$user->orders->where('is_late',1)->count()}}</td>
-                                <td><a href="/writer/admin_id_download/{{$user->id}}"> 
-                                    {{$user->first_name}}'s ID
-                                    </a>
-                                </td>
-                                <td><a href="/writer/admin_cv_download/{{$user->id}}"> 
-                                    {{$user->first_name}}'s CV
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="/writer/admin_cert_download/{{$user->id}}"> 
-                                    {{$user->first_name}}'s Certificate
-                                    </a>
-                                </td>
             				</tr>
             				@endforeach
             			</tbody>
