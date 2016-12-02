@@ -75,13 +75,7 @@
                 {{$message}}
               </div>
 
-            @elseif(Session::has('error'))
-          <div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
-                <h4><i class="icon fa fa-info"></i>Error!</h4>
-                 <? $error_1 = Session('error'); ?>
-                {{$error_1}}
-              </div>
+            
       @endif
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
