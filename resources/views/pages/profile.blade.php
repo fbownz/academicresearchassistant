@@ -489,7 +489,9 @@
                         <strong>{{$b_detail->a_number}}</strong>
                       </div>
                       <!-- <a href="#edit" class="btn btn-success col-sm-4">Edit Bank Account</a> -->
-                      <a href="/user/billing/{{$b_detail->id}}/delete/" class="btn btn-danger col-sm-4 pull-right">Delete Bank Account</a>
+                      @if($user->id == Auth::user()->id)
+                        <a href="/user/billing/{{$b_detail->id}}/delete/" class="btn btn-danger col-sm-4 pull-right">Delete Bank Account</a>
+                      @endif
                     </div>
                     @endforeach
                   @endif
