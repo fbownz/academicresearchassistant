@@ -66,16 +66,8 @@
         </div>
         <!-- /.col -->
         <div class="col-md-9">
-         @if(count($errors))
-      @foreach($errors->all() as $error)
-              <div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
-                <h4><i class="icon fa fa-ban"></i> Error!</h4>
-                {{$error}}
-              </div>
-              @endforeach
-
-            @elseif(Session::has('message'))
+        
+            @if(Session::has('message'))
           <div class="alert alert-info alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
                 <h4><i class="icon fa fa-info"></i>Success!</h4>
