@@ -180,8 +180,9 @@
                         <p> </p>
                       @endif
                       <div class="box-title">
-                      <div class="box-header with-border"></div> 
-                          <h3 class="box-title" style="color: #3c8dbc" > <i class="fa fa-user margin-r-5"></i>More details about Me</h3>
+                          <div class="box-header with-border">
+                              <h3 class="box-title" style="color: #3c8dbc" > <i class="fa fa-user margin-r-5"></i>More details about Me</h3>
+                          </div> 
                       </div>
                       <div class="box-body">
                         <span class="col-md-4">
