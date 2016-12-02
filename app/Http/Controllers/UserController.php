@@ -210,8 +210,12 @@ class UserController extends Controller
     // A function for the Admins to download user's cert.
     public function admin_download_cert(Request $request, $id){
         
-        if (!$request->user()->id == $id || !$request->user()->ni_admin) {
-            return back()->with('error', "You are not an admin to download that document, if you believe this is a mistake kindly contact Support");
+        if ( !$request->user()->ni_admin) {
+            // We check if they are the owners of the files being requested
+            if ($reuest->user()->id != $id) {
+                return back()->with('error', "You are not an admin or document owner to download that document, if you believe this is a mistake kindly contact Support");
+            }
+            
         } else {
             
             $user = User::findorfail($id);
