@@ -162,23 +162,23 @@ class UserController extends Controller
                 return back()->with('error', "You are not an Admin or document owner to download that document, if you believe this is a mistake kindly contact Support");
             }
             else {
-            
-            $user = User::findorfail($id);
-        
-            $disk='vipande';
-            $file_name = $user->picha_ya_id;
-            $mime = $user->picha_ya_id_mime;
-
-            if (!$file_name) {
-                return back()->with('error', 'No id found for '.$user->first_name .', Has the writer uploaded their ID?');
-            } else {
-                $file = Storage::disk($disk)->get($file_name);
-
-                return (new Response($file, 200))
-                    ->header('Content-Type',$mime);
+                    
+                    $user = User::findorfail($id);
                 
-            }
-        }
+                    $disk='vipande';
+                    $file_name = $user->picha_ya_id;
+                    $mime = $user->picha_ya_id_mime;
+
+                    if (!$file_name) {
+                        return back()->with('error', 'No id found for '.$user->first_name .', Has the writer uploaded their ID?');
+                    } else {
+                        $file = Storage::disk($disk)->get($file_name);
+
+                        return (new Response($file, 200))
+                            ->header('Content-Type',$mime);
+                        
+                    }
+                }
             
         } else {
             
@@ -208,7 +208,23 @@ class UserController extends Controller
             // We check if they are the owners of the files being requested
             if (!$request->user()->ni_admin) {
                 return back()->with('error', "You are not an Admin or document owner to download that document, if you believe this is a mistake kindly contact Support");
+            } else {
+                $user = User::findorfail($id);
+                $disk='resumes';
+                $file_name = $user->resume;
+                $mime = $user->resume_mime;
+
+                if (!$file_name) {
+                    return back()->with('error', 'No resume found for ' .$user->first_name. ', Has the writer uploaded their Resume?');
+                 } else {
+                    $file = Storage::disk($disk)->get($file_name);
+
+                    return (new Response($file, 200))
+                        ->header('Content-Type',$mime);
+                }
+
             }
+
             
         } else {
             
@@ -239,6 +255,22 @@ class UserController extends Controller
             // We check if they are the owners of the files being requested
             if (!$request->user()->ni_admin) {
                 return back()->with('error', "You are not an Admin or document owner to download that document, if you believe this is a mistake kindly contact Support");
+            }
+            else {
+                $user = User::findorfail($id);
+                $disk='certs';
+                $file_name = $user->certificate;
+                $mime = $user->certificate_mime;
+
+                if (!$file_name) {
+                    return back()->with('error', 'No Cert found for '.$user->first_name. 'Has the writer uploaded their Cert?');
+
+                } else {
+                    $file = Storage::disk($disk)->get($file_name);
+
+                    return (new Response($file, 200))
+                        ->header('Content-Type',$mime);  
+                }
             }
             
         } else {
