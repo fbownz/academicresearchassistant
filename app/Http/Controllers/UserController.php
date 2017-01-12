@@ -161,6 +161,24 @@ class UserController extends Controller
             if (!$request->user()->ni_admin) {
                 return back()->with('error', "You are not an Admin or document owner to download that document, if you believe this is a mistake kindly contact Support");
             }
+            else {
+            
+            $user = User::findorfail($id);
+        
+            $disk='vipande';
+            $file_name = $user->picha_ya_id;
+            $mime = $user->picha_ya_id_mime;
+
+            if (!$file_name) {
+                return back()->with('error', 'No id found for '.$user->first_name .', Has the writer uploaded their ID?');
+            } else {
+                $file = Storage::disk($disk)->get($file_name);
+
+                return (new Response($file, 200))
+                    ->header('Content-Type',$mime);
+                
+            }
+        }
             
         } else {
             
@@ -171,7 +189,7 @@ class UserController extends Controller
             $mime = $user->picha_ya_id_mime;
 
             if (!$file_name) {
-                return back()->with('error', 'No id found for '.$user->first_name .', Has the writer uploaded their ID?');
+                return back()->with('error', 'No id found for '.$user->first_name .', Have you uploaded your ID?');
             } else {
                 $file = Storage::disk($disk)->get($file_name);
 
