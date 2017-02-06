@@ -36,6 +36,12 @@
                   <b> <i class="fa fa-pencil"></i> Orders completed</b> <a class="pull-right">{{$user->orders->where('approved', 1)->count()}}</a>
                 </li>
                 <li class="list-group-item">
+                  <b> <i class="fa fa-user margin-r-5"></i>Email:</b> <span class="pull-right text-muted">{{$user->email}}</span>
+                </li>
+                <li class="list-group-item">
+                  <b> <i class="fa fa-user margin-r-5"></i>Phones:</b> <span class="pull-right text-muted">{{$user->phone1}} || {{$user->phone2}}</span>
+                </li>
+                <li class="list-group-item">
                   <b><i class="fa fa-id-card-o margin-r-5"></i>
                     <a href="/writer/admin_id_download/{{$user->id}}"> 
                       Download my ID
@@ -138,12 +144,10 @@
                         </div>
                       </div>
                       <p> </p>   
-                      @if($subject_infos >5)
-                        <div class="box-title">
-                          <div class="box-header with-border">
+                      @if($user->orders->where('is_complete', 1)->count() > 0 && $subject_infos > 5)
+                          <div class="box-header ">
                               <h3 class="box-title" style="color: #3c8dbc;">A Summary of all Subjects done</h3>
                           </div>
-                        </div>
                         @foreach($subject_infos as $subject_info)
                           <!-- We create colors for the labels --> 
                           <? $label_color = 'label-primary'; ?>
