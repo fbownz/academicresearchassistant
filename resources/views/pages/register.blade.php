@@ -37,7 +37,11 @@
   <div class="register-box-body">
     <p class="login-box-msg">Register a new account</p>
 
-    <form action="../../index.html" method="post">
+    Greetings you will be required to take a test before we finalise on your registration. 
+
+    Updates to come...
+
+    <!-- <form action="../../index.html" method="post">
       <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="Full name">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -62,13 +66,12 @@
             </label>
           </div>
         </div>
-        <!-- /.col -->
-        <div class="col-xs-4">
+         <div class="col-xs-4">
           <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
-        </div>
+        </div> -->
         <!-- /.col -->
-      </div>
-    </form>
+      <!-- /div>
+    </form> -->
 
     <div class="social-auth-links text-center">
       <p>- OR -</p>

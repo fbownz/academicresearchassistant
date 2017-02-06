@@ -505,17 +505,17 @@ class NotificationController extends Controller
 
         try {
             $results = $gateway->sendMessage($recipients, $message);
-            foreach($results as $result) {
+            //foreach($results as $result) {
             //We save this response to a table for reporting purposes
-                $sms_notice = new Sms_notice;
-                $sms_notice->Phone = $result->number;
-                $sms_notice->status = $result->status;
-                $sms_notice->MessageId = $result->messageId;
-                $sms_notice->Cost = $result->cost;
-                $sms_notice->txt = $message;
-                $sms_notice->save();
+            //    $sms_notice = new Sms_notice;
+              //  $sms_notice->Phone = $result->number;
+               // $sms_notice->status = $result->status;
+                //$sms_notice->MessageId = $result->messageId;
+               // $sms_notice->Cost = $result->cost;
+                //$sms_notice->txt = $message;
+                //$sms_notice->save();
  
-            } 
+           // } 
         }
         catch (AfricasTalkingGatewayException $e) {
             // echo "Africa is talking Sending Error!: ".$e->getMessage();

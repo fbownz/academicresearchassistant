@@ -3,6 +3,7 @@
 @section('content')
 @include('errors')
 @include('flash')
+<!-- 
 <form role="form" method="POST" action="{{ url('/register') }}">
     {!! csrf_field() !!}
       <div class="form-group {{ $errors->has('first_name') ? ' has-error' : '' }} has-feedback">
@@ -63,15 +64,31 @@
             </label>
           </div>
         </div>
+		-->
         <!-- /.col -->
+	<!--
         <div class="col-xs-4">
           <button type="submit" class="btn btn-success btn-block btn-flat">Register</button>
         </div>
+		-->
         <!-- /.col -->
+		<!--
         <span class="col-xs-12">
             <a href="/login" class="text-center">I already have an Account</a>
         </span>
         
       </div>
     </form>
+	-->
+	<p>
+👋🏾 Greetings <br/>	
+Thank you for your interest in writing with us. We do appreciate it. 👍🏽  <br/>
+	We are carrying out tests on  all our new writers.
+	So at the moment we are not taking on new writers.
+	
+	Keep on checking back for updates
+	</p>
+<span class="col-xs-12">
+<a href="/login" class="text-center">I already have an Account</a>
+</span>
 @endsection
