@@ -149,7 +149,7 @@
                               <h3 class="box-title" style="color: #3c8dbc;">A Summary of all Subjects done</h3>
                           </div>
                         @foreach($subject_infos as $subject_info)
-                          <!-- We create colors for the labels --> 
+                          <!-- We create colors for the labels -->
                           <? $label_color = 'label-primary'; ?>
                           @if($subject_info->total/$user->orders->count() < 0.25)
                               <? $label_color = 'label-warning'; ?>
