@@ -36,10 +36,10 @@
                   <b> <i class="fa fa-pencil"></i> Orders completed</b> <a class="pull-right">{{$user->orders->where('approved', 1)->count()}}</a>
                 </li>
                 <li class="list-group-item">
-                  <b> <i class="fa fa-user margin-r-5"></i>Email:</b> <span class="pull-right text-muted">{{$user->email}}</span>
+                  <b> <i class="fa fa-envelope margin-r-5"></i>Email:</b> <span class="pull-right text-muted">{{$user->email}}</span>
                 </li>
                 <li class="list-group-item">
-                  <b> <i class="fa fa-user margin-r-5"></i>Phones:</b> <span class="pull-right text-muted">{{$user->phone1}} || {{$user->phone2}}</span>
+                  <b> <i class="fa fa-mobile margin-r-5"></i>Phones:</b> <span class="pull-right text-muted">@if($user->phone1){{$user->phone1}} @endif|| @if($user->phone2){{$user->phone2}}@endif</span>
                 </li>
                 <li class="list-group-item">
                   <b><i class="fa fa-id-card-o margin-r-5"></i>
