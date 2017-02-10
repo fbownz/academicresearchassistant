@@ -39,7 +39,7 @@
                   <b> <i class="fa fa-envelope margin-r-5"></i>Email:</b> <span class="pull-right text-muted">{{$user->email}}</span>
                 </li>
                 <li class="list-group-item">
-                  <b> <i class="fa fa-mobile margin-r-5"></i>Phones:</b> <div class="text-muted">@if($user->phone1){{$user->phone1}} @endif|| @if($user->phone2){{$user->phone2}}@endif</div>
+                  <b> <i class="fa fa-mobile margin-r-5"></i>Phones:</b> <div class="text-muted">@if($user->phone1){{$user->phone1}} @endif @if($user->phone2) || {{$user->phone2}}@endif</div>
                 </li>
                 <li class="list-group-item">
                   <b><i class="fa fa-id-card-o margin-r-5"></i>
