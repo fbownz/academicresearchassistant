@@ -24,7 +24,7 @@
             					<th>Approved</th>
                                 <th>Processing</th>
                                 <th>Revision</th>
-            					<th>Late</th>
+            					<th>Registration IP</th>
             				</tr>
             			</thead>
             			<tbody>
@@ -44,7 +44,7 @@
                                 <td>{{$user->orders->where('approved', 1)->count()}}</td>
             					<td>{{$user->orders->where('status','Active')->count()}}</td>
             					<td>{{$user->orders->where('status','Active-Revision')->count()}}</td>
-            					<td>{{$user->orders->where('is_late',1)->count()}}</td>
+            					<td>{{$user->ip}}</td>
             				</tr>
             				@endforeach
             			</tbody>
