@@ -1,57 +1,38 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Be right back.</title>
+        <title>ARA:: We are down for Maintenance</title>
 
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
         <style>
-            html, body {
-                height: 100%;
-            }
-
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                color: #ef1919;
-                display: table;
-                font-weight: 100;
-                font-family: 'Lato';
-            }
-
-            .container {
-                text-align: center;
-                display: table-cell;
-            }
-
-            .content {
-                text-align: center;
-                display: inline-block;
-            }
-
-            .title {
-                font-size: 72px;
-                margin-bottom: 40px;
-                color: #;
-            }
-            .text {
-                text-align: justify;
-                color: #108a0a;
-            }
+            body { text-align: center; padding: 150px; }
+            h1 { font-size: 50px; }
+            body { font: 20px Helvetica, sans-serif; color: #333; }
+            article { display: block; text-align: left; width: 650px; margin: 0 auto; }
+            a { color: #dc8100; text-decoration: none; }
+            a:hover { color: #333; text-decoration: none; }
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="content">
+        <!-- <div class="container"> -->
+            <!-- <div class="content">
                 <div class="title">Down for Maintanance</div>
                 <div class="text">
                     We are currently undergoing maintanance kindly bear with us. <p>
                     Contact us info@academicresearchassistants.com
                     </p>
                 </div>
-            </div>
-        </div>
+            </div> -->
+
+<article>
+    <h1>We&rsquo;ll be back soon!</h1>
+    <div>
+        <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always <a href="mailto:info@academicresearchassistants.com">Email Us</a>, otherwise we&rsquo;ll be back online shortly!</p>
+        <p>&mdash; ARA Team</p>
+    </div>
+</article>
+        <!-- </div> -->
         <!-- Google Analytics Code -->
         <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
