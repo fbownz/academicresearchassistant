@@ -28,7 +28,7 @@
 <article>
     <h1>We&rsquo;ll be back soon!</h1>
     <div>
-        <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always <a href="mailto:info@academicresearchassistants.com">Email Us</a>, otherwise we&rsquo;ll be back online shortly!</p>
+        <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always <a href="mailto:info@academicresearchassistants.com">Email Us</a>, or call us <a href="tel:+254788882000">0788882000</a> otherwise we&rsquo;ll be back online shortly!</p>
         <p>&mdash; ARA Team</p>
     </div>
 </article>
