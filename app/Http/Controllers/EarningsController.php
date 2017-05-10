@@ -179,12 +179,13 @@ class EarningsController extends Controller
         ]);
     }
     public function approve(User $user)
-    {
-        //We check if the total payment is a -ve balance
+    {   
+        
+        //We check if the total payment is a less than $50 (Ksh 5000)
         $total_earnings = $user->earnings()->where('paid', '0')->sum('total') - $user->fines()->where('status', 1)->sum('total_fine');
-        if($total_earnings < 1 )
+        if($total_earnings < 50 )
         {
-            return back()->with('error', 'The system cannot approve '.$user->first_name."'s".' earnings because the writer has a -ve balance');
+            return back()->with('error', 'The system cannot approve '.$user->first_name.' earnings because the writer has not reached the $50 threshhold');
         }
 
 
@@ -207,7 +208,7 @@ class EarningsController extends Controller
             NotificationController::paymentApprovedNotice($user);
             Earning_reports_controller::store_Earning_report($user, $total_earnings);
 
-            return back()->with('approved_order', 'Earning Approved Successfully');
+            return back()->with('approved_order', .$user->first_name.' Earnings Approved Successfully');
     }
 
 }
