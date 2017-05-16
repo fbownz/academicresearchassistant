@@ -208,7 +208,7 @@ class EarningsController extends Controller
             NotificationController::paymentApprovedNotice($user);
             Earning_reports_controller::store_Earning_report($user, $total_earnings);
 
-            return back()->with('approved_order', .$user->first_name.' Earnings Approved Successfully');
+            return back()->with('approved_order', $user->first_name.' Earnings Approved Successfully');
     }
 
 }
