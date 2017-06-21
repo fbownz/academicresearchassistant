@@ -285,13 +285,12 @@ use App\User;
                         <?
 
                           $order_task = $list_task->order;
-                          if ($order_task > 0 ) {
+                          if ($order_task) {
                             $percentage_no = $list_task->order->notifications->where('status',0)->where('type', $list_task->type)->count() / $list_task->order->notifications->where('status',0)->count() * 100;
                           }
                         ?>
-                          @if($percentage_no)
+                          
                           <small class="pull-right">{{round($percentage_no)}}%</small>
-                          @endif
 
                           @if($list_task->type == 'order_revision')
                           New Revision request on order #{{$list_task->order->order_no}}
@@ -309,8 +308,7 @@ use App\User;
 
 
                         </h3>
-                        @if($percentage_no)
-                        
+                       
                         <!-- The progress bar -->
                         <div class="progress xs">
                           <!-- Change the css width attribute to simulate progress -->
@@ -318,7 +316,6 @@ use App\User;
                             <span class="sr-only">{{round($percentage_no)}}% Complete</span>
                           </div>
                         </div>
-                        @endif
                       </a>
                     </li>
                     @endforeach
