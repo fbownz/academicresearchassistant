@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="/css/bootstrap/css/bootstrap.min.css">
   @if (strpos($_SERVER['REQUEST_URI'], "users") !== false || strpos($_SERVER['REQUEST_URI'], "mailbox") !== false || strpos($_SERVER['REQUEST_URI'], "u_bids") !== false || strpos($_SERVER['REQUEST_URI'], "earnings") !== false || strpos($_SERVER['REQUEST_URI'], "find_work") !== false)
   <!-- datattables css -->
-  <link rel="stylesheet" href="/css/plugins/datatables/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
   @endif
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -617,9 +617,9 @@ use App\User;
 <!-- AdminLTE App -->
 <script src="/css/js/app.min.js"></script>
 @if (strpos($_SERVER['REQUEST_URI'], "mailbox") !== false || strpos($_SERVER['REQUEST_URI'], "users") !== false || strpos($_SERVER['REQUEST_URI'], "earnings") !== false || strpos($_SERVER['REQUEST_URI'], "find_work") !== false)
-
-<script src="/css/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="/css/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- Datatables -->
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
 @endif
 @if(strpos($_SERVER['REQUEST_URI'], "update_user") !== false)
 <script src="/css/plugins/select2/select2.full.min.js"></script>
@@ -752,7 +752,7 @@ use App\User;
           "sort": true ,
           "info": true,
           buttons: [
-            'csv', 'excel', 'pdf', 'print'
+            'csv'
           ]
         });
       } );
