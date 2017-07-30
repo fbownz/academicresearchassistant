@@ -620,6 +620,9 @@ use App\User;
 <!-- Datatables -->
 <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+<script src"https://cdn.datatables.net/buttons/1.3.1/js/buttons.flash.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
 @endif
 @if(strpos($_SERVER['REQUEST_URI'], "update_user") !== false)
 <script src="/css/plugins/select2/select2.full.min.js"></script>
