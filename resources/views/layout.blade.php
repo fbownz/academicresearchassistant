@@ -736,32 +736,31 @@ use App\User;
           "paging": true,
           "lengthChange": true,
           "searching": true,
-          "sort": true ,
+          "sort": true,
           "info": true,
         });
-      } );
-    </script>
-    <script>
-      $(document).ready( function () {
         $('#pe_earnings_table').DataTable({
           "paging": true,
           "lengthChange": true,
           "searching": true,
-          "sort": true ,
+          "sort": true,
           "info": true,
         });
-      } );
-    </script>
-    <script>
-      $(document).ready( function () {
         $('#pa_earnings_table').DataTable({
           "paging": true,
           "lengthChange": true,
           "searching": true,
-          "sort": true ,
-          "info": true,
+          "sort": true,
           buttons: [
-            'csv'
+            {
+               extend: 'csv',
+               text: 'Copy all data',
+               exportOptions: {
+                 modifier: {
+                    search: 'none'
+                   }
+               }
+              }
           ]
         });
       } );
