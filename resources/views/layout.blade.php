@@ -289,7 +289,7 @@ use App\User;
                             $percentage_no = $list_task->order->notifications->where('status',0)->where('type', $list_task->type)->count() / $list_task->order->notifications->where('status',0)->count() * 100;
                           }
                         ?>
-                          
+
                           <small class="pull-right">{{round($percentage_no)}}%</small>
 
                           @if($list_task->type == 'order_revision')
@@ -308,7 +308,7 @@ use App\User;
 
 
                         </h3>
-                       
+
                         <!-- The progress bar -->
                         <div class="progress xs">
                           <!-- Change the css width attribute to simulate progress -->
@@ -751,6 +751,9 @@ use App\User;
           "searching": true,
           "sort": true ,
           "info": true,
+          buttons: [
+            'csv', 'excel', 'pdf', 'print'
+          ]
         });
       } );
     </script>
@@ -776,7 +779,7 @@ use App\User;
 
   </script>
   <!-- Heap Analytics -->
-  
+
     <script type="text/javascript">
       window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
         heap.load("2580214040");
