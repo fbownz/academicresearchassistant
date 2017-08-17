@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Message;
 
 //We add the AfricasTalkingGateway Class in order to send SMS notifications
-use App\AfricasTalkingGateway; 
+use App\AfricasTalkingGateway;
 use Carbon\Carbon;
 
 
@@ -26,7 +26,7 @@ use Carbon\Carbon;
 
 class NotificationController extends Controller
 {
-    
+
     public static function bidAcceptednotice(User $user, Order $order)
     {
 
@@ -46,7 +46,7 @@ class NotificationController extends Controller
             $m->to($user->email, $user->first_name)->subject('Academicresearch: Congrats! Your bid has been accepted on order '.$order->order_no);
         });
 
-        
+
         //We send an sms notification to the User for the assigned order;
         $txt = 'Congratulations '.$user->first_name.' your bid for Order '.$order->order_no.' has been accepted. Deliver the paper by '.$deadline."\n".' Academicresearchassistants.com';
         $send_sms =self::sendSMSnotice($user,$txt);
@@ -124,7 +124,7 @@ class NotificationController extends Controller
         $user = $admin;
         $txt = 'There is a new Message on Order '.$order->order_no.' Kindly check the order to respond'."\n".' Academicresearchassistants.com';
         $send_sms =self::sendSMSnotice($user,$txt);
-        }   
+        }
 
     }
 
@@ -163,7 +163,7 @@ class NotificationController extends Controller
         });
         }
 
-        
+
     }
 
     public static function lateOrdersNotice(User $user, Order $order)
@@ -264,12 +264,12 @@ class NotificationController extends Controller
 
     public static function clientdeliveryTimeNotice(Order $order)
     {
-       
+
         // I want to create a notification only if the order has been assigned if it hasn't been assigned I go straight to send the sms and email;
 
         $notification = new Notification;
         if ($order->user_id) {
-            
+
             $notification->user_id = $order->user->id;
         }
         else{
@@ -288,7 +288,7 @@ class NotificationController extends Controller
             $admins = User::where('ni_admin',1)->get();
             if ($admins->count()) {
                 foreach ($admins as $admin) {
-                    
+
                    self::sendSMSnotice($admin, $text);
 
                    $admin_email = $admin->email;
@@ -347,8 +347,8 @@ class NotificationController extends Controller
     //     }
     // }
     public function view(Request $request, Order $order, Notification $notification)
-    {   
-        if(!Auth::user()->ni_admin){
+    {
+        if(Auth::user()->ni_admin !== 1){
             if($order->status !== "Available" && $order->user_id !== $request->user()->id){
                 Return redirect('orders')->with('error','You are not allowed to view that Order. Kindly contact Admin for further Assistance');
             }
@@ -381,11 +381,11 @@ class NotificationController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
-         
+
         }
         else
         {
-             
+
           $prof_comp_array = NotificationController::profileComplete(Auth::user());
 
           $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
@@ -397,7 +397,7 @@ class NotificationController extends Controller
           // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
            $notifications_no = $list_bid_accepted->count();
            $order_msg_no = $list_order_message->count();
-          
+
           // $list_notifications = $list_notifications->sortByDesc('created_at');
 
 
@@ -410,12 +410,12 @@ class NotificationController extends Controller
 
         }
 
-         return view('pages.order', [ 
+         return view('pages.order', [
         'site_title' => PagesController::$site_title,
         'page_title' => $order->order_no,
         'page_description' =>PagesController::$page_description='Order details',
-        
-        
+
+
         'user_description' => PagesController::$user_description,
         'join_date_text' => PagesController::$join_date_text,
         'version_no' => PagesController::$version_no,
@@ -435,7 +435,7 @@ class NotificationController extends Controller
 
     public static function profileComplete(User $user)
     {
-        
+
         $prof_comp_array = [];
         $prof_comp_array['b_detail'] = 1;
         $prof_comp_array['simu1'] = 1;
@@ -443,42 +443,42 @@ class NotificationController extends Controller
         $prof_comp_array['copy_ya_id'] = 1;
         $prof_comp_array['cv'] = 1;
         $prof_comp_array['count'] = 0;
-                
+
          if($user->b_details->count() <1)
           {
             $prof_comp_array['b_detail'] = 0;
             $prof_comp_array['count'] = $prof_comp_array['count'] +1;
-          }    
+          }
           if(!$user->phone1)
           {
             $prof_comp_array['simu1'] = 0;
             $prof_comp_array['count'] = $prof_comp_array['count'] +1;
-          }    
+          }
           if(!$user->academic_level)
           {
             $prof_comp_array['shule_level'] = 0;
             $prof_comp_array['count'] = $prof_comp_array['count'] +1;
-          }    
+          }
           if(!$user->picha_ya_id)
           {
             $prof_comp_array['copy_ya_id'] = 0;
             $prof_comp_array['count'] = $prof_comp_array['count'] +1;
-          }    
+          }
           if(!$user->certificate)
           {
             $prof_comp_array['cert'] = 0;
             $prof_comp_array['count'] = $prof_comp_array['count'] +1;
-          }    
+          }
           if(!$user->resume )
           {
             $prof_comp_array['cv'] = 0;
             $prof_comp_array['count'] = $prof_comp_array['count'] +1;
           }
 
-          return $prof_comp_array; 
+          return $prof_comp_array;
     }
     public static function sendSMSnotice(User $user, $txt)
-    {   
+    {
         //implement the AfricaisTalkingAPI here
         if($user->phone1){
 
@@ -491,12 +491,12 @@ class NotificationController extends Controller
             Return;
         }
         if($txt){
-           $message = $txt; 
+           $message = $txt;
         }
         else{
             Return;
         }
-        
+
         $sent = 0;
 
         $username = config('app.africa_is_talking_username');
@@ -514,8 +514,8 @@ class NotificationController extends Controller
                // $sms_notice->Cost = $result->cost;
                 //$sms_notice->txt = $message;
                 //$sms_notice->save();
- 
-           // } 
+
+           // }
         }
         catch (AfricasTalkingGatewayException $e) {
             // echo "Africa is talking Sending Error!: ".$e->getMessage();
@@ -526,9 +526,9 @@ class NotificationController extends Controller
             $failed_sms_notice->txt = $message;
             $failed_sms_notice->save();
 
-            
+
         }
-        
+
 
     }
 }
