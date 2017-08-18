@@ -302,7 +302,7 @@ use App\User;
 
                           <!-- Start of Admin late order notifications -->
 
-                          @if($list_task->type == 'admin_order_late')
+                          @if($list_task->type != 'admin_order_late')
                           Order #{{$list_task->order->order_no}} is Late
                           @endif
 
@@ -747,21 +747,21 @@ use App\User;
           "info": true,
         });
         $('#pa_earnings_table').DataTable({
+          dom: 'Bflrtp',
           "paging": true,
           "lengthChange": true,
           "searching": true,
-          "sort": true,
           buttons: [
             {
-               extend: 'csv',
-               text: 'Copy all data',
-               exportOptions: {
-                 modifier: {
-                    search: 'none'
-                   }
-               }
+              extend: 'csv',
+              text: 'csv Export',
+              exportOptions: {
+                  modifier: {
+                      search: 'none'
+                  }
               }
-          ]
+             }
+          ],
         });
       } );
     </script>
