@@ -235,7 +235,7 @@ use App\User;
                          @endif
                        @elseif($notification->type == 'admin_order_bidPlaced')
                          @if(count($notification->order) > 0)
-                         {{$notification->user->first_name}} placed a new bid on Order #{{$notification->order->order_id}} !
+                         {{$notification->user->first_name}} placed a new bid on Order #{{$notification->order->order_no}} !
                          @else
                          No order found was it deleted ?
                          @endif
@@ -289,11 +289,12 @@ use App\User;
 
                           <small class="pull-right">{{round($percentage_no)}}%</small>
 
-                          @if( $order_task == 'order_revision')
-                          New Revision request on order #{{$order_task->order_id}}
+                          <!-- Updated some bugs I had made -->
+                          @if( $list_task->type == 'order_revision')
+                          New Revision request on order #{{$list_task->order_id}}
                           @endif
-                          @if($order_task == 'order_late')
-                          Late Order #{{$order_task->order_id}}
+                          @if($list_task->type == 'order_late')
+                          Late Order #{{$list_task->order_id}}
                           @endif
 
 

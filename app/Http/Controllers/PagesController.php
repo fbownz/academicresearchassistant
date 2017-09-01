@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PagesController extends Controller
 {
-    
+
 
     public static $site_title ='Academic Research Assistants';
     public static $page_title;
@@ -75,11 +75,11 @@ class PagesController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
-         
+
         }
         else
         {
-             
+
           $prof_comp_array = NotificationController::profileComplete(Auth::user());
 
           $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
@@ -91,7 +91,7 @@ class PagesController extends Controller
           // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
            $notifications_no = $list_bid_accepted->count();
            $order_msg_no = $list_order_message->count();
-          
+
           // $list_notifications = $list_notifications->sortByDesc('created_at');
 
 
@@ -103,10 +103,10 @@ class PagesController extends Controller
           $number_tasks =$list_tasks->count() ;
 
         }
-    	
+
         $earnings = Earning::all();
 
-        
+
         self::$page_description='A snapshort of your Account';
         $orders= Order::orderBy('created_at', 'desc')->get();
 
@@ -158,11 +158,11 @@ class PagesController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
-         
+
         }
         else
         {
-             
+
           $prof_comp_array = NotificationController::profileComplete(Auth::user());
 
           $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
@@ -174,7 +174,7 @@ class PagesController extends Controller
           // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
            $notifications_no = $list_bid_accepted->count();
            $order_msg_no = $list_order_message->count();
-          
+
           // $list_notifications = $list_notifications->sortByDesc('created_at');
 
 
@@ -217,8 +217,8 @@ class PagesController extends Controller
     // We use this function to view all the messages table
     public function mailbox(Request $request)
     {
-        
-     
+
+
        if($request->user()->ni_admin)
             {
                 $prof_comp_array = 0;
@@ -239,7 +239,7 @@ class PagesController extends Controller
 
                 $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
                 $number_tasks =$list_tasks->count() ;
-          
+
               $messages = Message::where('for_admin',1)
               ->where('unread', 0)
               ->orderBy('created_at', 'desc')
@@ -262,7 +262,7 @@ class PagesController extends Controller
                   // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
                    $notifications_no = $list_bid_accepted->count();
                    $order_msg_no = $list_order_message->count();
-                  
+
                   // $list_notifications = $list_notifications->sortByDesc('created_at');
 
 
@@ -281,9 +281,9 @@ class PagesController extends Controller
                   ->get();
 
                 $unread_msgs = $request->user()->messages->where('unread', 1)->sortByDesc('created_at');
-                
+
           }
-          
+
 
         Return view('pages.messages',[
             'site_title' =>self::$site_title,
@@ -315,7 +315,7 @@ class PagesController extends Controller
     public function sentbox(Request $request)
     {
 
-        
+
        if($request->user()->ni_admin)
             {
 
@@ -333,7 +333,7 @@ class PagesController extends Controller
                 $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
 
 
-            
+
                 $notifications_no = $list_bid_accepted->count();
                 // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
 
@@ -362,7 +362,7 @@ class PagesController extends Controller
               // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
               $notifications_no = $list_bid_accepted->count();
               $order_msg_no = $list_order_message->count();
-          
+
               // $list_notifications = $list_notifications->sortByDesc('created_at');
               $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
               $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
@@ -409,7 +409,7 @@ class PagesController extends Controller
 
         if($request->user()->ni_admin)
             {
-              
+
               if($message->for_admin)
               {
                 $inbox_thread = Message::where('subject', $message->subject)->where('sender_id', $message->sender_id)->get();
@@ -420,7 +420,7 @@ class PagesController extends Controller
               else
               {
                 $sent_thread = Message::where('subject', $message->subject)->where('sender_id', $message->user_id)->get();
-                $inbox_thread = Message::where('subject',$message->subject)->where('user_id', $message->user_id)->get();                
+                $inbox_thread = Message::where('subject',$message->subject)->where('user_id', $message->user_id)->get();
               }
 
 
@@ -450,7 +450,7 @@ class PagesController extends Controller
 
                 if($request->user()->id == $message->user_id ){
                     $message->unread = 0;
-                     $message->update(); 
+                     $message->update();
                 }
 
                 $prof_comp_array = NotificationController::profileComplete(Auth::user());
@@ -460,7 +460,7 @@ class PagesController extends Controller
 
                 $list_bid_accepted = Auth::user()->notifications()->where('status',0)->where('type','order_bid_accepted')->orderBy('created_at', 'desc')->get();
                 $list_order_message = Auth::user()->notifications()->where('status',0)->where('type','order_message')->orderBy('created_at', 'desc')->get();
-  
+
                 $notifications_no = $list_bid_accepted->count();
                 $order_msg_no = $list_order_message->count();
 
@@ -471,7 +471,7 @@ class PagesController extends Controller
                 $number_tasks =$list_tasks->count() ;
 
 
-                $unread_msgs = $request->user()->messages->where('unread', 1)->sortByDesc('created_at')->groupBy('subject');      
+                $unread_msgs = $request->user()->messages->where('unread', 1)->sortByDesc('created_at')->groupBy('subject');
           }
 
           $mail_thread = $sent_thread->toBase()->merge($inbox_thread)->sortBy('created_at');
@@ -512,14 +512,14 @@ class PagesController extends Controller
         $this->validate($request,
             ['subject'=>'required',
             'receiver_id' =>'required',
-            ]); 
+            ]);
         $original_mail= Message::findOrFail($request->mail_id);
         $message = new Message;
         $message->subject = $request->subject;
         $message->sender_id = $request->user()->id;
 
         //We receiver_id is the same as the sender_id.
-        //If they are the same it means that this user is sending a message to themslves. 
+        //If they are the same it means that this user is sending a message to themslves.
         // So we check the original mail that we are responding to and check who the user_id for that message.
         // That user_id is the one that we set as the receiver_id;
         if($request->receiver_id == $request->user()->id)
@@ -546,13 +546,13 @@ class PagesController extends Controller
                     $user->email = 'support@academicresearchassistants.com';
                     $user->first_name = 'Support Department';
                 }
-                
+
                 if ($request->department == 'Quality Assurance') {
                     # code...
                     $user->email = 'qualityassurance@academicresearchassistants.com';
                     $user->first_name = 'Quality Assurance Department';
                 }
-                
+
                 if ($request->department == 'Billing') {
                     # code...
                     $user->email = 'billing@academicresearchassistants.com';
@@ -571,7 +571,7 @@ class PagesController extends Controller
 
         Return redirect('sentbox')->with('message', 'Reply posted successfully');
     }
-   
+
     public function compose(Request $request)
     {
         if($request->user()->ni_admin)
@@ -587,7 +587,7 @@ class PagesController extends Controller
                     $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
 
 
-                    
+
                     $notifications_no = $list_bid_accepted->count();
                     // I used $list_bid_accepted the same as other users so as not to have a difficult time to display them on the layout
 
@@ -612,7 +612,7 @@ class PagesController extends Controller
 
                 $notifications_no = $list_bid_accepted->count();
                 $order_msg_no = $list_order_message->count();
-          
+
                 $list_order_late = Auth::user()->notifications()->where('status',0)->where('type','order_late')->orderBy('created_at', 'desc')->get();
                 $list_order_revisions = Auth::user()->notifications()->where('status',0)->where('type','order_revision')->orderBy('created_at', 'desc')->get();
 
@@ -636,13 +636,13 @@ class PagesController extends Controller
             'number_tasks' => $number_tasks,
             'prof_comp_array' => $prof_comp_array,
             ]);
-            
+
     }
 
 
     public function newMail(Request $request)
     {
-        
+
         $this->validate($request,
             ['subject'=>'required',
             'department' =>'required',
@@ -669,13 +669,13 @@ class PagesController extends Controller
                     $email_to = 'support@academicresearchassistants.com';
                     $email_name = 'Support Department';
                 }
-                
+
                 if ($request->department == 'Quality Assurance') {
                     # code...
                     $email_to = 'qualityassurance@academicresearchassistants.com';
                     $email_name = 'Quality Assurance Department';
                 }
-                
+
                 if ($request->department == 'Billing') {
                     # code...
                     $email_to = 'billing@academicresearchassistants.com';
@@ -748,7 +748,7 @@ class PagesController extends Controller
                                 $m->to($writer->email, $writer->first_name)->subject($subject);
                             });
                         }
-                        
+
                     }
                     return redirect('sentbox')->with ('message','Message to Active writers sent successfully');
                 }
@@ -778,7 +778,7 @@ class PagesController extends Controller
                                 $m->to($writer->email, $writer->first_name)->subject($subject);
                             });
                         }
-                        
+
                     }
                     return redirect('sentbox')->with ('message','Message to Inactive writers sent successfully');
                 }
@@ -803,12 +803,12 @@ class PagesController extends Controller
                         $m->to($writer->email, $writer->first_name)->subject($subject);
                     });
 
-                    return redirect('sentbox')->with ('message','Message to '.$writer->first_name.' sent successfully'); 
+                    return redirect('sentbox')->with ('message','Message to '.$writer->first_name.' sent successfully');
                 }
-                
+
             }
-        
-        
+
+
     }
 
     public function allusers()
@@ -834,11 +834,11 @@ class PagesController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
-         
+
         }
         else
         {
-             
+
           $prof_comp_array = NotificationController::profileComplete(Auth::user());
 
           $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
@@ -850,7 +850,7 @@ class PagesController extends Controller
           // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
            $notifications_no = $list_bid_accepted->count();
            $order_msg_no = $list_order_message->count();
-          
+
           // $list_notifications = $list_notifications->sortByDesc('created_at');
 
 
@@ -928,11 +928,11 @@ class PagesController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
-         
+
         }
         else
         {
-             
+
           $prof_comp_array = NotificationController::profileComplete(Auth::user());
 
           $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
@@ -944,7 +944,7 @@ class PagesController extends Controller
           // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
            $notifications_no = $list_bid_accepted->count();
            $order_msg_no = $list_order_message->count();
-          
+
           // $list_notifications = $list_notifications->sortByDesc('created_at');
 
 
@@ -990,7 +990,7 @@ class PagesController extends Controller
     {
         // We confirm that the person requesting the user's profile is an admin or client (should come later on)
         if(! $request->user()->ni_admin){
-            // return back()->with ('error', 'You are not authorised to view that page. Contact support for assistance'); 
+            // return back()->with ('error', 'You are not authorised to view that page. Contact support for assistance');
             Return redirect('find_work')->with('error',"We are still working on a new writer profile page in the mean time... Find some work below :)");
         }
 
@@ -999,7 +999,7 @@ class PagesController extends Controller
             $messages_no = $list_messages->count();
 
             // $list_bid_accepted = Notification::where('status',0)->where('type',"admin_order_bidPlaced")->orderBy('created_at', 'desc')->get();
-            // I have disabled the need to show bid notifications on the writers profile page because they are many and only the client should see this. 
+            // I have disabled the need to show bid notifications on the writers profile page because they are many and only the client should see this.
 
             $list_bid_accepted = 0;
             $list_order_message = Notification::where('status',0)->where('type',"admin_order_message")->orderBy('created_at', 'desc')->get();
@@ -1081,11 +1081,11 @@ class PagesController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
-         
+
         }
         else
         {
-             
+
           $prof_comp_array = NotificationController::profileComplete(Auth::user());
 
           $list_messages = Auth::user()->messages->where('unread',1)->sortByDesc('created_at');
@@ -1097,7 +1097,7 @@ class PagesController extends Controller
           // $list_notifications = $list_order_message->toBase()->merge($list_bid_accepted);
            $notifications_no = $list_bid_accepted->count();
            $order_msg_no = $list_order_message->count();
-          
+
           // $list_notifications = $list_notifications->sortByDesc('created_at');
 
 
@@ -1134,7 +1134,7 @@ class PagesController extends Controller
     // public function activateUsers()
     // {
     //     $users = User::all()->where('status',null);
-    //     foreach ($users as $user) 
+    //     foreach ($users as $user)
     //         {
     //             $user->status = '1';
     //             $user->verified = 1;
