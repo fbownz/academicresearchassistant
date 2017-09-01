@@ -504,10 +504,8 @@ class NotificationController extends Controller
         $gateway    = new AfricasTalkingGateway($username, $apikey);
 
         try {
-          // We are disabling the sms notice function until we sort out our account.
-          // Comment return and uncomment *$results below only
-          Return;
-            // $results = $gateway->sendMessage($recipients, $message);
+          // We enable SMS notifications
+            $results = $gateway->sendMessage($recipients, $message);
 
             //foreach($results as $result) {
             //We save this response to a table for reporting purposes
@@ -524,11 +522,11 @@ class NotificationController extends Controller
         catch (AfricasTalkingGatewayException $e) {
             // echo "Africa is talking Sending Error!: ".$e->getMessage();
             //We save the failed message response for debugging purposes
-            // $failed_sms_notice = new Failed_sms_notice;
-            // $failed_sms_notice->phone = $recipients;
-            // $failed_sms_notice->message = $e->getMessage();
-            // $failed_sms_notice->txt = $message;
-            // $failed_sms_notice->save();
+             $failed_sms_notice = new Failed_sms_notice;
+             $failed_sms_notice->phone = $recipients;
+             $failed_sms_notice->message = $e->getMessage();
+             $failed_sms_notice->txt = $message;
+             $failed_sms_notice->save();
 
 
         }
