@@ -300,8 +300,8 @@ use App\User;
 
                           <!-- Start of Admin late order notifications -->
 
-                          @if($list_task->type != 'admin_order_late')
-                          Order #{{$list_task->order->order_id}} is Late
+                          @if($list_task->type == 'admin_order_late')
+                          Order #{{$list_task->order_id}} is Late
                           @endif
 
 
