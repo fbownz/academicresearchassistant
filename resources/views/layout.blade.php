@@ -197,9 +197,9 @@ use App\User;
                     @foreach($list_bid_accepted as $notification)
 
                     <li><!-- start notification -->
-                      <a href="/orders/{{$notification->}}/notifications/{{$notification->id}}#@if($notification->type == 'admin_order_message')order-message @elseif($notification->type == 'order_message')order-message @endif">
+                      <a href="/orders/{{$notification->order_id}}/notifications/{{$notification->id}}#@if($notification->type == 'admin_order_message')order-message @elseif($notification->type == 'order_message')order-message @endif">
                         @if($notification->type == 'order_bid_accepted')
-                        <? $icon = "fa-thumbs-up" ?>
+                        <? $icon ="fa-thumbs-up"?>
                         @elseif($notification->type == 'order_message')
                         <? $icon = "fa-comments" ?>
 
