@@ -1,16 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--   Hello there...
-  @fbownz
-  Peace...
-  -->
-
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{{$page_title}} | {{$site_title}}</title>
-  <!-- Tell the browser to be responsive to screen width -->
+  <!-- responsive to the browser's screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.5 -->
   <link rel="stylesheet" href="/css/bootstrap/css/bootstrap.min.css">
@@ -50,7 +44,8 @@
 	<![endif]-->
 </head>
 
-<?
+<?php
+//I changed from plain <? use App\User
 use App\User;
 ?>
 
@@ -156,9 +151,10 @@ use App\User;
                         @endif
                         <i class="fa {{$icon}} text-aqua"></i>
 
+                        <!-- I made an error 2 months back by confusing order_no for order_id-->
                        @if($notification->type == 'order_message')
                          @if(count($notification->order) > 0)
-                          New message on #{{$notification->order->order_no}}
+                          New message on #{{$notification->order->order_id}}
                          @else
                           No order found
                          @endif
@@ -166,7 +162,7 @@ use App\User;
                          <!-- start of Admin Notification Messages -->
                        @elseif($notification->type == 'admin_order_message')
                          @if(count($notification->order) > 0)
-                          New message on #{{$notification->order->order_no}}
+                          New message on #{{$notification->order->order_id}}
                          @else
                           No order found
                          @endif
@@ -201,7 +197,7 @@ use App\User;
                     @foreach($list_bid_accepted as $notification)
 
                     <li><!-- start notification -->
-                      <a href="/orders/{{$notification->order_id}}/notifications/{{$notification->id}}#@if($notification->type == 'admin_order_message')order-message @elseif($notification->type == 'order_message')order-message @endif">
+                      <a href="/orders/{{$notification->}}/notifications/{{$notification->id}}#@if($notification->type == 'admin_order_message')order-message @elseif($notification->type == 'order_message')order-message @endif">
                         @if($notification->type == 'order_bid_accepted')
                         <? $icon = "fa-thumbs-up" ?>
                         @elseif($notification->type == 'order_message')
@@ -219,13 +215,13 @@ use App\User;
 
                        @if($notification->type == 'order_bid_accepted')
                          @if(count($notification->order) > 0)
-                         Congrats your Bid for order #{{$notification->order->order_no}} was accepted !
+                         Congrats your Bid for order #{{$notification->order->order_id}} was accepted !
                          @else
                          No order found was it deleted?
                          @endif
                        @elseif($notification->type == 'order_message')
                          @if(count($notification->order) > 0)
-                         You have a new message on order #{{$notification->order->order_no}} !
+                         You have a new message on order #{{$notification->order->order_id}} !
                          @else
                          No order found was it deleted ?
                          @endif
@@ -233,13 +229,13 @@ use App\User;
                          <!-- start of Admin Notification Messages -->
                        @elseif($notification->type == 'admin_order_message')
                          @if(count($notification->order) > 0)
-                         You have a new message on order #{{$notification->order->order_no}} !
+                         You have a new message on order #{{$notification->order->order_id}} !
                          @else
                          No order found was it deleted ?
                          @endif
                        @elseif($notification->type == 'admin_order_bidPlaced')
                          @if(count($notification->order) > 0)
-                         {{$notification->user->first_name}} placed a new bid on Order #{{$notification->order->order_no}} !
+                         {{$notification->user->first_name}} placed a new bid on Order #{{$notification->order->order_id}} !
                          @else
                          No order found was it deleted ?
                          @endif
@@ -278,32 +274,34 @@ use App\User;
                         <!-- Task title and progress text -->
                         <h3>
                         <!--
-                          We find the order that the notification belongs to. then we calculate the total number of notifications the order has
+                          We confirm that $list_task has a valid order
+                          We check the total unread notifications that order has,
                           From there we find  the total number of that type of notification, then we divide by total notifications and we find the
                           percentage
                         -->
-                        <?
+                        <?php
 
                           $order_task = $list_task->order;
                           if ($order_task) {
                             $percentage_no = $list_task->order->notifications->where('status',0)->where('type', $list_task->type)->count() / $list_task->order->notifications->where('status',0)->count() * 100;
                           }
+                        endif;
                         ?>
 
                           <small class="pull-right">{{round($percentage_no)}}%</small>
 
-                          @if($list_task->type == 'order_revision')
-                          New Revision request on order #{{$list_task->order->order_no}}
+                          @if( $order_task == 'order_revision')
+                          New Revision request on order #{{$order_task->order_id}}
                           @endif
-                          @if($list_task->type == 'order_late')
-                          Late Order #{{$list_task->order->order_no}}
+                          @if($order_task == 'order_late')
+                          Late Order #{{$order_task->order_id}}
                           @endif
 
 
                           <!-- Start of Admin late order notifications -->
 
                           @if($list_task->type != 'admin_order_late')
-                          Order #{{$list_task->order->order_no}} is Late
+                          Order #{{$list_task->order->order_id}} is Late
                           @endif
 
 
