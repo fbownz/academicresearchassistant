@@ -199,7 +199,7 @@ use App\User;
                     <li><!-- start notification -->
                       <a href="/orders/{{$notification->order_id}}/notifications/{{$notification->id}}#@if($notification->type == 'admin_order_message')order-message @elseif($notification->type == 'order_message')order-message @endif">
                         @if($notification->type == 'order_bid_accepted')
-                        <? $icon ="fa-thumbs-up"?>
+                        <? $icon = "fa-thumbs-up"?>
                         @elseif($notification->type == 'order_message')
                         <? $icon = "fa-comments" ?>
 
@@ -279,13 +279,12 @@ use App\User;
                           From there we find  the total number of that type of notification, then we divide by total notifications and we find the
                           percentage
                         -->
-                        <?php
+                        <?
 
                           $order_task = $list_task->order;
                           if ($order_task) {
                             $percentage_no = $list_task->order->notifications->where('status',0)->where('type', $list_task->type)->count() / $list_task->order->notifications->where('status',0)->count() * 100;
                           }
-                        endif;
                         ?>
 
                           <small class="pull-right">{{round($percentage_no)}}%</small>
