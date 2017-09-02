@@ -1,9 +1,9 @@
 @extends('layout')
 
 @section('body')
-<?php 
+<?php
 	use Carbon\Carbon;
-	use App\User; 
+	use App\User;
 	$deadline = Carbon::parse("$order->deadline");
 	$client_deadline = Carbon::parse("$order->client_deadline");
 	//$time_now =Carbon::now();
@@ -58,7 +58,7 @@
 							Bid on this Order
 						</h4>
 						<div class="box-tools pull-right">
-							
+
 							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 	                		</button>
 						</div>
@@ -73,7 +73,7 @@
 					<div class="box-footer">
 						{{ Form::submit('Bid on this job',array('class'=>'btn btn-success')) }}
 					</div>
-					
+
 					  {{ Form::close() }}
 				</div>
 
@@ -97,7 +97,7 @@
 								<? $postedat = Carbon::parse($note->created_at);
 								$when = $postedat->diffForHumans() ;
 								$user = User::find($note->user_id);
-								$msg_profpic = $user->prof_pic_url; 
+								$msg_profpic = $user->prof_pic_url;
 								?>
 								<div class="direct-chat-msg
 									@if($user->ni_admin)
@@ -105,7 +105,7 @@
 									@endif
 									">
 									<div class="direct-chat-info clearfix">
-					                    <span class="direct-chat-name text-light-blue 
+					                    <span class="direct-chat-name text-light-blue
 					                    @if($user->ni_admin)
 											pull-right
 											@else
@@ -117,7 +117,7 @@
 				                    		@if(Auth::user()->ni_admin)
 				                    			{{$user->first_name}} {{$user->last_name}}
 				                    		@else
-				                    		Admin
+				                    		{{$user->first_name}}
 				                    		@endif
 
 										@else
@@ -133,7 +133,7 @@
 			                  		</div>
 									<img class="direct-chat-img" src="{{$msg_profpic}}" alt="{{$user->id}} Prof Pic">
 									<div class="direct-chat-text">
-						                    {!! $note->body !!} 
+						                    {!! $note->body !!}
 					                </div>
 					                @if($note->attachment_name)
 						                <div class="attachment-block clearfix">
@@ -145,7 +145,7 @@
 					                @endif
 								</div>
 		                    	@endforeach
-		                    </div>		
+		                    </div>
 		            	</div>
 					</div>
 				@endif
@@ -155,11 +155,11 @@
 							@if(Auth::user()->ni_admin)
 							Add a message to the Writer
 							@else
-							Add a message to the admin on this order
+							Add a message to the client on this order
 							@endif
 						</h4>
 						<div class="box-tools pull-right">
-							
+
 							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 	                		</button>
 						</div>
@@ -168,13 +168,13 @@
 					<div class="box-body">
 						<input type="hidden" name="order_id" value="{{$order->id}}">
 						<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
-						
+
 						<div class="form-group">
 	                		{!! Form::textarea('body', null, array('id'=>'compose-textarea',
 	                                                        'class'=>'form-control',
 	                                                        'required' => 'required',
 	                                                        'style'=>'height:150px',
-	                                                        'placeholder'=>'Enter your Message here')) 
+	                                                        'placeholder'=>'Enter your Message here'))
 	                        !!}
 	              		</div>
 
@@ -194,9 +194,9 @@
 					<div class="box-footer">
 						{{ Form::submit('Add Message',array('class'=>'btn btn-success')) }}
 					</div>
-					
+
 					  {{ Form::close() }}
-				
+
 				</div>
 
 			@endif
@@ -204,13 +204,13 @@
 
 			<div class="box box-success">
 				<div class="box-header with-border">
-					
+
 					<h4 class="text-green"><i class="fa fa-edit"></i>
 						{{$order->order_no}} Was placed on <b>{{$order -> created_at->format('F j, Y H:i A')}}</b>
 					</h4>
 					<h5>And was last updated on {{$order -> updated_at->format('F j, Y H:i A')}} is currently
 					@if($order->approved == 1 && $order->is_late !== 1)
-						<span class="text-light-blue">Approved</span> 
+						<span class="text-light-blue">Approved</span>
 						@elseif($order->approved == 1 && $order->is_late == 1)
 						<span class="text-light-blue">Approved and late fee aplied</span>
 						@elseif($order->approved !=1 && $order->is_late !==1)
@@ -218,7 +218,7 @@
 						@elseif($order->approved !=1 && $order->is_late ==1)
 						<span class="text-red lead">{{$order->status}} and Late!</span>
 
-					@endif	
+					@endif
 					</h5>
 					<div class="box-tools pull-right">
 						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -258,16 +258,16 @@
 						        	<div class="col-md-5 col-sm-6"><strong>Client's Deadline:</strong></div>
 							        @if($order->approved !== 1 && $order->is_late ==1)
 										<div class="col-md-7 col-sm-6 text-red lead"><i class="fa fa-clock-o"></i> {{$client_deadline->format('F j, Y H:i A')}}</div>
-							        
+
 							        @else
 							        	<div class="col-md-7 col-sm-6 text-green"><i class="fa fa-clock-o"></i> {{$client_deadline->format('F j, Y H:i A')}}</div>
 							        @endif
-						        
+
 						        @endif
 				      		<div class="col-md-5 col-sm-6"><strong>Country of Origin</strong></div>
 				      		<div class="col-md-5 col-sm-6">{{$order->client_country}}</div>
 						</div>
-	
+
 				</div>
 				<div class="box-footer">
 
@@ -307,7 +307,7 @@
 					</div>
 			</div>
 
-			
+
 
 			@if (Auth::user()->ni_admin ==1 && count($order->Order_reports)>0)
 				<div class="box box-default box-solid">
@@ -324,13 +324,13 @@
 						@foreach($order->Order_reports as $Order_report)
 						<? $user = User::find($Order_report->user_id); ?>
 						@if($Order_report->created_at->diffInMinutes($order->created_at,false) > -2 )
-						<div class="attachment-block">Added by {{$user->first_name}} {{$user->last_name}} 
-							on {{$Order_report->updated_at->format('F j, Y H:i A')}} 
+						<div class="attachment-block">Added by {{$user->first_name}} {{$user->last_name}}
+							on {{$Order_report->updated_at->format('F j, Y H:i A')}}
 						</div>
 						@else
-	                            <div class="attachment-block">Marked as {{$Order_report->order_status}} by 
-	                            
-	                            {{$user->first_name}} {{$user->last_name}}  
+	                            <div class="attachment-block">Marked as {{$Order_report->order_status}} by
+
+	                            {{$user->first_name}} {{$user->last_name}}
 	                            @if($Order_report->writer_assigned)
 	                            and assigned to {{User::find($Order_report->writer_assigned)->first_name}}
 	                            @endif
@@ -338,7 +338,7 @@
 	                     @endif
 	                    @endforeach
 					</div>
-					
+
 				</div>
 			@endif
 
@@ -360,9 +360,9 @@
 
 		            <div class="box-body">
 		              @foreach($bids as $bid)
-						<? 
+						<?
 							$bid_user = $bid->user;
-							if ($bid->id & 1) 
+							if ($bid->id & 1)
 							{
 								$a = "left" ;
 								$b = "right";
@@ -390,14 +390,14 @@
 							<img class="direct-chat-img" src="{{$bid_user->prof_pic_url}}" alt="{{$bid_user->id}} Prof Pic">
 							<div class="direct-chat-text">
 				                    ${{$bid->bid_ammount}}<br/>
-				                    {{$bid->bid_msg}}   
+				                    {{$bid->bid_msg}}
 			              	</div>
 		                      @if($bid->user_id == Auth::user()->id)
 		                      <a class="btn btn-danger pull-right btn-xs" href="../../bids/delete/{{$bid->id}}">
 									Delete
 								</a>
 							@endif
-			              	
+
 						</div>
 					  @endforeach
 		            </div>
@@ -430,7 +430,7 @@
 						@endforeach
 					</div>
 				</div>
-				
+
 			@endif
 
 		</div>
@@ -500,7 +500,7 @@
 						{{csrf_field()}}
 						<label>Compensation</label> <br>
 						<small>The total amount to be paid to the writer</small>
-						<input type="number" name="compensation" class="form-control" 
+						<input type="number" name="compensation" class="form-control"
 						placeholder="Enter amount here..."
 						Required="required"
 						value="{{$order->compensation}}">
@@ -514,7 +514,7 @@
 						</select>
 					</div>
 					<div class="form-group col-md-12">
-						<label>Select Writer</label> 
+						<label>Select Writer</label>
 						<select name="writer" class="form-control" Required="required" placeholder="Assign order to a particular writer">
 							@foreach($writers as $writer)
 							<option value="{{$writer->id}}"
@@ -526,7 +526,7 @@
 						</select>					</div>
 						<button class="btn btn-success" type="submit" >Update
 	                  	</button>
-	                  	</form> 
+	                  	</form>
 					</div>
 			</div>
 			<!-- Add more time/hours  -->
@@ -537,7 +537,7 @@
 						Update order deadline
 					</h4>
 					<div class="box-tools pull-right">
-						
+
 						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                 		</button>
 					</div>
@@ -561,7 +561,7 @@
 				<div class="box-footer">
 					{{ Form::submit('Update Order deadline',array('class'=>'btn btn-success')) }}
 				</div>
-				
+
 				  {{ Form::close() }}
 			</div>
 
@@ -574,7 +574,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			@endif
 			@if(Auth::user()->ni_admin == 1)
 			<div class="box box-success">
@@ -588,7 +588,7 @@
 					</div>
 				</div>
 				<div class="box-body">
-						
+
 					<a class="btn btn-success" href="/orders/{{$order->id}}/edit" >Edit/Update
                       </a>
                       <a class="btn btn-danger pull-right" href="/orders/delete/{{$order->id}}">
@@ -597,7 +597,7 @@
 				</div>
 			</div>
 			@endif
-			
+
 
 			@if(Auth::user()->ni_admin==1 || $order->user_id == Auth::user()->id )
 			<!-- Deliver order widget -->
@@ -613,7 +613,7 @@
 					</div>
 				</div>
 				<div class="box-body">
-					
+
 					{{ Form::open(array('url'=>'deliver-order','files'=>true)) }}
 					<input type="hidden" name="order_id" value="{{$order->id}}">
 					<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
@@ -639,8 +639,8 @@
 
 				  {{ Form::close() }}
 				  </div>
-				  
-				  
+
+
 				</div>
 				@if (count($order->order_delivery_reports)>0)
 		        <div class="box-footer" id="order_file">
@@ -649,12 +649,12 @@
 
 		            @if($order_delivery_report->is_complete == 1)
 		            <a class="btn btn-default btn-file" href="{{route('get_file', $order_delivery_report->file_name)}}">
-		                  <i class="fa fa-paperclip"></i> 
+		                  <i class="fa fa-paperclip"></i>
 		                  Final Product copy {{$order_delivery_report->created_at->format('F j, Y H:i A')}}
 		                </a>
 		                @elseif($order_delivery_report->is_complete == 0)
 		                <a class="btn btn-default btn-file" href="{{route('get_file', $order_delivery_report->file_name)}}">
-		                  <i class="fa fa-paperclip"></i> 
+		                  <i class="fa fa-paperclip"></i>
 		                  Draft copy {{$order_delivery_report->created_at->format('F j, Y H:i A')}}
 		              </a>
 		            @endif
@@ -664,15 +664,15 @@
 		          {{ Form::open(array('url'=>'approve-order')) }}
 				  <input type="hidden" name="order_id" value="{{$order->id}}">
 				  <label>Enter Bonus if any</label>
-				  <input type="integer" name="bonus" class="form-control" placeholder="Enter 0 if none" 
+				  <input type="integer" name="bonus" class="form-control" placeholder="Enter 0 if none"
             				Required="required">
-            			
+
 				  <div class="form-group">
 		          {{Form::submit('Approve this work as complete',array('class'=> ' btn btn-success'))}}
 		          </div>
 		        </div>
         		{{ Form::close() }}
-        		
+
         		@endif
 
 					@endif
@@ -692,9 +692,9 @@
 				</div>
 				@if(Auth::user()->ni_admin)
 				<div class="box-body">
-        			{{Form::open(array('url'=>'apply-fines'))}}   
+        			{{Form::open(array('url'=>'apply-fines'))}}
         			{{Form::label('name', 'Select a writer to appy this fine on')}}
-        			<input type="hidden" name="order_id" value="{{$order->id}}">      			
+        			<input type="hidden" name="order_id" value="{{$order->id}}">
         			<div class="form-group">
         				<select name="writer" class="form-control" Required="required">
 							@foreach($writers as $writer)
