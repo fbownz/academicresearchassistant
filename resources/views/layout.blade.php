@@ -154,7 +154,7 @@ use App\User;
                         <!-- I made an error 2 months back by confusing order_no for order_id-->
                        @if($notification->type == 'order_message')
                          @if(count($notification->order) > 0)
-                          New message on #{{$notification->order->order_id}}
+                          New message on #{{$notification->order_id}}
                          @else
                           No order found
                          @endif
@@ -162,7 +162,7 @@ use App\User;
                          <!-- start of Admin Notification Messages -->
                        @elseif($notification->type == 'admin_order_message')
                          @if(count($notification->order) > 0)
-                          New message on #{{$notification->order->order_id}}
+                          New message on #{{$notification->order_id}}
                          @else
                           No order found
                          @endif
@@ -215,13 +215,13 @@ use App\User;
 
                        @if($notification->type == 'order_bid_accepted')
                          @if(count($notification->order) > 0)
-                         Congrats your Bid for order #{{$notification->order->order_id}} was accepted !
+                         Congrats your Bid for order #{{$notification->order_id}} was accepted !
                          @else
                          No order found was it deleted?
                          @endif
                        @elseif($notification->type == 'order_message')
                          @if(count($notification->order) > 0)
-                         You have a new message on order #{{$notification->order->order_id}} !
+                         You have a new message on order #{{$notification->order_id}} !
                          @else
                          No order found was it deleted ?
                          @endif
@@ -229,7 +229,7 @@ use App\User;
                          <!-- start of Admin Notification Messages -->
                        @elseif($notification->type == 'admin_order_message')
                          @if(count($notification->order) > 0)
-                         You have a new message on order #{{$notification->order->order_id}} !
+                         You have a new message on order #{{$notification->order_id}} !
                          @else
                          No order found was it deleted ?
                          @endif
