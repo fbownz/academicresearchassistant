@@ -58,7 +58,7 @@ class AfricasTalkingGateway
 
 
   //Messaging methods
-  public function sendMessage($to_, $message_, $from_ = 'AcademicRA', $bulkSMSMode_ = 1, Array $options_ = array())
+  public function sendMessage($to_, $message_, $from_ = 'Webonmobi', $bulkSMSMode_ = 1, Array $options_ = array())
   {
     if ( strlen($to_) == 0 || strlen($message_) == 0 ) {
       throw new AfricasTalkingGatewayException('Please supply both to and message parameters');
