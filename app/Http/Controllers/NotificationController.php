@@ -348,7 +348,7 @@ class NotificationController extends Controller
     // }
     public function view(Request $request, Order $order, Notification $notification)
     {
-        if(Auth::user()->ni_admin != 1){
+        if(!Auth::user()->ni_admin){
             if($order->status != "Available" && $order->user_id != Auth::user()->id){
                 Return redirect('orders')->with('error','You are not allowed to view that Order. Kindly contact Admin for further Assistance');
             }
