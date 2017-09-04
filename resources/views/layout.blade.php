@@ -154,20 +154,21 @@ use App\User;
                         <!-- I made an error 2 months back by confusing order_no for order_id-->
                        @if($notification->type == 'order_message')
                          @if(count($notification->order) > 0)
-                          New message on #{{$notification->order_id}}
+                          New message on #{{$notification->order->order_no}}
                          @else
-                          No order found
+                          No order found was it deleted?
                          @endif
 
                          <!-- start of Admin Notification Messages -->
                        @elseif($notification->type == 'admin_order_message')
                          @if(count($notification->order) > 0)
-                          New message on #{{$notification->order_id}}
+                          New message on #{{$notification->order->order_no}}
                          @else
-                          No order found
+                          No order found was it deleted?
                          @endif
                          <!-- end of Admin Notification Messages -->
                        @endif
+
                       </a>
                     </li>
                     <!-- end notification -->
