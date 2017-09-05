@@ -19,3 +19,5 @@ database/factories/*
 database/seeds/*
 bootstrap/*
 gulpfile.js
+app/Http/routes.php
+app/Http/Kernel.php
