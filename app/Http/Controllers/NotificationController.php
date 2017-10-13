@@ -348,7 +348,7 @@ class NotificationController extends Controller
     // }
     public function view(Request $request, Order $order, Notification $notification)
     {
-        if(!Auth::user()->ni_admin){
+        if(!$request->user()->ni_admin){
             if($order->status != "Available" && $order->user_id != Auth::user()->id){
                 Return redirect('orders')->with('error','You are not allowed to view that Order. Kindly contact Admin for further Assistance');
             }
@@ -361,7 +361,7 @@ class NotificationController extends Controller
         $notification->status = 1;
         $notification->update();
 
-         if (Auth::user()->ni_admin )
+         if ($request->user()->ni_admin )
         {
             $prof_comp_array = 0;
             $list_messages = Message::where('for_admin', 1)->where('unread', 1)->orderBy('created_at', 'desc')->get();
