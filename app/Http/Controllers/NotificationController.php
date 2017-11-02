@@ -43,12 +43,12 @@ class NotificationController extends Controller
         {
             $m->from('noreply@academicresearchassistants.com','ARA');
 
-            $m->to($user->email, $user->first_name)->subject('Academicresearch: Congrats! Your bid has been accepted on order '.$order->order_no);
+            $m->to($user->email, $user->first_name)->subject('Academicresearch: Congrats! Your bid has been accepted #'.$order->order_no);
         });
 
 
         //We send an sms notification to the User for the assigned order;
-        $txt = 'Congratulations '.$user->first_name.' your bid for Order '.$order->order_no.' has been accepted. Deliver the paper by '.$deadline."\n".' Academicresearchassistants.com';
+        $txt = 'Congratulations '.$user->first_name.' your bid #'.$order->order_no.' has been accepted. Deliver the paper by '.$deadline."\n".' Academicresearchassistants.com';
         $send_sms =self::sendSMSnotice($user,$txt);
 
     }
@@ -67,14 +67,33 @@ class NotificationController extends Controller
         {
             $m->from('notifications@academicresearchassistants.com','ARA');
 
-            $m->to($user->email, $user->first_name)->subject('Academicresearch: Revision required on Order '.$order->order_no);
+            $m->to($user->email, $user->first_name)->subject('Academicresearch: Changes required on #'.$order->order_no);
         });
 
         //We send an sms notification to the User for the assigned order;
-        $txt = 'Order '.$order->order_no.' Needs urgent revision. Make efforts to make the changes and upload the file'."\n".' academicresearchassistants.com';
+        $txt = 'Order '.$order->order_no.' Needs urgent changes. Work on the changes and upload the file academicresearchassistants.com/orders/'.$order->order_no;
         $send_sms =self::sendSMSnotice($user,$txt);
 
     }
+    // public static function accountDeactivatednotice(User $user)
+    // {
+
+    //     $notification = new Notification;
+    //     $notification->user_id = $user->id;
+    //     $notification->order_id = null;
+    //     $notification->type = 'Deactivated';
+    //     $notification->message ='Deactivated';
+
+    //     $notification->save();
+
+    //     Mail::queue('emails.deactivated',['user'=>$user],function ($m) use ($user, $order)
+    //     {
+    //         $m->from('notifications@academicresearchassistants.com','ARA');
+
+    //         $m->to($user->email, $user->first_name)->subject('Academicresearch: Your account has been deactivated');
+    //     });
+
+    // }
     public static function orderMessageNotice(User $user, Order $order)
     {
         $notification = new Notification;
@@ -338,14 +357,7 @@ class NotificationController extends Controller
 
         });
     }
-    // public static function update_notifications()
-    // {
-    //     # code...
-    //     foreach(Notification::where('status',0)->where('message','Payment approved')->get() as $notification){
-    //         $notification->status = 1;
-    //         $notification->update();
-    //     }
-    // }
+   
     public function view(Request $request, Order $order, Notification $notification)
     {
         if(!$request->user()->ni_admin){

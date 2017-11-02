@@ -55,6 +55,13 @@
                     </a>
                   </b>
                 </li>
+                @if(Auth::user()->ni_admin)
+                  <li class="list-group-item">
+                    <a href="/writer/deactivate/{{$user->id}}">
+                      <button type="button" class="btn btn-block btn-danger">Delete this Account</button>
+                    </a>
+                  </li>
+                @endif
               </ul>
 
               <!-- <a href="#settings" class="btn btn-primary btn-block"><b>Edit Profile</b></a> -->

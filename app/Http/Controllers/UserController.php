@@ -11,6 +11,9 @@ use Validator;
 
 use App\User;
 use App\Http\Requests;
+use App\Message;
+use App\Http\Controllers\PagesController;
+use Mail;
 
 class UserController extends Controller
 {
@@ -292,6 +295,44 @@ class UserController extends Controller
             } 
 
         }
+        
+    }
+
+    // A function for the Admins to deactivate writers profile.
+    public function deactivate_writer(Request $request, $id){
+        
+        if (!$request->user()->ni_admin) {
+                return back()->with('error', "You are not an Admin, if you believe this is a mistake kindly contact Support");
+            }
+        else {
+                $writer = User::findorfail($id);
+                $writer->status = "";
+                $writer->update();
+
+                //We queue a new email to the writer
+                    $message = new Message;
+                    $message->subject = "Acount Status at AcademicResearchAssistants";
+                    $message->sender_id = $request->user()->id;
+                    $message->user_id = $id;
+                    $message->body = "Unfortunately our system noticed irregularities with your account and therefore, your writers account has been deactivated. <br/>
+                        This means you will no longer be able to place new bids on orders and only have access to the papers that you were assigned before. <br/>
+                        Get in touch with the support team for further information or if you have any questions.
+                        Regards.";
+                    $message->department = "Quality Assurance";
+                    $message->save();
+
+                    // We queue mail to send notifications
+                    $subject = $message->subject;
+                    $mail = $message;
+                    Mail::queue('emails.new_message',['user'=>$writer, 'subject'=>$subject, 'mail'=>$mail],function ($m) use ($writer,$subject)
+                    {
+                        $m->from('notifications@academicresearchassistants.com','Do not Reply: Academic Research Assistants');
+
+                        $m->to($writer->email, $writer->first_name)->subject($subject);
+                    });
+                return redirect('PagesController::allusers')->with('message', ''.$writer->first_name.' deactivated successfully');
+            }
+
         
     }
 

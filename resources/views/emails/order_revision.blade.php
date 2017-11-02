@@ -4,10 +4,10 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <link rel="stylesheet" href="http://academicresearchassistants.com//css/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://academicresearchassistants.com/css/bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="http://academicresearchassistants.com//css/AdminLTE.min.css">
-        <link rel="stylesheet" href="http://academicresearchassistants.com//css/skins/skin-green.min.css">
+        <link rel="stylesheet" href="http://academicresearchassistants.com/css/AdminLTE.min.css">
+        <link rel="stylesheet" href="http://academicresearchassistants.com/css/skins/skin-green.min.css">
 
     </head>
     <body class="skin-green">
@@ -25,10 +25,10 @@
                     <p>
                     	<a href="http://academicresearchassistants.com/orders/{{$order->id}}"> View your Order</a><br>
                     	The revised product should be delivered by {{$order->deadline}}. <br>
-						Please be advised that you will be penalized if the product does not conform to the revision instructions. <br> 
+						Please be advised that you will be imposed a 100% fine if you fail to work on the revision on time. <br> 
 						Further penalties will also be imposed if you do not deliver the paper in a timely manner.
 						<hr>
-						Check our Fines policy belw:<br>
+						Check our Fines policy below:<br>
 						<b><a href="http://academicresearchassistants.com/fines-policy">http://academicresearchassistants.com/fines-policy</a>
 						<br/>
 						<b>Your remuneration will be reflected in your account only after your order has been approved by the quality assurance department.

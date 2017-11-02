@@ -813,7 +813,7 @@ class PagesController extends Controller
 
     public function allusers()
     {
-        $users = User::where('ni_admin', null)->get();
+        $users = User::where('ni_admin', null)->where('verified', 1)->where('status', "1")->get();
          if (Auth::user()->ni_admin )
         {
             $prof_comp_array = 0;

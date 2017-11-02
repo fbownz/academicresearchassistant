@@ -43,7 +43,7 @@ class BidsStoreController extends Controller
         {
             if($request->user()->status !== "1" || $request->user()->verified !==1 )
             {
-                return back()->with('error',"You can't bid on the order at this time, you account is not active yet;Kindly  contact the Support for further clarrification.");
+                return back()->with('error',"You can't bid on the order at this time, you account is not active. Contact Support.");
             }
             
             $prof_comp_array = NotificationController::profileComplete($request->user());
@@ -74,8 +74,7 @@ class BidsStoreController extends Controller
 
 
 
-    	return back()->with('message', 'Your Bid was placed successfully. 
-            Please note that if you are assigned the order you have to deliver it on time');
+    	return back()->with('message', 'Your Bid was placed successfully.');
 	
     }
 
