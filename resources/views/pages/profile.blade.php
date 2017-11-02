@@ -17,14 +17,7 @@
             <div class="box box-primary">
             <div class="box-body box-profile">
               <img class="profile-user-img img-responsive img-circle" src="{{$user->prof_pic_url}}" alt="Your profile picture">
-
-              <h3 class="profile-username text-center">{{$user->first_name}} {{$user->last_name}}</h3>
-              
-              
-              <!-- We'll use the space to define User levels and status -->
-              <!-- <p class="text-muted text-center">Software Engineer</p> -->
-              
-
+              <h3 class="profile-username text-center">{{$user->first_name}} {{$user->last_name}} {{$rating_5}}<i class="fa fa-star text-green"></i></h3>
               <ul class="list-group list-group-unbordered">
                 <li class="list-group-item">
                   <b> <i class="fa fa-user margin-r-5"></i>Username:</b> <span class="pull-right text-muted">{{$user->name}}</span>
@@ -96,54 +89,26 @@
               <div class="active tab-pane" id="experience">
                 <div class="box box-solid">
                   <div class="box-body">
-                      <div class="box-title">
-                          <div class="box-header">
-                              <h3 class="box-title" style="color: #3c8dbc;">About Me</h3>
-                          </div>
-                        </div>
-                      <span class='col-md-12'>{{$user->description}} <p> </p></span>
-                      <br>
-                      <div class="form-group">
-                        <div class="col-md-4">
-                          <strong>Orders Approved</strong>
-                        </div>
-                        <div class="text-muted col-md-8">
-                          <strong>{{$user->orders->where('approved', 1)->count()}}</strong>
-                        </div>
-                      </div> 
-                      <div class="form-group">
-                        <div class="col-md-4">
-                          <strong>Orders Delivered</strong>
-                        </div>
-                        <div class="text-muted col-md-8">
-                          <strong>{{$user->orders->where('is_complete', 1)->count()}}</strong>
-                        </div>
-                      </div> 
-                      <div class="form-group">
-                        <div class="col-md-4">
-                          <strong>Late Orders</strong>
-                        </div>
-                        <div class="text-muted col-md-8">
-                          <strong>{{$user->orders->where('is_late', 1)->count()}}</strong>
-                        </div>
-                      </div>  
-                      <div class="form-group">
-                        <div class="col-md-4">
-                          <strong>Orders in Revision</strong>
-                        </div>
-                        <div class="text-muted col-md-8">
-                          <strong>{{$user->orders->where('status', 'Active-Revision')->count()}}</strong>
-                        </div>
-                      </div>  
-                      <div class="form-group">
-                        <div class="col-md-4">
-                          <strong>Orders Active</strong>
-                        </div>
-                        <div class="text-muted col-md-8">
-                          <strong>{{$user->orders->where('status','Active')->count()}}</strong>
-                        </div>
-                      </div>
-                      <p> </p>   
+                    <ul class="nav nav-stacked">
+                      <li>{{$user->description}}</li>
+                      <li><strong>Jobs Delivered</strong> 
+                        <span class="pull-right badge bg-green">{{$user->orders->where('is_complete', 1)->count()}}</span></li>
+                      <li><strong>Jobs Approved</strong> 
+                        <span class="pull-right badge bg-green">{{$user->orders->where('approved', 1)->count()}}</span></li>
+                      <li><strong>Active Jobs</strong> 
+                        <span class="pull-right badge bg-green">{{$user->orders->where('status','Active')->count()}}</span></li>
+                      <li><strong>Jobs in Revision</strong> 
+                        <span class="pull-right badge bg-green">{{$user->orders->where('status', 'Active-Revision')->count()}}</span></li>
+                      <li class="text-red"><strong>Total Late Jobs </strong>
+                        <span class="pull-right badge bg-red">{{$user->orders->where('is_late', 1)->count()}}</span></li>
+                      <li class="text-red"><strong>Total Fines</strong>
+                        <span class="pull-right badge bg-red">{{$user->fines()->count()}}</span></li>
+                    </ul>
+                        <!-- Added Rating to show 5 star rating depending on orders completed -->
+                      <h4>Order Delivery Ratings</h4>
+                      <b>{{$rating_5}} </b><i class="fa fa-star text-green"></i><br/>
+                      <b>Orders without fines: </b> {{$rating_100}}%<br/>
+                        <p> </p>   
                       @if($user->orders->where('is_complete', 1)->count() > 0 && $subject_infos > 5)
                           <div class="box-header ">
                               <h3 class="box-title" style="color: #3c8dbc;">A Summary of all Subjects done</h3>
@@ -151,13 +116,13 @@
                         @foreach($subject_infos as $subject_info)
                           <!-- We create colors for the labels -->
                           <? $label_color = 'label-primary'; ?>
-                          @if($subject_info->total/$user->orders->count() < 0.25)
+                          @if($subject_info->total/$user->earnings->count() < 0.25)
                               <? $label_color = 'label-warning'; ?>
-                          @elseif($subject_info->total/$user->orders->count() < 0.50 )
+                          @elseif($subject_info->total/$user->earnings->count() < 0.50 )
                             <? $label_color = 'label-primary'; ?>
-                          @elseif($subject_info->total/$user->orders->count() < 0.75)
+                          @elseif($subject_info->total/$user->earnings->count() < 0.75)
                             <? $label_color = 'label-info'; ?>
-                          @elseif($subject_info->total/$user->orders->count() > 0.75 )
+                          @elseif($subject_info->total/$user->earnings->count() > 0.75 )
                             <? $label_color = 'label-success'; ?>
                           @endif
                           <div class="col-md-6">
@@ -539,7 +504,7 @@
                @if($user->id == Auth::user()->id && $user->b_details->count() > 0)
                   <div class="box box-primary collapsed-box">
                       <div class="box-header with-border">
-                        <h4 class="box-title" data-widget="collapse">Edit Bank Details</h4>
+                        <strong data-widget="collapse">Edit Bank Details</h4>
 
                         <div class="box-tools ">
                           <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>

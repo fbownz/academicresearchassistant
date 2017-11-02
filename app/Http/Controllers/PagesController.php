@@ -906,7 +906,18 @@ class PagesController extends Controller
         }
 
 
-        $subject_infos = DB::table('orders')->where('user_id',$user->id)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
+        $subject_infos = DB::table('orders')->where('user_id',$user->id)->where('approved', 1)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
+
+          $s_d = $user->earnings()->count() - $user->fines()->count();
+          if (!$s_d) {
+            $rating_100 = 0;
+            $rating_5 = 0;
+            }
+          else {
+            $r = $s_d/$user->earnings()->count();
+            $rating_5 = round($r*5,2);
+            $rating_100 = round($r*100,2);
+          }  
 
          if (Auth::user()->ni_admin )
         {
@@ -982,13 +993,15 @@ class PagesController extends Controller
             'list_tasks' => $list_tasks,
             'number_tasks' => $number_tasks,
             'prof_comp_array' => $prof_comp_array,
+            'rating_5' => $rating_5,
+            'rating_100' => $rating_100,
             ]);
     }
 
 
     public function viewWriterProfile(Request $request, User $user)
     {
-        // We confirm that the person requesting the user's profile is an admin or client (should come later on)
+        // We confirm that the person requesting the user's profile is an admin or client (should come later on its time)
         if(! $request->user()->ni_admin){
             // return back()->with ('error', 'You are not authorised to view that page. Contact support for assistance');
             Return redirect('find_work')->with('error',"We are still working on a new writer profile page in the mean time... Find some work below :)");
@@ -1020,7 +1033,17 @@ class PagesController extends Controller
             $b_b_name = '';
             $a_name = '';
             $a_number = '';
-
+            //We count fines and 5 star ratings
+            $s_d = $user->earnings()->count() - $user->fines()->count();
+            if (!$s_d) {
+              $rating_5 = 0;
+              $rating_100 =0;
+            }
+            else {
+                $rating = $s_d/$user->earnings()->count();
+                $rating_5 = round($rating*5,2);
+                $rating_100 = round($rating*100,2);
+            }
         if($user->b_details->count() > 0)
         {
             $b_name = $user->b_details->first()->b_name;
@@ -1029,7 +1052,7 @@ class PagesController extends Controller
             $a_number = $user->b_details->first()->a_number;
         }
 
-        $subject_infos = DB::table('orders')->where('user_id',$user->id)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
+        $subject_infos = DB::table('orders')->where('user_id',$user->id)->where('approved', 1)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
 
         Return view('pages.profile',[
             'site_title'=> self::$site_title,
@@ -1055,6 +1078,8 @@ class PagesController extends Controller
             'list_tasks' => $list_tasks,
             'number_tasks' => $number_tasks,
             'prof_comp_array' => $prof_comp_array,
+            'rating_5' => $rating_5,
+            'rating_100' => $rating_100,
             ]);
 
     }

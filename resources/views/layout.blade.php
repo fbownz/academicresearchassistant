@@ -25,7 +25,7 @@
         <!--<link rel="stylesheet" type="text/css" href="/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">-->
         <link rel="stylesheet" href="/css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
         @elseif(strpos($_SERVER['REQUEST_URI'], "readmail") !== false || strpos($_SERVER['REQUEST_URI'], "compose") !== false )
-        <link rel="stylesheet" href="/css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+        <link rel="stylesheet" type="txt/css" href="/css/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
         @endif
         @if (strpos($_SERVER['REQUEST_URI'], "edit") !== false)
         <link rel="stylesheet" type="text/css" href="/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
@@ -389,7 +389,21 @@ use App\User;
           <img src="{{Auth::user()->prof_pic_url}}" class="img-circle" alt="{{Auth::user()->first_name}} Avi">
         </div>
         <div class="pull-left info">
-          <p>{{Auth::user()->first_name}}</p>
+          <p>{{Auth::user()->first_name}} <br>
+            @if(!Auth::user()->ni_admin)
+                <?
+                  $s_d = Auth::user()->earnings()->count() - Auth::user()->fines()->count(); 
+                  if (!$s_d) {
+                    $r_5 = 0;
+                  }
+                  else{
+                    $r = $s_d/Auth::user()->earnings()->count();
+                    $r_5 = round($r*5,2);
+                  }
+                ?>
+              <b>{{$r_5}}</b><i class="fa fa-star"></i>
+            @endif
+            </p>
           <!-- Status -->
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
@@ -788,8 +802,8 @@ use App\User;
   <!-- Heap Analytics -->
 
     <script type="text/javascript">
-      window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-        heap.load("2580214040");
+      // window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+      //   heap.load("2580214040");
   </script>
 </body>
 </html>

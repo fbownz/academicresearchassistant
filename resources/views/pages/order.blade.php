@@ -98,6 +98,15 @@
 								$when = $postedat->diffForHumans() ;
 								$user = User::find($note->user_id);
 								$msg_profpic = $user->prof_pic_url;
+
+								$s_d = $user->earnings()->count() - $user->fines()->count();
+								if (!$s_d) {
+									$r_5 = 0;
+								}
+								else{
+					            	$r = $s_d/$user->earnings()->count();
+					            	$r_5 = round($r*5,2);
+								}
 								?>
 								<div class="direct-chat-msg
 									@if($user->ni_admin)
@@ -122,7 +131,15 @@
 
 										@else
 											{{$user->name}}
-										@endif </span>
+										@endif </span> 
+										<span class="text-green @if($user->ni_admin)
+											display-none
+											@else
+											pull-left
+											@endif">
+			                    			&nbsp;<b>{{$r_5}}</b><i class="fa fa-star"></i>
+			                    		</span>
+											
 					                    <span class="direct-chat-timestamp @if($user->ni_admin)
 											pull-left
 											@else
@@ -362,6 +379,15 @@
 		              @foreach($bids as $bid)
 						<?
 							$bid_user = $bid->user;
+							$s_d = $bid_user->earnings()->count() - $bid_user->fines()->count();
+							if (!$s_d) {
+								$r_5 = 0;
+							}
+							else{
+				            $r = $s_d/$bid_user->earnings()->count();
+				            $r_5 = round($r*5,2);
+							}
+
 							if ($bid->id & 1)
 							{
 								$a = "left" ;
@@ -384,7 +410,12 @@
 			                    		{{$bid_user->name}}
 		                    		@endif
 			                    	</a>
+			                    	<br>
 			                    </span>
+			                    <span class="text-green pull-{{$a}}">
+			                    	<b>{{$r_5}}</b><i class="fa fa-star"></i>
+			                    </span>
+
 			                    <span class="direct-chat-timestamp pull-{{$b}}">{{$bid->created_at->format('F j, Y H:i A')}}</span>
 		                  	</div>
 							<img class="direct-chat-img" src="{{$bid_user->prof_pic_url}}" alt="{{$bid_user->id}} Prof Pic">
