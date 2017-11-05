@@ -78,7 +78,7 @@ class RegistrationController extends Controller
             $user->save();    
         }
         else{
-            Helpers::flash($user->first_name.'Unfortunately you can only have one account!');
+            Helpers::flash($request->first_name.'Unfortunately you can only have one account!');
 
                 return redirect()->back();
         }
