@@ -343,7 +343,6 @@
                 <hr>
                 <div class="form-group">
                 <label class="col-sm-3 control-label text-olive" for="picha_ya_id">
-                  <!-- <img src="{{$user->picha_ya_id_url}}" class="user-image" alt="photo of id"> -->
                   @if($user->picha_ya_id)
                    <? $dl='id' ?>
                     <a href="/user/dl/{{$dl}}" class=" btn btn-success">
@@ -355,11 +354,13 @@
                     @endif
                 </label>
                 <div class="col-sm-9">
+                @if(!$user->picha_ya_id)
                   {!! Form::file('picha_ya_id', null, array('class' => 'form-control',
                                                             'required' =>'required')) !!}
                   <div class="text-muted text-olive">
                   Upload a scanned copy of your id
                   </div>
+                  @endif
                 </div>
                 </div>
 
@@ -377,11 +378,13 @@
                     @endif
                   </label>
                   <div class="col-sm-9">
+                    @if(!$user->resume)
                   {!! Form::file('resume', null, array('class' => 'form-control',
                                                       'required' =>'required')) !!}
-                  <div class="text-muted text-olive">
-                  Update your CV
-                  </div>
+                    <div class="text-muted text-olive">
+                    Update your CV
+                    </div>
+                    @endif
                   </div>
                 </div>
                 <hr>
@@ -397,12 +400,14 @@
                       Degree or Academic Certificate
                     @endif
                   </label>
-                <div class="col-sm-8">
+                <div class="col-sm-9">
+                  @if(!$user->certificate)
                   {!! Form::file('certificate', null, array('class' => 'form-control',
                                                                           'required' =>'required')) !!}
                   <div class="text-muted text-olive">
                   Click to upload a scanned copy of Degree/Certificate
                   </div>
+                  @endif
                 </div>
                 </div>
                 <hr>
