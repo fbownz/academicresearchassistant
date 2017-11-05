@@ -25,6 +25,7 @@
                                 <th>Processing</th>
                                 <th>Revision</th>
             					<th>Registration IP</th>
+                                <th>Status</th>
             				</tr>
             			</thead>
             			<tbody>
@@ -45,6 +46,10 @@
             					<td>{{$user->orders->where('status','Active')->count()}}</td>
             					<td>{{$user->orders->where('status','Active-Revision')->count()}}</td>
             					<td>{{$user->ip}}</td>
+                                <td><a href="/writer/deactivate/{{$user->id}}">
+                                      <button type="button" class="btn btn-block btn-danger">Deactivate User</button>
+                                    </a>
+                                </td>
             				</tr>
             				@endforeach
             			</tbody>
