@@ -112,8 +112,6 @@
             <select name="writer" class="form-control" required ="required">
               <option selected="selected" value="">Select a Writer</option>
               <option value="active writers">Active Writers</option>
-              <option value="inactive writers">Inactive Writers</option>
-              <option value="all writers">All Writers</option>
               @foreach($writers as $writer)
               <option value="{{$writer->id}}">
                 {{$writer->first_name}} {{$writer->last_name}}

@@ -60,18 +60,29 @@ class RegistrationController extends Controller
             // 'password_confirmation'=>'required|confirmed',
             'checkbox' =>'required'
             ]); 
-        $confirmation_code = str_random(30);
-    	$user = new User;
-    	$user->email = $request->email;
-    	$user->first_name = $request->first_name;
-    	$user->last_name = $request->last_name;
-    	$user->password = bcrypt($request->password);
-        $user->confirmation_code = $confirmation_code;
+        //We check the ip address used for this request
+        //We return user with an error to let them know they can't sign up for another user account.
+        $ip_count = User::where('ip',$request->ip)->count();
+        if (!$ip_count) {
+            $confirmation_code = str_random(30);
+            $user = new User;
+            $user->email = $request->email;
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->password = bcrypt($request->password);
+            $user->confirmation_code = $confirmation_code;
 
-    	$user->ip = $request->getClientIp();
+            $user->ip = $request->getClientIp();
 
-    	
-        $user->save();
+            
+            $user->save();    
+        }
+        else{
+            Helpers::flash($user->first_name.'Unfortunately you can only have one account!');
+
+                return redirect()->back();
+        }
+        
 
          Mail::send('emails.confirm',['user'=>$user, 'confirmation_code' => $confirmation_code ],function ($m) use ($user)
         {
