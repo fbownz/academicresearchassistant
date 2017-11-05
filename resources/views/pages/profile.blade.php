@@ -341,77 +341,53 @@
                   </div>
                 </div>
                 <hr>
+
+                @if(!$user->picha_ya_id)
                 <div class="form-group">
                 <label class="col-sm-3 control-label text-olive" for="picha_ya_id">
-                  @if($user->picha_ya_id)
-                   <? $dl='id' ?>
-                    <a href="/user/dl/{{$dl}}" class=" btn btn-success">
-                    <i class="icon fa fa-download"></i>Download your ID
-                  </a>
-                  
-                    @else
                     Upload a scanned copy of your ID
-                    @endif
                 </label>
                 <div class="col-sm-9">
-                @if(!$user->picha_ya_id)
                   {!! Form::file('picha_ya_id', null, array('class' => 'form-control',
                                                             'required' =>'required')) !!}
                   <div class="text-muted text-olive">
                   Upload a scanned copy of your id
                   </div>
-                  @endif
                 </div>
                 </div>
-
                 <hr>
+                  @endif
+
+                  @if(!$user->resume)
                 <div class="form-group">
                   <label class="control-label col-sm-3 text-olive" for="resume">
-                    @if($user->resume !== null)
-                    <? $dl = 'cv'?>
-                    <a href="/user/dl/{{$dl}}" class=" btn btn-success">
-                    <i class="icon fa fa-download"></i> Download your CV
-                  </a>
-                  
-                    @else
-                    Upload your CV
-                    @endif
+                    CV or Professional resume
                   </label>
                   <div class="col-sm-9">
-                    @if(!$user->resume)
                   {!! Form::file('resume', null, array('class' => 'form-control',
                                                       'required' =>'required')) !!}
                     <div class="text-muted text-olive">
                     Update your CV
                     </div>
-                    @endif
                   </div>
                 </div>
                 <hr>
+                @endif
+                @if(!$user->certificate)
                 <div class="form-group">
                   <label class="control-label col-sm-4 text-olive" for="resume">
-                    @if($user->certificate !== null)
-                    <? $dl = 'cert'?>
-                    <a href="/user/dl/{{$dl}}" class=" btn btn-success">
-                    <i class="icon fa fa-download"></i>
-                    Download your certificate
-                    </a>
-                    @else
                       Degree or Academic Certificate
-                    @endif
                   </label>
                 <div class="col-sm-9">
-                  @if(!$user->certificate)
                   {!! Form::file('certificate', null, array('class' => 'form-control',
                                                                           'required' =>'required')) !!}
                   <div class="text-muted text-olive">
                   Click to upload a scanned copy of Degree/Certificate
                   </div>
-                  @endif
                 </div>
                 </div>
                 <hr>
-
+                @endif
                 <div class="form-group">
                   <div class="col-sm-offset-2 col-sm-10 ">
                     {!! Form::submit('Update Profile', array('class'=>'btn btn-success'))!!}
