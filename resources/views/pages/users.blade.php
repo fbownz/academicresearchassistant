@@ -45,6 +45,11 @@
             					<td>{{$user->orders->where('status','Active')->count()}}</td>
             					<td>{{$user->orders->where('status','Active-Revision')->count()}}</td>
             					<td>{{$user->ip}}</td>
+                                <td>
+                                    <a href="/writer/deactivate/{{$user->id}}">
+                                      <button type="button" class="btn btn-block btn-danger">Delete this Account</button>
+                                    </a>
+                                </td>
             				</tr>
             				@endforeach
             			</tbody>

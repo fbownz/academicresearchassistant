@@ -330,7 +330,7 @@ class UserController extends Controller
 
                         $m->to($writer->email, $writer->first_name)->subject($subject);
                     });
-                return redirect('PagesController::allusers')->with('message', ''.$writer->first_name.' deactivated successfully');
+                return redirect('users')->with('message', ''.$writer->first_name.' deactivated successfully');
             }
 
         
