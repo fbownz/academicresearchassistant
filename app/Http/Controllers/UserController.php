@@ -311,12 +311,12 @@ class UserController extends Controller
 
                 //We queue a new email to the writer
                     $message = new Message;
-                    $message->subject = "Acount Status at AcademicResearchAssistants";
+                    $message->subject = "Acount Status!";
                     $message->sender_id = $request->user()->id;
                     $message->user_id = $id;
-                    $message->body = "Unfortunately our system noticed irregularities with your account and therefore, your writers account has been deactivated. <br/>
+                    $message->body = "Unfortunately our system noticed irregularities with your account or you have not been active <br /> your writers account has been deactivated. <br/>
                         This means you will no longer be able to place new bids on orders and only have access to the papers that you were assigned before. <br/>
-                        Get in touch with the support team for further information or if you have any questions.
+                        Get in touch with the support team for further information or if you have any questions. <br />
                         Regards.";
                     $message->department = "Quality Assurance";
                     $message->save();
@@ -326,7 +326,7 @@ class UserController extends Controller
                     $mail = $message;
                     Mail::queue('emails.new_message',['user'=>$writer, 'subject'=>$subject, 'mail'=>$mail],function ($m) use ($writer,$subject)
                     {
-                        $m->from('notifications@academicresearchassistants.com','Do not Reply: Academic Research Assistants');
+                        $m->from('notifications@academicresearchassistants.com','Must read: Academic Research Assistants');
 
                         $m->to($writer->email, $writer->first_name)->subject($subject);
                     });
