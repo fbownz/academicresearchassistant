@@ -5,10 +5,18 @@
     <section class="content">
 	<div class="row">
         <div class="col-md-12">
+             @if(Session::has('message'))
+          <div class="alert alert-info alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                <h4><i class="icon fa fa-info"></i>Success!</h4>
+                 <? $message = Session('message'); ?>
+                {{$message}}
+              </div>
+        @endif
           <div class="box box-success">
 	            <div class="box-header with-border">
 	              <h3 class="box-title">Users</h3>
-
+                    
 	              <div class="box-tools pull-right">
 	                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 	                </button>
