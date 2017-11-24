@@ -1,2 +1,5 @@
 kernel.php
 routes.php
+Controllers/Auth/*
+Middleware
+Requests
