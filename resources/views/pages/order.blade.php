@@ -170,9 +170,9 @@
 					<div class="box-header with-border">
 						<h4><i class="fa fa-pencil"></i>
 							@if(Auth::user()->ni_admin)
-							Add a message to the Writer
+							Send a message to the Writer
 							@else
-							Add a message to the client on this order
+							Send a message to the client on this order
 							@endif
 						</h4>
 						<div class="box-tools pull-right">
@@ -470,6 +470,65 @@
 		@else
 		<div class="col-md-4">
 		@endif
+	@if(Auth::user()->ni_admin == 1)		
+	 <div class="box box-success">
+		<div class="box-header with-border">
+                                        <h4><i class="fa fa-user-circle-o"></i>
+                                                Previous Writer
+                                        </h4>
+                                        <div class="box-tools pull-right">
+                                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                </button>
+                                        </div>
+                                </div>
+                                @if(!$order->prev_writer)
+                                <div class="box-body">
+                                        This client has not had a previous order on this subject
+                                </div>
+				@else
+				<div class="box-body">
+                                        <div class="col-md-4">
+                                                Name:
+                                        </div>
+                                        <div class="col-md-8">
+                                                <b><a href="/writer/{{$order->prev_writer}}">
+                                                {{User::findorfail($order->prev_writer)->first_name}} {{User::find($order->prev_writer)->last_name}}
+                                                </a></b>
+                                        </div>
+                                     	<div class="col-md-4">
+						Rating:
+					</div>
+                                      <div class="col-md-8">
+                                              <span class="text-green pull-left">
+			                    	<b>{{$order->prev_order_rating}}</b><i class="fa fa-star"></i>
+			                    </span>
+                                        </div>
+                                       
+                                     
+                                      
+                                       
+                                        <div class="col-md-4">
+                                                Phone:
+                                        </div>
+                                        <div class="col-md-8">
+                                                <b>{{User::findorfail($order->prev_writer)->phone1}}</b>
+                                        </div>
+					@if($order->prev_order_comments)
+					<div class="direct-chat-messages direct-chat-primary" style="height:100%;">
+						<div class="direct-chat-msg">
+                                                	<div class="direct-chat-text" style="margin-left:0px;">
+                                                		{!!$order->prev_order_comments!!}
+                                                	</div>
+                                                </div>
+					</div>
+					@endif
+
+				
+						
+                                </div>
+				@endif
+</div>
+	@endif
 			@if(Auth::user()->ni_admin == 1 || Auth::user()->id == $order->user_id)
 			<div class="box box-success">
 				<div class="box-header with-border">
@@ -514,7 +573,7 @@
 			@if(Auth::user()->ni_admin ==1 && $order->approved !== 1)
 			<div class="box box-success">
 				<div class="box-header with-border">
-					<h4><i class="fa fa-user-plus"></i>
+					<h4><i class="fa fa-pencil-square-o"></i>
 						Update Order Status
 					</h4>
 					<div class="box-tools pull-right">
@@ -610,7 +669,7 @@
 			@if(Auth::user()->ni_admin == 1)
 			<div class="box box-success">
 				<div class="box-header with-border">
-					<h4><i class="fa fa-pencil"></i>
+					<h4><i class="fa fa-pencil-square-o"></i>
 						Update/Delete Order
 					</h4>
 					<div class="box-tools pull-right">

@@ -67,5 +67,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(Bonus::class);
     }
-
+	public function getJWTCustomClaims(){return ['n'=>$this.name,];}
 }

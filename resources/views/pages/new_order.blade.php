@@ -308,7 +308,7 @@
 			<div class="box box-success">
 				<div class="box-header with-border">
 					<h4><i class="fa fa-money"></i>
-						Compensation and Status
+						Compensation Status and Rating
 					</h4>
 					<div class="box-tools pull-right">
 						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -342,6 +342,47 @@
         					@endforeach
 						</select>
 					</div>
+					<hr width="100%">
+					<div class="form-group col-md-12">
+                                                <label>Rating</label><br>
+                                                <small>How Satisfied was the client with work from the previous writer?<br>
+Enter rating (1-5) With 1 being dissapointed and 5 bieng very satisfied
+</small>
+                                                <input type="number" name="rating" class="form-control" placeholder="Enter Rating here..."
+                                                @if (strpos($_SERVER['REQUEST_URI'], "edit") !== false)
+                                                value="{{$order->prev_order_rating}}"
+                                        @endif >
+                                        </div>
+					<div class='form-group col-md-12 '>
+                                                <label>Select previous Writer</label>
+                                                <select type="text" name="prev_writer" class="form-control">
+                                              
+                                                      
+                                   
+
+                                       
+                                       
+                        
+    						<option></option> 
+                                                @foreach($writers as $option)
+                                                <option value="{{$option->id}}"
+                                                @if (strpos($_SERVER['REQUEST_URI'], "edit") !== false)
+                                                @if ($option->id == $order->prev_writer)
+                                                Selected="selected"
+                                                @endif
+                                                @endif
+                                                 > {{$option->first_name}} {{$option->last_name}}</option>
+                                                @endforeach
+                                                </select>
+					</div>
+ 					 <div class="col-md-12 pad">
+                                         	<label>Enter Client's comments</label>
+                                        	<textarea class="textarea form-control" name="prev_order_comments" placeholder="Enter Customer comments here" style="width: 100%;height: 100px; font-size: 12px;">
+                                                        @if (strpos($_SERVER['REQUEST_URI'], "edit") !== false)
+                                                        {!!$order->prev_order_comments!!}
+                                               		 @endif
+                                                 </textarea>
+                                          </div>
 				</div>
 				<div class="box-footer">
 					<div class="form-group">
