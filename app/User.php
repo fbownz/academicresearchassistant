@@ -23,7 +23,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','address','certificate','certificate_mime',
+        'country','email','ip','ni_admin','phone1','phone2','picha_ya_id','picha_ya_id_mime','picha_ya_id_url',
+        'prof_pic','resume','resume_mime'
     ];
 // Create a one to many relationship with the orders
     public function orders(){

@@ -1,4 +1,4 @@
 # academicresearchassistants
-A job based site that lets its users bid for work and they are paid by the number of pages of work done.
-
+A REST API, and backend app for Online-Freelance jobs site that enables users to bid on jobs and interact with clients and admin alike.
+www.academicresearchassistants.com
 https://twitter.com/fbownz
