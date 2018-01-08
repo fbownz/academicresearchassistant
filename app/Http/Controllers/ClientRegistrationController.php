@@ -20,7 +20,7 @@ class ClientsRegistrationController extends Controller
 
     // We define our variables to use on the class
 
-    protected $from = 'noreply@writemyclassessay.com';
+    protected $from = 'support@writemyclassessay.com';
     $domain = 'writemyclassessay.com';
 
     protected $to;
@@ -44,6 +44,19 @@ class ClientsRegistrationController extends Controller
  	   {
      	   $this->middleware('guest');
    	 }
+
+     public function checkEMail(Request $request)
+    {
+    // We will checkMail and create a new user if no user is found with that mail.
+    $user = User::where('email', $request->email)->get();
+    if ($user->count() == 0) {
+        //We create a new user with that email address and create a password.
+        store_client($request);
+    } else (condition) {
+        return response()->json('A registered user', 201);    }
+    
+    }
+
      //Function to generate a strong password for our new customers.
      function generateStrongPassword($length = 9, $add_dashes = false, $available_sets = 'luds')
         {
@@ -87,33 +100,31 @@ class ClientsRegistrationController extends Controller
             $domain = substr (Request::root(), 12); // $domain is now 'example.com'
             $from = 'support@'.$domain;
         }
-
     	$this->validate($request,
             ['email'=>'required|unique:users,email']); 
-            
+            $sp = generateStrongPassword(9,false,'luds');
+
             $user = new User;
             $user->email = $request->email;
-            $user->password = bcrypt(generateStrongPassword(9,false,'luds'));
+            $user->password = bcrypt();
             // $user->confirmation_code = $confirmation_code;
-            $user->ip = $request->getClientIp();
+            $user->ip = $request->getClientIp($sp);
             $user->verified = 1;
             $user->status ='1';
-            $user->domain= $domain;
-            
             $user->save(); 
             //Mail to client for joining
-         Mail::send('emails.clientpassword',['user'=>$user, 'password' => $request->password ],function ($m) use ($user,$request)
+         Mail::send('emails.clientpassword',['user'=>$user, 'password' => $sp, 'domain'=> $domain ],function ($m) use ($user,$request)
         {
-            $m->from([$from],'Top Academic Paper writing Platform');
+            $m->from([$from],'Academic Paper writing Platform');
 
             $m->to([$user->email])->subject('Welcome to '.$domain.'- The Complete Paper Writing Service');
         });
 
          //Mail to Admins for new registration
 
-         Mail::send('emails.admin_new_user',['user'=>$user, 'confirmation_code' => $confirmation_code ],function ($m) use ($user)
+         Mail::send('emails.admin_new_user',['user'=>$user, 'domain'=>$domain],function ($m) use ($user)
         {
-            $m->from('notifications@academicresearchassistants.com','Academic Research Assistants');
+            $m->from([$from],'Academic Paper writing Platform');
 
             $m->to(['m@writemyclassessay.com','chris@writemyclassessay.com'], 'Admin')->subject('A new Client successfully Registered on '.$domain);
         });
