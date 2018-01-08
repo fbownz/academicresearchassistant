@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laratrust\Traits\LaratrustUserTrait;
 
@@ -69,5 +70,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Bonus::class);
     }
-	public function getJWTCustomClaims(){return ['n'=>$this.name,];}
+	//implementing JWT Auth
+	public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+	public function getJWTCustomClaims(){return ["name"=>$this->name];}
 }
