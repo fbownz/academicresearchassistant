@@ -70,6 +70,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Bonus::class);
     }
+    /*2018*/
+    public function transactions()
+    {
+        return $this->hasMany(Transactions::class);
+    }
+    public function files()
+    {
+        return $this->hasMany(Files::class);
+    }
+    public function client_feedbacks(){
+      return $this->hasMany(ClientFeedback::class);
+    }
 	//implementing JWT Auth
 	public function getJWTIdentifier()
     {

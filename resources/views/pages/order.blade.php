@@ -51,7 +51,7 @@
 						</div>
 					</div>
 					@endif
-			@if($order->status == "Available" && Auth::user()->ni_admin !== 1 && Auth::user()->verified == 1 && Auth::user()->status == "1" )
+			@if($order->status == "Available" || $order->status == "Unpaid" && Auth::user()->ni_admin !== 1 && Auth::user()->verified == 1 && Auth::user()->status == "1" )
 				<div class="box box-success" id="bidonthis">
 					<div class="box-header with-border">
 						<h4><i class="fa fa-pencil"></i>
@@ -65,10 +65,13 @@
 					</div>
 					{{ Form::open(array('url'=>'bid-order')) }}
 					<div class="box-body">
-						<input type="hidden" name="order_id" value="{{$order->id}}">
-						<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
-						<input type="number" class="form-control" name="bid_ammount" Required="required" placeholder="Enter your total bid ammount here in $..." />
-						<input type="text" class="form-control" name="bid_msg" Required="required" placeholder="Add a Message with your bid..."/>
+						<div class="callout callout-default">
+	                		<p><h4>Important! Your bid should include</h4><ol><li>A brief Introduction of how you'll complete the paper</li><li>How much time you will take to complete the paper</li><li>Your qualifications and reason why the cient should assign you the paper</li></ol></p>
+              			</div>
+							<input type="hidden" name="order_id" value="{{$order->id}}">
+							<input type="hidden" name="user_id" value="{{Auth::user()->id}}">
+							<input type="number" class="form-control" name="bid_ammount" Required="required" placeholder="Enter your total bid ammount here in $..." max="{{$max_bid}}"/>
+							<textarea type="text" class="form-control" name="bid_msg" Required="required" placeholder="Enter your bid message..." rows="4"></textarea>
 					</div>
 					<div class="box-footer">
 						{{ Form::submit('Bid on this job',array('class'=>'btn btn-success')) }}
@@ -166,11 +169,12 @@
 		            	</div>
 					</div>
 				@endif
+				<!-- Order Notes-->
 				<div class="box box-success">
 					<div class="box-header with-border">
 						<h4><i class="fa fa-pencil"></i>
 							@if(Auth::user()->ni_admin)
-							Send a message to the Writer
+							Send a message to both Writer and Client
 							@else
 							Send a message to the client on this order
 							@endif
@@ -255,13 +259,17 @@
 								<div class="col-md-7 col-sm-6 text-green"><i class="fa fa-clock-o"></i> {{$timer}}</div>
 							@endif
 						    <div class="col-md-5 col-sm-6"><strong>Compensation Total:</strong></div>
-					        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div>
+					        <div class="col-md-7 col-sm-6 text-green">${{$bid_compensation}}</div>
+						    <div class="col-md-5 col-sm-6"><strong>Type of work:</strong></div>
+						    <div class="col-md-7 col-sm-6">{{$order->type_ofwork}}</div>
 						    <div class="col-md-5 col-sm-6"><strong>Pages:</strong><small>(275 Words/Page)</small></div>
 						    <div class="col-md-7 col-sm-6">{{$order->word_length}}, <strong>{{$order->spacing}} Spaced</strong></div>
 						    <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
 					        <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
-							<div class="col-md-5 col-sm-6"><strong>Order Type:</strong></div>
+					        @if($order->type_of_product)
+					        <div class="col-md-5 col-sm-6"><strong>Order Type:</strong></div>
 					        <div class="col-md-7 col-sm-6">{{$order->type_of_product}}</div>
+					        @endif
 					        <div class="col-md-5 col-sm-6"><strong>Topic:</strong></div>
 					        <div class="col-md-7 col-sm-6">{{$order->subject}}</div>
 					        <div class="col-md-5 col-sm-6"><strong>Academic Level:</strong></div>
@@ -540,7 +548,7 @@
                 		</button>
 					</div>
 				</div>
-				@if($order->status == "Available" || $order->status == "Not-Available")
+				@if($order->status == "Available" || $order->status == "Not-Available" || $order->status=="Unpaid")
 				<div class="box-body">
 					No Writer assigned Yet
 				</div>

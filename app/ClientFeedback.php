@@ -4,8 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Bid extends Model
-{
+class ClientFeedback extends Model
+{	
+	// The table we are on
+	 protected $table = 'client_feedback';
      // A one to one Relationship with users
     public function user(){
 
@@ -14,11 +16,5 @@ class Bid extends Model
     public function order(){
 
     	return $this->belongsTo(Order::class);
-    }
-    // create a one to many relationship with notes
-    public function notes(){
-
-    	return $this->hasMany(Note::class);
-
     }
 }

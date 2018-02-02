@@ -56,6 +56,8 @@ class Order_delivery_reports_controller extends Controller
     	
     	$current_order->update();
         //We send a message to the writer and the admin that we've received their paper
+        //We check if the order has a client_ID and we send the clientDelivery cemail.
+        NotificationController::clientOrderDeliveryNotice($user, $current_order);
         NotificationController::orderDeliveryNotice($user, $current_order);
         NotificationController::adminOrderDeliveryNotice($user, $current_order);
     	return back()->with('message', 'Paper uploaded Successfully');

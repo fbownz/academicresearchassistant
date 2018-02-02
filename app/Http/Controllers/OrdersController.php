@@ -240,7 +240,7 @@ class OrdersController extends Controller
     public function show(Request $request, Order $order){
 
         // I use this so as not to show Orders to people not asigned
-        if (!$request->user()->ni_admin && $order->status !== 'Available' && $order->status !=="Not-Available" ) {
+        if (!$request->user()->ni_admin && $order->status !== 'Available' && $order->status !== 'Unpaid' && $order->status !=="Not-Available" ) {
         // I had to change and check against user_id instead of $order->user->id
             if ($order->user_id !== $request->user()->id) {
                 Return redirect('orders')->with('warning','Hey '.$request->user()->first_name.', You do not have permision to view Order '.$order->order_no.' It has already been assigned Or it is not available.');
@@ -253,6 +253,7 @@ class OrdersController extends Controller
         $users_to_be_assigned = User::has('bids')->where('status', "1")->where('verified', 1)->orderBy('first_name','asc')->get();
 
         $bids_submitted = Bid::where('order_id','=',$order->id)->orderBy('created_at','asc')->get();
+
 
          if (Auth::user()->ni_admin )
         {
@@ -276,6 +277,8 @@ class OrdersController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
+            $max_bid = $order->compensation;
+            $bid_compensation = $order->compensation;
 
         }
         else
@@ -303,6 +306,23 @@ class OrdersController extends Controller
           $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
           $number_tasks =$list_tasks->count() ;
 
+          // We do a calculation to determine the maximum & min amount a writer should bid for an order.
+          if (Auth::user()->earnings()->count() > 70) {
+            //We confirm that the compensation is less than (number of pages*5)
+            //If it is less than total number of pages*5, we go ahead and put the compensation as total (number of pages*5)
+            if (($order->word_length) * 5 > $order->compensation ) {
+              $max_bid = ($order->word_length * 5);
+            } else{
+              $max_bid =  ($order->compensation);
+            }
+          }else {
+            if (($order->word_length) * 5 > $order->compensation ) {
+              $max_bid = ($order->compensation);
+            } else{
+              $max_bid = ($order->word_length * 5);
+            }
+          }
+          $bid_compensation = ($order->word_length * 5);
         }
 
          return view('pages.order', [
@@ -326,6 +346,8 @@ class OrdersController extends Controller
         'list_tasks' => $list_tasks,
         'number_tasks' => $number_tasks,
         'prof_comp_array' => $prof_comp_array,
+		'max_bid' => $max_bid,
+		'bid_compensation'=>$bid_compensation,
         ]);
 
     // return $card;
@@ -1075,6 +1097,8 @@ class OrdersController extends Controller
             // $order->delivery_time = $request->delivery_time;
 
             $order->deadline = $request->deadline;
+            $order->client_deadline = $request->deadline;
+            
         }
 
         if($request->client_deadline){
@@ -1203,6 +1227,7 @@ class OrdersController extends Controller
         if($request->deadline){
 
             $order->deadline = $request->deadline;
+            $order->client_deadline = $request->deadline;
         }
         $order->is_late = null;
         $order->update();
@@ -1211,6 +1236,13 @@ class OrdersController extends Controller
           $user = $order->user;
           NotificationController::delivery_time_changed($user, $order);
         }
+        //We also send a notification to the client that their order time has been updated.
+        //We make sure its being sent from the correct domain and correct link
+        //So for now we will do without it
+        // if($order->client_ID){
+        //   $user = User::findorfail($order->client_ID);
+        //   NotificationController::delivery_time_changed($user, $order);
+        // }
 
 
 
@@ -1228,6 +1260,8 @@ class OrdersController extends Controller
             $order->is_late = null; //We make sure the order is not marked as late
             $order->update();
 
+            //We add a notification on the order of the same change.
+            OrderreportsController::store_report($request);
             return back()->with('message', 'Order made Available Successfully');
 
         }

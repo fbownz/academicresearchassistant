@@ -16,7 +16,10 @@ class Order extends Model
 
     }
     public function order_reports(){
-    	return $this->hasMany(Order_report::class);
+      return $this->hasMany(Order_report::class);
+    }
+    public function client_feedbacks(){
+      return $this->hasMany(ClientFeedback::class);
     }
 
     public function order_delivery_reports(){
@@ -50,9 +53,13 @@ class Order extends Model
     {
       return $this->hasMany(Fine::class);
     }
-    
     public function bonuses()
     {
         return $this->hasMany(Bonus::class);
+    }
+    
+    public function files()
+    {
+      return $this->hasMany(Files::class);
     }
 }

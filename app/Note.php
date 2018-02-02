@@ -15,4 +15,9 @@ class Note extends Model
     {
     	return $this->belongsTo(User::class);
     }
+    // Create a one to one relationship with the bids
+    public function bid(){
+
+    	return $this->belongsTo(Bid::class);
+    } 
 }

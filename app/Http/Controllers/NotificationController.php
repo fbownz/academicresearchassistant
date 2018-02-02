@@ -48,10 +48,65 @@ class NotificationController extends Controller
 
 
         //We send an sms notification to the User for the assigned order;
-        $txt = 'Congratulations '.$user->first_name.' your bid #'.$order->order_no.' has been accepted. Deliver the paper by '.$deadline."\n".' Academicresearchassistants.com';
+        $txt = 'Congratulations '.$user->first_name.' your bid on '.$order->order_no.' has been accepted. Deliver the paper by '.$deadline."\n".' Academicresearchassistants.com';
         $send_sms =self::sendSMSnotice($user,$txt);
 
     }
+    public static function bidAcceptedWriterAdminnotice(User $writer, Order $order)
+    {
+
+       
+        //Because of the new clients, and bids & messages, we should first check if an order is active/ before fetching user ID.
+
+        $notification = new Notification;
+        //We check the status of the order if it's Active and add user_id
+        //That means we will also add a client_id on notifications, which we have done
+        if ($order->user) {
+            $notification->user_id = $order->user->id;
+        }
+        if ($order->client_ID) {
+            $notification->client_id = $order->client_ID;
+        }
+        $notification->order_id = $order->id;
+        $notification->type = 'admin_order_assigned';
+        $notification->message ='Client '.$order->client_ID.' has completed payment and order assigned successfully';
+
+        $notification->save();
+        $admins = User::where('ni_admin', 1)->get();
+        foreach ($admins as $admin) {
+            # code...
+            $admin_email = $admin->email;
+            $admin_name = $admin->first_name;
+
+            Mail::queue('emails.admin_order_assigned',['order'=>$order, 'notification'=>$notification],function ($m) use ($admin_email, $admin_name, $order)
+            {
+                $m->from('noreply@academicresearchassistants.com','ARA');
+
+                $m->to($admin_email, $admin_name)->subject('Academicresearch: Order '.$order->order_no.' has been assigned!');
+            });
+        }
+        //We send another email to the client to notify them of the new order status and the writer has started working on their paper.
+            
+            $user = User::findorfail($order->client_ID);
+            if ($user->domain == 1) {
+                $domain = "writemyclassessay.com";
+                $from = "support@writemyclassessay.com";
+            } elseif ($user->domain == 2) {
+                $domain = "writemyacademicessay.com";
+                $from = "support@writemyacademicessay.com";
+            }elseif ($user->domain == 3) {
+                $domain ="writemyschoolessay.com";
+                $from = "support@writemyschoolessay.com";
+            }
+         Mail::send('emails.clientPaperActive',['user'=>$user, 'domain'=> $domain, 'order'=>$order ],function ($m) use ($user,$domain,$from)
+        {
+            $m->from($from,'Academic Paper writing Platform');
+
+            $m->to([$user->email])->subject('Your paper is active: '.$domain.'- The Complete Paper Writing Service');
+        });
+
+    }
+    
     public static function orderRevisionnotice(User $user, Order $order)
     {
 
@@ -96,20 +151,37 @@ class NotificationController extends Controller
     // }
     public static function orderMessageNotice(User $user, Order $order)
     {
+        //Order messageNotice should create 2 notifications for writers & Client
+        if ($user->id == $order->client_ID) {
+            // This is a client sending a message to a writer n admin.
+            $userID = $order->user->id;
+            $e_template = 'emails.order_message';
+        }elseif ($user->id == $order->user->id) {
+            //For our orders that don't have client_ids we should also take care of that to avoid errors.
+            if ($order->client_ID) {
+                $userID = $order->client_ID;
+            } else{
+                $userID = $user->id;
+            }
+            //We should come up with a template for order messages
+            $e_template ='emails.order_message';
+        }
+
         $notification = new Notification;
-        $notification->user_id = $user->id;
+        $notification->user_id = $userID;   
+        $notification->client_id = $order->client_ID;      
         $notification->order_id = $order->id;
         $notification->type = 'order_message';
         $notification->message ='New Message';
 
         $notification->save();
-
-        Mail::queue('emails.order_message',['user'=>$user, 'order'=>$order,'notification'=>$notification],function ($m) use ($user, $order)
+         
+        Mail::queue($e_template,['user'=>$user, 'order'=>$order,'notification'=>$notification],function ($m) use ($user, $order)
         {
             $m->from('noreply@academicresearchassistants.com','ARA');
 
             $m->to($user->email, $user->first_name)->subject('You have a New message on Order '.$order->order_no);
-        });
+        }); 
 
         //We send an sms notification to the User for order Message;
         $txt = 'You have a new Message on Order '.$order->order_no.' Kindly check the order to respond'."\n".' Academicresearchassistants.com';
@@ -117,9 +189,17 @@ class NotificationController extends Controller
     }
     public static function adminOrderMessageNotice(Order $order)
     {
+        //Because of the new clients, and bids & messages, we should first check if an order is active/ before fetching user ID.
 
         $notification = new Notification;
-        $notification->user_id = $order->user->id;
+        //We check the status of the order if it's Active and add user_id
+        //That means we will also add a client_id on notifications, which we have done
+        if ($order->user) {
+            $notification->user_id = $order->user->id;
+        }
+        if ($order->client_ID) {
+            $notification->client_id = $order->client_ID;
+        }
         $notification->order_id = $order->id;
         $notification->type = 'admin_order_message';
         $notification->message ='New Message';
@@ -147,8 +227,31 @@ class NotificationController extends Controller
 
     }
 
+    public static function clientOrderDeliveryNotice(User $writer, Order $order)
+    {
+        //For the purpose of our new clients, We also send them an email on order delivery
+        //We wil design a new email template for clients
+
+        $client = User::findorfail($order->client_ID);
+        if ($client->domain == 1) {
+            $domain = "writemyclassessay.com";
+        }elseif ($client->domain == 2) {
+            $domain = "writemyacademicessay.com";
+        }elseif ($client->domain == 3) {
+            $domain = "writemyschoolessay.com";
+        }
+        Mail::queue('emails.orderDeliveryClient',['client'=>$client, 'writer'=>$writer, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $writer, $order, $domain)
+        {
+            $m->from('support@'.$domain, 'Academic Paper writing Platform');
+
+            $m->to($client->email, $client->first_name)->subject('Your order '.$order->order_no.' has been delivered');
+
+        });
+    }
     public static function orderDeliveryNotice(User $user, Order $order)
     {
+        //For the purpose of our new clients, We also send them an email on order delivery
+        //We wil design a new email template for clients
 
         Mail::queue('emails.order_delivery',['user'=>$user, 'order'=>$order], function($m)use ($user, $order)
         {
@@ -212,7 +315,7 @@ class NotificationController extends Controller
         $notification->message ='Late Order';
 
         $notification->save();
-        // I send an email to admins on the same
+        // I send an email to admins on the same and to clients too
         $admins = User::where('ni_admin', 1)->get();
         foreach ($admins as $admin) {
             # code...
@@ -253,29 +356,6 @@ class NotificationController extends Controller
         });
 
 
-        // //We save another record on the database for the Admin notice
-        // $notification = new Notification;
-        // $notification->user_id = $order->user->id;
-        // $notification->order_id = $order->id;
-        // $notification->type = 'Delivery time updated';
-        // $notification->message ='Delivery time has been updated';
-
-        // $notification->save();
-        // // I send an email to admins on the same
-        // $admins = User::where('ni_admin', 1)->get();
-        // foreach ($admins as $admin) {
-        //     # code...
-        //     $admin_email = $admin->email;
-        //     $admin_name = $admin->first_name;
-
-        //     Mail::queue('emails.admin_late_order',['user'=>$user, 'order'=>$order],function ($m) use ($admin_email, $admin_name,$order)
-        //     {
-        //         $m->from('notifications@academicresearchassistants.com','ARA');
-
-        //         $m->to($admin_email, $admin_name)->subject('Academicresearch: Late Order Notice! for Order '.$order->order_no);
-        //     });
-        // }
-
         //We send an sms notification to the User for the time update;
         $txt = 'Greetings '.$user->first_name.' Order '.$order->order_no.' deadline has been updated to '.$order->deadline.' Kindly have a look at it and take not of the the chagnes. Academicresearchasistants.com';
         $send_sms =self::sendSMSnotice($user,$txt);
@@ -287,7 +367,7 @@ class NotificationController extends Controller
         // I want to create a notification only if the order has been assigned if it hasn't been assigned I go straight to send the sms and email;
 
         $notification = new Notification;
-        if ($order->user_id) {
+        if ($order->user) {
 
             $notification->user_id = $order->user->id;
         }
@@ -328,6 +408,9 @@ class NotificationController extends Controller
     // We save the record on the database for the admin side
     public static function bidPlaced(Request $request)
     {
+        //For the purpose of our new clients, We also send the clients an email for the bids placed
+        //We wil design a new email template for clients
+
         $notification = new Notification;
         $notification->user_id = $request->user_id;
         $notification->order_id = $request->order_id;
@@ -335,6 +418,51 @@ class NotificationController extends Controller
         $notification->message ='New Bid Placed';
 
         $notification->save();
+
+        //We send an email to the Client.
+
+        $order= Order::findorfail($request->order_id);
+        $writer = User::findorfail($request->user_id);
+        $client = User::findorfail($order->client_ID);
+
+        if ($client->domain == 1) {
+            $domain = "writemyclassessay.com";
+        }elseif ($client->domain == 2) {
+            $domain = "writemyacademicessay.com";
+        }elseif ($client->domain == 3) {
+            $domain = "writemyschoolessay.com";
+        }
+
+         Mail::queue('emails.clientBid',['writer'=>$writer, 'order'=>$order, 'domain'=>$domain,'client'=>$client], 
+            function($m)use ($writer, $order, $domain,$client)
+        {
+            $m->from('support@'.$domain, "Academic Paper writing Platform");
+
+            $m->to($client->email, $client->first_name)->subject('Writer '.$writer->name.' is ready to start working on your order '.$order->order_no);
+
+        });
+    }
+
+
+    // We save the record on the database for the admin side
+    public static function clientBidRequest(User $user,Order $order)
+    {
+
+        $notification = new Notification;
+        $notification->user_id = $user->id;
+        $notification->order_id = $order->order_id;
+        $notification->type = 'writer_bid_request';
+        $notification->message ='New Client Bid request on order '.$order->order_no;
+
+        $notification->save();
+
+                Mail::queue('emails.bid_request',['user'=>$user, 'order'=>$order], function($m)use ($user, $order)
+        {
+            $m->from('noreply@academicresearchassistants.com', 'ARA');
+
+            $m->to($user->email, $user->first_name)->subject('You have a new Bid request on Order '.$order->order_no);
+
+        });
     }
 
 
@@ -393,6 +521,8 @@ class NotificationController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
+            $max_bid = $order->compensation;
+            $bid_compensation = $order->compensation;
 
         }
         else
@@ -419,6 +549,13 @@ class NotificationController extends Controller
 
           $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
           $number_tasks =$list_tasks->count() ;
+          // We do a calculation to determine the maximum & min amount a writer should bid for an order.
+          if (Auth::user()->earnings()->count() > 70) {
+            $max_bid =  ($order->compensation);
+          }else {
+            $max_bid = ($order->word_length * 5);
+          }
+          $bid_compensation = ($order->word_length * 5);
 
         }
 
@@ -432,6 +569,8 @@ class NotificationController extends Controller
         'join_date_text' => PagesController::$join_date_text,
         'version_no' => PagesController::$version_no,
         'order' => $order,
+        'max_bid' => $max_bid,
+        'bid_compensation' =>$bid_compensation,
         'writers' => $users_to_be_assigned,
         'bids' => $bids_submitted,
         'messages_no' => $messages_no,

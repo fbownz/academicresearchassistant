@@ -1002,6 +1002,7 @@ class PagesController extends Controller
     public function viewWriterProfile(Request $request, User $user)
     {
         // We confirm that the person requesting the user's profile is an admin or client (should come later on its time)
+        // it has finally arrived (2018/jan/)
         if(! $request->user()->ni_admin){
             // return back()->with ('error', 'You are not authorised to view that page. Contact support for assistance');
             Return redirect('find_work')->with('error',"We are still working on a new writer profile page in the mean time... Find some work below :)");

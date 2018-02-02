@@ -47,7 +47,7 @@
                                   <div class="box-header with-border">
                                       <a data-toggle="collapse" data-parent="#all_orders" href="#{{$order->id}}">
                                             <span style="font-size:26px">{{$order->order_no}}</span>
-                                            <span class="pull-right" style="font-size:18px">${{$order->compensation}}</span>
+                                            <!-- <span class="pull-right" style="font-size:18px">${{$order->compensation}}</span> -->
                                       </a>  
                                   </div>
                                   <div id="{{$order->id}}" class="panel-collapse collapse">

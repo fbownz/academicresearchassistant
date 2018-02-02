@@ -200,7 +200,7 @@
                               <div class="box-header with-border">
                                 <a data-toggle="collapse" data-parent="#all_orders" href="#{{$order->id}}">
                                       <h4 class="box-title">{{$order->order_no}}</h4>
-                                      <span class="label label-success pull-right">${{$order->compensation}}</span>
+                                      <!-- <span class="label label-success pull-right">${{$order->compensation}}</span> -->
                                   </a>  
                               </div>
                               <div id="{{$order->id}}" class="panel-collapse collapse">
@@ -220,8 +220,8 @@
                                       <div class="col-md-7 col-sm-6">{{$order->style}}</div>
                                       <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
                                       <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
-                                      <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
-                                      <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div>
+                                      <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
+                                      <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
                                   
                                   
                                       <div class="box-footer clearfix">
@@ -259,7 +259,7 @@
                               <div class="box-header with-border">
                                 <a data-toggle="collapse" data-parent="#all_orders" href="#{{$order->id}}">
                                       <h4 class="box-title">{{$order->order_no}}</h4>
-                                      <span class="label label-success pull-right">${{$order->compensation}}</span>
+                                      <!-- <span class="label label-success pull-right">${{$order->compensation}}</span> -->
                                   </a>  
                               </div>
                               <div id="{{$order->id}}" class="panel-collapse collapse">
@@ -279,8 +279,8 @@
                                       <div class="col-sm-6">{{$order->style}}</div>
                                       <div class="col-sm-6"><strong>Number of Sources:</strong></div>
                                       <div class="col-sm-6">{{$order->no_of_sources}}</div>
-                                      <div class="col-sm-6"><strong>Order Total:</strong></div>
-                                      <div class="col-sm-6 text-green">${{$order->compensation}}</div>
+                                      <!-- <div class="col-sm-6"><strong>Order Total:</strong></div>
+                                      <div class="col-sm-6 text-green">${{$order->compensation}}</div> -->
                                       <div class="box-footer clearfix">
                                         <a class="btn btn-sm btn-success btn-flat pull-left" href="/orders/{{$order->id}}" >View Order</a>
                                       </div>

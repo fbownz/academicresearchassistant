@@ -54,7 +54,7 @@ class BidsStoreController extends Controller
         }
          $current_order = Order::findorfail($request->order_id);   
         
-        if ($current_order->status !=='Available' ) {
+        if ($current_order->status !=='Available' && $current_order->status !=='Unpaid') {
             return back()->with('error',"You can't Bid on this order, it has already been assigned");
         }
     
