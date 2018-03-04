@@ -57,7 +57,7 @@ class NotesController extends Controller
 
     	// We should create code for sending notifications to the Writer here 
         $user_id = $order->user_id;
-    	if(Auth::user()->ni_admin && $user_id > 0 )
+    	if(Auth::user()->ni_admin && $user_id)
     	{
             $user = $order->user;
             NotificationController::orderMessageNotice($user,$order);	

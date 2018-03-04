@@ -12,23 +12,22 @@
         use App\Message;
         
 
-            $a_orders = Order::where('status','Available')->paginate(5); 
-           // No_Available Orders
+            $a_orders = Order::where('status','Available')->orderBy('created_at', 'desc')->paginate(10); 
             $no_of_orders = Order::where('status','Available')->count();
 
         if (Auth::user()->ni_admin == 0) 
         {
             
             //Active Orders
-            $ac_orders = Auth::user()->orders()->where('status','Active')->paginate(5);
+            $ac_orders = Auth::user()->orders()->where('status','Active')->orderBy('created_at', 'desc')->paginate(5);
             $no_of_active = Auth::user()->orders()->where('status','Active')->count();
 
             // Delivered orders
-            $comp_orders = Auth::user()->orders()->where('status','Delivered')->get();
+            $comp_orders = Auth::user()->orders()->where('status','Delivered')->orderBy('created_at', 'desc')->get();
             $no_comp_orders = Auth::user()->orders()->where('status','Delivered')->count() ;
 
             // Approved orders (Orders that have been paid )
-            $app_orders = Auth::user()->earnings()->get();
+            $app_orders = Auth::user()->earnings()->orderBy('created_at', 'desc')->get();
             $no_App_orders = Auth::user()->earnings()->count();
 
 
@@ -55,11 +54,11 @@
         else
         {
           //Active Orders
-          $ac_orders =  Order::where('status','Active')->get();
+          $ac_orders =  Order::where('status','Active')->orderBy('created_at', 'desc')->get();
           $no_of_active = Order::where('status', 'Active')->count();
 
           //Delivered Orders
-          $comp_orders = Order::where('status','Delivered')->get();
+          $comp_orders = Order::where('status','Delivered')->orderBy('created_at', 'desc')->get();
           $no_comp_orders = Order::where('status','Delivered')->count();
 
           //Approved Orders
@@ -173,9 +172,10 @@
 
       <div class="row">
         <div class="col-md-12">
+        @if(Auth::user()->ni_admin)
           <div class="box box-success">
             <div class="box-header with-border">
-              <h3 class="box-title">Orders</h3>
+              <h3 class="box-title">Transactions Summary</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -187,15 +187,15 @@
             <div class="box-body">
               <div class="col-md-7 col-xs-12 col-sd-12 col-lg-7">
                   <div class="box-group" id="all_orders">
-                  <h4 class="box-title">Recent Orders</h4>
+                      <h4 class="box-title"> {{$no_of_orders}} Orders Available to bid</h4>
                       <!-- Start iterating through the order data from the orderscontroller -->
-                  @if(count($a_orders)!=0)
-                  @foreach($a_orders as $order)
-                  <?php   
-                      $deadline = Carbon::parse("$order->deadline");
-                      //$time_now =Carbon::now();
-                      $timer= $deadline->diffForHumans()
-                   ?>
+                      @if(count($a_orders)!=0)
+                      @foreach($a_orders as $order)
+                      <?php   
+                          $deadline = Carbon::parse("$order->deadline");
+                          //$time_now =Carbon::now();
+                          $timer= $deadline->diffForHumans()
+                       ?>
                   <div class="panel box box-primary">
                               <div class="box-header with-border">
                                 <a data-toggle="collapse" data-parent="#all_orders" href="#{{$order->id}}">
@@ -220,6 +220,21 @@
                                       <div class="col-md-7 col-sm-6">{{$order->style}}</div>
                                       <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
                                       <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+                                      @if(Auth::user()->ni_admin)
+                                        <div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+                                             @if($order->client_ID && $order->transactions->count())
+                                              @if($order->transactions->last()->responseCode == "Y")
+                                                <div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+                                              @else
+                                                <div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+                                              @endif
+                                             @elseif(!$order->client_ID)
+                                              <div class="col-md-7 col-sm-6">Added manually!</div>
+                                             @else
+                                             <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+                                             @endif
+
+                                        @endif
                                       <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
                                       <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
                                   
@@ -246,7 +261,160 @@
                 <!-- /.col -->
                 <div class="col-md-5 col-xs-12 col-sd-12 col-lg-5">
                   <div class="box-group" id="all_orders">
-                    <h4 class="box-title">All your Active Orders</h4>
+                        <h4 class="box-title">{{$no_of_active}} Active Orders</h4>
+                <!-- Start iterating through the order data from the orderscontroller -->
+                  @if(count($ac_orders) != 0)
+                  @foreach($ac_orders as $order)
+                  <?php   
+                      $deadline = Carbon::parse("$order->deadline");
+                      //$time_now =Carbon::now();
+                      $timer= $deadline->diffForHumans()
+                   ?>
+                <div class="panel box box-primary">
+                              <div class="box-header with-border">
+                                <a data-toggle="collapse" data-parent="#all_orders" href="#{{$order->id}}">
+                                      <h4 class="box-title">{{$order->order_no}}</h4>
+                                      <!-- <span class="label label-success pull-right">${{$order->compensation}}</span> -->
+                                  </a>  
+                              </div>
+                              <div id="{{$order->id}}" class="panel-collapse collapse">
+                                <div class="box-body">
+                                  
+                                    <div class="col-sm-6"><strong>Order Type:</strong></div>
+                                      <div class="col-sm-6">{{$order->type_of_product}}</div>
+                                      <div class="col-sm-6"><strong>Topic:</strong></div>
+                                      <div class="col-sm-6">{{$order->subject}}</div>
+                                      <div class="col-sm-6"><strong>Pages:</strong><small>(275 Words/Page)</small></div>
+                                      <div class="col-sm-6">{{$order->word_length}}, <strong>{{$order->spacing}} Spaced</strong></div>
+                                      <div class="col-sm-6"><strong>Academic Level:</strong></div>
+                                      <div class="col-sm-6">{{$order->academic_level}}</div>
+                                      <div class="col-sm-6"><strong>Deadline:</strong></div>
+                                      <div class="col-sm-6">{{$timer}}</div>
+                                      <div class="col-sm-6"><strong>Reference Style:</strong></div>
+                                      <div class="col-sm-6">{{$order->style}}</div>
+                                      <div class="col-sm-6"><strong>Number of Sources:</strong></div>
+                                      <div class="col-sm-6">{{$order->no_of_sources}}</div>
+                                      <!-- <div class="col-sm-6"><strong>Order Total:</strong></div>
+                                      <div class="col-sm-6 text-green">${{$order->compensation}}</div> -->
+                                      <div class="box-footer clearfix">
+                                        <a class="btn btn-sm btn-success btn-flat pull-left" href="/orders/{{$order->id}}" >View Order</a>
+                                      </div>
+                                 </div>
+                            </div>    
+                        </div>
+                        @endforeach
+                        
+
+                  
+                  <div class="box-footer clearfix">
+                      <a class="btn btn-sm btn-default btn-flat pull-left" href="/orders#pending" >View All Active Orders
+                      </a>
+                   </div>
+                   @else
+                        No Data to display, no orders active, bid on an order to be assigned one.
+                        @endif
+                          </div>
+                 </div>
+
+                <!-- </div> -->
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- ./box-body -->
+            </div>
+          </div>
+        @endif
+          <!-- /.box -->
+          <div class="box box-success">
+            <div class="box-header with-border">
+              <h3 class="box-title">Orders</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="col-md-7 col-xs-12 col-sd-12 col-lg-7">
+                  <div class="box-group" id="all_orders">
+                      <h4 class="box-title"> {{$no_of_orders}} Orders Available to bid</h4>
+                      <!-- Start iterating through the order data from the orderscontroller -->
+                      @if(count($a_orders)!=0)
+                      @foreach($a_orders as $order)
+                      <?php   
+                          $deadline = Carbon::parse("$order->deadline");
+                          //$time_now =Carbon::now();
+                          $timer= $deadline->diffForHumans()
+                       ?>
+                  <div class="panel box box-primary">
+                              <div class="box-header with-border">
+                                <a data-toggle="collapse" data-parent="#all_orders" href="#{{$order->id}}">
+                                      <h4 class="box-title">{{$order->order_no}}</h4>
+                                      <!-- <span class="label label-success pull-right">${{$order->compensation}}</span> -->
+                                  </a>  
+                              </div>
+                              <div id="{{$order->id}}" class="panel-collapse collapse">
+                                <div class="box-body">
+                                  
+                                    <div class="col-md-5 col-sm-6"><strong>Order Type:</strong></div>
+                                      <div class="col-md-7 col-sm-6">{{$order->type_of_product}}</div>
+                                      <div class="col-md-5 col-sm-6"><strong>Topic:</strong></div>
+                                      <div class="col-md-7 col-sm-6">{{$order->subject}}</div>
+                                      <div class="col-md-5 col-sm-6"><strong>Pages:</strong><small>(275 Words/Page)</small></div>
+                                      <div class="col-md-7 col-sm-6">{{$order->word_length}}, <strong>{{$order->spacing}} Spaced</strong></div>
+                                      <div class="col-md-5 col-sm-6"><strong>Academic Level:</strong></div>
+                                      <div class="col-md-7 col-sm-6">{{$order->academic_level}}</div>
+                                      <div class="col-md-5 col-sm-6"><strong>Deadline:</strong></div>
+                                      <div class="col-md-7 col-sm-6">{{$timer}}</div>
+                                      <div class="col-md-5 col-sm-6"><strong>Reference Style:</strong></div>
+                                      <div class="col-md-7 col-sm-6">{{$order->style}}</div>
+                                      <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
+                                      <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+                                      @if(Auth::user()->ni_admin)
+                                        <div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+                                             @if($order->client_ID && $order->transactions->count())
+                                              @if($order->transactions->last()->responseCode == "Y")
+                                                <div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+                                              @else
+                                                <div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+                                              @endif
+                                             @elseif(!$order->client_ID)
+                                              <div class="col-md-7 col-sm-6">Added manually!</div>
+                                             @else
+                                             <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+                                             @endif
+
+                                        @endif
+                                      <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
+                                      <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
+                                  
+                                  
+                                      <div class="box-footer clearfix">
+                                        <a class="btn btn-sm btn-success btn-flat pull-left" href="/orders/{{$order->id}}" >View Order</a>
+                                        <a class="btn btn-sm btn-success btn-flat pull-right" href="/orders/{{$order->id}}#bidonthis" >Place Bid</a>
+                                      </div>
+                                 </div>
+                            </div>    
+                        </div>
+                        @endforeach
+
+
+                  <div class="box-footer clearfix">
+                      <a class="btn btn-sm btn-default btn-flat pull-left" href="/find_work" >Available Orders/Find Work
+                      </a>
+                   </div>
+                   @else
+                        No Data to display, No orders available Check back later
+                        @endif
+                    </div>
+               </div>
+                <!-- /.col -->
+                <div class="col-md-5 col-xs-12 col-sd-12 col-lg-5">
+                  <div class="box-group" id="all_orders">
+                        <h4 class="box-title">{{$no_of_active}} Active Orders</h4>
                 <!-- Start iterating through the order data from the orderscontroller -->
                   @if(count($ac_orders) != 0)
                   @foreach($ac_orders as $order)

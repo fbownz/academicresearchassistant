@@ -100,8 +100,12 @@
 								<? $postedat = Carbon::parse($note->created_at);
 								$when = $postedat->diffForHumans() ;
 								$user = User::find($note->user_id);
-								$msg_profpic = $user->prof_pic_url;
-
+								if($user->domain){
+									$msg_profpic = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAUEBAUEAwUFBAUGBgUGCA4JCAcHCBEMDQoOFBEVFBMRExMWGB8bFhceFxMTGyUcHiAhIyMjFRomKSYiKR8iIyL/2wBDAQYGBggHCBAJCRAiFhMWIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiL/wAARCABLAEsDASIAAhEBAxEB/8QAGwAAAgIDAQAAAAAAAAAAAAAAAAEGBwIFCAT/xAAuEAABAwMCBAYCAQUAAAAAAAABAAIDBAURITEGEkFhBxMiUXGBkaHBFCMyM0L/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A6+6I09kAI6IEcY1wFXnE/Hvkzuo7CYpMZEtSW8w+G9D8rLxGvT4YorRTux5zPMqHA68udG/BwSfgKtcNQbKmv12pKQ09JcKmKEu5sMfjB7Hot9aPEC40GWXIf18RGnO7le09PVjUfKh+UdNUF+2i6QXi0wVtNo2UatJyWOG7T3XvVJcI3CspOJKKnpKl8cFTURtmjGrXjPUfrKu0aZ3QGEk0kD6IOyANEHZBT/iDRGl4rdMCS2riEmp2I9JA/A/KiZGCpj4kPeeKImv/ANbaZvJ9k5/ah6BYR0QdUdMIM4QTURtax7yXgcjM8ztdhjqV0JSlxo4C6EwOMbcwuOTHp/jnrhc8B7onNkjeWPYQ5rmnBBGxHddB2+d1Va6SoeCHzQse75IBKD0oQhAIQhBB+PuHprjSx3KkLS+iicJWOOOaPfI7jX89lVYXQ1XTR1dHNTTZEU7HRuxuARgqga2imttwqKOqGJoHlju/cdiNftB50dEDdB0yTsgkfCvC8nEVS58sjI6GB4E2vrd1wB0z7q6Gta1rWtAa1owANgFEuB+HprNbpKmrdietDT5Q2jaMkZ76qXIDCMIGyWUDCFiXNYxznuDWt1LnHAAUXufHlmoCWwSPrZh/zTj0/bjp+MoJTjJ01VIcW3IXbimsmjwYmO8ph9w3TP2cle+78e3O5wywQNio6eQcpEeXPI6jmP8ACim2yAGhQdc+yEDZBeXDV3hvNippongysY2OZnVjwMHPzuPlbrK57o66qt1UJ6CokgmGnMx2M9j7jsVNrZ4lVMYay8UrZ27edB6H/bdj+kFnbpLV2m/W69R81vqGueBl0TvS9o7j+RkLaZQUffuJa2/TO855iowfRTMPpA6E+57laRI7lLKDLZBOEZRlA0jqUJdUD2090Y7pFPKDOGaWnnZNTyPimjOWPYcEFWJQ+JojoIWV9HPLUtb/AHJInBrXH3Axoq3G6z5R7IP/2Q==";
+								}
+								else{
+									$msg_profpic = $user->prof_pic_url;
+								}
 								$s_d = $user->earnings()->count() - $user->fines()->count();
 								if (!$s_d) {
 									$r_5 = 0;
@@ -112,7 +116,7 @@
 								}
 								?>
 								<div class="direct-chat-msg
-									@if($user->ni_admin)
+									@if($user->ni_admin || $user->domain)
 									right
 									@endif
 									">
@@ -258,10 +262,17 @@
 							@else()
 								<div class="col-md-7 col-sm-6 text-green"><i class="fa fa-clock-o"></i> {{$timer}}</div>
 							@endif
+
 						    <div class="col-md-5 col-sm-6"><strong>Compensation Total:</strong></div>
-					        <div class="col-md-7 col-sm-6 text-green">${{$bid_compensation}}</div>
-						    <div class="col-md-5 col-sm-6"><strong>Type of work:</strong></div>
+					        @if($order->user_id)
+							<div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div>
+							@else()
+							<div class="col-md-7 col-sm-6 text-green">${{$bid_compensation}}</div>
+							@endif
+						    @if($order->type_ofwork)
+						    	<div class="col-md-5 col-sm-6"><strong>Type of work:</strong></div>
 						    <div class="col-md-7 col-sm-6">{{$order->type_ofwork}}</div>
+						    @endif
 						    <div class="col-md-5 col-sm-6"><strong>Pages:</strong><small>(275 Words/Page)</small></div>
 						    <div class="col-md-7 col-sm-6">{{$order->word_length}}, <strong>{{$order->spacing}} Spaced</strong></div>
 						    <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
@@ -287,10 +298,22 @@
 							        @else
 							        	<div class="col-md-7 col-sm-6 text-green"><i class="fa fa-clock-o"></i> {{$client_deadline->format('F j, Y H:i A')}}</div>
 							        @endif
+						      		<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+					      			 @if($order->client_ID && $order->transactions->count())
+					      			 	@if($order->transactions->last()->responseCode == "Y")
+					      			 		<div class="col-md-5 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+					      			 	@else
+					      			 		<div class="col-md-5 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+					      			 	@endif
+					      			 @elseif(!$order->client_ID)
+					      			 	<div class="col-md-5 col-sm-6">Added manually!</div>
+				      			 	 @else
+				      			 	 <div class="col-md-5 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+					      			 @endif
 
 						        @endif
-				      		<div class="col-md-5 col-sm-6"><strong>Country of Origin</strong></div>
-				      		<div class="col-md-5 col-sm-6">{{$order->client_country}}</div>
+					      		<div class="col-md-5 col-sm-6"><strong>Country of Origin</strong></div>
+					      		<div class="col-md-5 col-sm-6">{{$order->client_country}}</div>
 						</div>
 
 				</div>
@@ -311,6 +334,17 @@
 										</a>
 									</div>
 									@endif
+
+								@endif
+								@if($order->files)
+									@foreach($order->files as $file)
+										<div class="col-md-12" style="padding-bottom: 5px">
+										<a href="{{$file->link}}" class="btn btn-success">
+											<i class="icon fa fa-download"></i>
+											{{$file->name}}
+										</a>
+									</div>
+									@endforeach
 
 								@endif
 								<div class="col-sm-12"><strong>Title:</strong></div>
@@ -346,6 +380,12 @@
 						</div>
 					</div>
 					<div class="box-body">
+						<div class="attachment-block">
+							@if($order->client_ID)
+								<? $client = User::findorfail($order->client_ID); ?>
+								Client: <strong>{{$client->email}}</strong>
+							@endif
+						</div>
 						@foreach($order->Order_reports as $Order_report)
 						<? $user = User::find($Order_report->user_id); ?>
 						@if($Order_report->created_at->diffInMinutes($order->created_at,false) > -2 )
@@ -435,6 +475,10 @@
 		                      <a class="btn btn-danger pull-right btn-xs" href="../../bids/delete/{{$bid->id}}">
 									Delete
 								</a>
+								@elseif(Auth::user()->ni_admin)
+								<a class="btn btn-danger pull-right btn-xs" href="/bids/delete/{{$bid->id}}">
+									Delete
+								</a>
 							@endif
 
 						</div>
@@ -466,12 +510,13 @@
 							<strong>Writer Fined</strong><br>
 					        {{$fine->user->first_name}}
 			            </div>
+			            <a class="btn btn-danger pull-right btn-xs" href="../../fine/delete/{{$bid->id}}">
+									Remove Fine
+								</a>
 						@endforeach
 					</div>
 				</div>
-
 			@endif
-
 		</div>
 		@if($order->status == 'Available' && ! Auth::User()->ni_admin)
 		<div class="col-md-12">
@@ -577,6 +622,32 @@
 				</div>
 				@endif
 			</div>
+			@endif
+			@if($order->user_id == Auth::User()->id)
+				<div class="box box-danger box-solid"  id="fines">
+					<div class="box-header with-border">
+						<h4><i class="icon fa fa-warning"></i>
+							Order Fines!
+						</h4>
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+	                		</button>
+						</div>
+					</div>
+					<div class="box-body">
+						@foreach($order->fines as $fine)
+						<div class="callout callout-danger">
+		                	<h5>Fine #{{$fine->id}}</h5>
+		                	<strong>Reason for fine</strong><br>
+					        {{$fine->reason}}<br>
+							<strong>Total Fee fined</strong><br>
+					        -${{$fine->total_fine}}<br>
+							<strong>Writer Fined</strong><br>
+					        {{$fine->user->first_name}}
+			            </div>
+						@endforeach
+					</div>
+				</div>
 			@endif
 			@if(Auth::user()->ni_admin ==1 && $order->approved !== 1)
 			<div class="box box-success">

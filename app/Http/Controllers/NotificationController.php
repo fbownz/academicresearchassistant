@@ -16,6 +16,9 @@ use App\Sms_notice;
 use App\Failed_sms_notice;
 use Illuminate\Support\Facades\Auth;
 use App\Message;
+use App\Transaction;
+use App\Order_delivery_report;
+use Illuminate\Support\Facades\Storage;
 
 //We add the AfricasTalkingGateway Class in order to send SMS notifications
 use App\AfricasTalkingGateway;
@@ -120,7 +123,7 @@ class NotificationController extends Controller
 
         Mail::queue('emails.order_revision',['user'=>$user,  'order'=>$order],function ($m) use ($user, $order)
         {
-            $m->from('notifications@academicresearchassistants.com','ARA');
+            $m->from('noreply@academicresearchassistants.com','ARA');
 
             $m->to($user->email, $user->first_name)->subject('Academicresearch: Changes required on #'.$order->order_no);
         });
@@ -143,7 +146,7 @@ class NotificationController extends Controller
 
     //     Mail::queue('emails.deactivated',['user'=>$user],function ($m) use ($user, $order)
     //     {
-    //         $m->from('notifications@academicresearchassistants.com','ARA');
+    //         $m->from('noreply@academicresearchassistants.com','ARA');
 
     //         $m->to($user->email, $user->first_name)->subject('Academicresearch: Your account has been deactivated');
     //     });
@@ -206,31 +209,38 @@ class NotificationController extends Controller
 
         $notification->save();
         $admins = User::where('ni_admin', 1)->get();
-        foreach ($admins as $admin) {
-            # code...
-            $admin_email = $admin->email;
-            $admin_name = $admin->first_name;
+        // foreach ($admins as $admin) {
+        //     # code...
+        //     $admin_email = $admin->email;
+        //     $admin_name = $admin->first_name;
 
-            Mail::queue('emails.admin_order_message',['order'=>$order, 'notification'=>$notification],function ($m) use ($admin_email, $admin_name, $order)
+        //     Mail::queue('emails.admin_order_message',['order'=>$order, 'notification'=>$notification],function ($m) use ($admin_email, $admin_name, $order)
+        //     {
+        //         $m->from('noreply@academicresearchassistants.com','ARA');
+
+        //         $m->to($admin_email, $admin_name)->subject('Academicresearch: You have a New message on order '.$order->order_no);
+        //     });
+
+        // //We send an sms notification to the User for order Message;
+        //     // For the purpose of the text I save the admin as the user
+        // $user = $admin;
+        // $txt = 'There is a new Message on Order '.$order->order_no.' Kindly check the order to respond'."\n".' Academicresearchassistants.com';
+        // $send_sms =self::sendSMSnotice($user,$txt);
+        // }
+            $admin_email = "m@academicresearchassistants.com";
+            $admin_name = "Morgan";
+        Mail::queue('emails.admin_order_message',['order'=>$order, 'notification'=>$notification],function ($m) use ($admin_email, $admin_name, $order)
             {
                 $m->from('noreply@academicresearchassistants.com','ARA');
 
                 $m->to($admin_email, $admin_name)->subject('Academicresearch: You have a New message on order '.$order->order_no);
             });
 
-        //We send an sms notification to the User for order Message;
-            // For the purpose of the text I save the admin as the user
-        $user = $admin;
-        $txt = 'There is a new Message on Order '.$order->order_no.' Kindly check the order to respond'."\n".' Academicresearchassistants.com';
-        $send_sms =self::sendSMSnotice($user,$txt);
-        }
-
     }
 
-    public static function clientOrderDeliveryNotice(User $writer, Order $order)
+    public static function clientOrderDeliveryNotice(User $writer, Order $order, 
+        Order_delivery_report $order_delivery_report)
     {
-        //For the purpose of our new clients, We also send them an email on order delivery
-        //We wil design a new email template for clients
 
         $client = User::findorfail($order->client_ID);
         if ($client->domain == 1) {
@@ -240,10 +250,16 @@ class NotificationController extends Controller
         }elseif ($client->domain == 3) {
             $domain = "writemyschoolessay.com";
         }
-        Mail::queue('emails.orderDeliveryClient',['client'=>$client, 'writer'=>$writer, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $writer, $order, $domain)
+        Mail::queue('emails.orderDeliveryClient',['client'=>$client, 'writer'=>$writer, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $writer, $order, $domain, $order_delivery_report)
         {
             $m->from('support@'.$domain, 'Academic Paper writing Platform');
+            // $file = Storage::disk('orders')->url($order_delivery_report->file_name);
+            // $filepath = realpath("storage/app/orders/".$order_delivery_report->file_name)
+            // $file = Storage::disk('orders')->get("/orders/".$order_delivery_report->file_name);
 
+            // if ($order_delivery_report->file_name) {
+            //     $m->attach($file, ['as' => $order_delivery_report->file_name, 'mime' => $order_delivery_report->mime]);
+            // }
             $m->to($client->email, $client->first_name)->subject('Your order '.$order->order_no.' has been delivered');
 
         });
@@ -255,7 +271,7 @@ class NotificationController extends Controller
 
         Mail::queue('emails.order_delivery',['user'=>$user, 'order'=>$order], function($m)use ($user, $order)
         {
-            $m->from('notifications@academicresearchassistants.com', 'ARA');
+            $m->from('noreply@academicresearchassistants.com', 'ARA');
 
             $m->to($user->email, $user->first_name)->subject('Academicresearch: We have received your '.$order->status. ' paper for '.$order->order_no);
 
@@ -279,7 +295,7 @@ class NotificationController extends Controller
 
             Mail::queue('emails.admin_order_delivery',['user'=>$user, 'order'=>$order],function ($m) use ($admin_email, $admin_name,$order)
         {
-            $m->from('notifications@academicresearchassistants.com','ARA');
+            $m->from('noreply@academicresearchassistants.com','ARA');
 
             $m->to($admin_email, $admin_name)->subject('Order #'.$order->order_no.' has been delivered');
         });
@@ -324,7 +340,7 @@ class NotificationController extends Controller
 
             Mail::queue('emails.admin_late_order',['user'=>$user, 'order'=>$order],function ($m) use ($admin_email, $admin_name,$order)
             {
-                $m->from('notifications@academicresearchassistants.com','ARA');
+                $m->from('noreply@academicresearchassistants.com','ARA');
 
                 $m->to($admin_email, $admin_name)->subject('Academicresearch: Late Order Notice! for Order '.$order->order_no);
             });
@@ -441,6 +457,24 @@ class NotificationController extends Controller
             $m->to($client->email, $client->first_name)->subject('Writer '.$writer->name.' is ready to start working on your order '.$order->order_no);
 
         });
+         //We send an email to admin on the new bid too.
+        $admins = User::where('ni_admin', 1)->get();
+        foreach ($admins as $admin) {
+            $admin_email = $admin->email;
+            $admin_name = $admin->first_name;
+
+            // We send each a text  and email below
+            $txt = 'New bid on '.$order->order_no.' check the bid to confirm the bid message.';
+            $send_sms =self::sendSMSnotice($admin,$txt);
+
+            Mail::queue('emails.admin_new_bid',['order'=>$order],function ($m) use ($admin_email, $admin_name,$order)
+        {
+            $m->from('noreply@academicresearchassistants.com','ARA');
+
+            $m->to($admin_email, $admin_name)->subject('New Bid on '.$order->order_no);
+        });
+        }
+
     }
 
 
@@ -479,7 +513,7 @@ class NotificationController extends Controller
 
         Mail::queue('emails.payment_approved',['user'=>$user], function($m)use ($user)
         {
-            $m->from('notifications@academicresearchassistants.com', 'ARA');
+            $m->from('noreply@academicresearchassistants.com', 'ARA');
 
             $m->to($user->email, $user->first_name)->subject('Academicresearch: Congrats payments approved ');
 
@@ -684,4 +718,108 @@ class NotificationController extends Controller
 
 
     }
+
+    //New Order by client from api
+        public static function clientNewOrderNotice(Order $order)
+    {
+        //For the purpose of our new clients, We also send them an email on order delivery
+        //We wil design a new email template for clients
+
+        $client = User::findorfail($order->client_ID);
+        if ($client->domain == 1) {
+            $domain = "writemyclassessay.com";
+        }elseif ($client->domain == 2) {
+            $domain = "writemyacademicessay.com";
+        }elseif ($client->domain == 3) {
+            $domain = "writemyschoolessay.com";
+        }
+        Mail::queue('emails.newOrderClient',['client'=>$client, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $order, $domain)
+        {
+            $m->from('support@'.$domain, 'Academic Paper writing Platform');
+
+            $m->to($client->email, $client->first_name)->subject('Congratulations! Your project is now visible to our writers.');
+
+        });
+    }
+
+    public static function adminNewOrderbyClientNotice(Order $order)
+    {
+
+        $notification = new Notification;
+        $notification->user_id = $order->user->id;
+        $notification->order_id = $order->id;
+        $notification->type = 'admin_new_order';
+        $notification->message ='Order Delivered';
+        $notification->save();
+
+
+        $client = User::findorfail($order->client_ID);
+        $admins = User::where('ni_admin', 1)->get();
+        foreach ($admins as $admin) {
+            # code...
+            $admin_email = $admin->email;
+            $admin_name = $admin->first_name;
+
+            Mail::queue('emails.admin_new_order',['client'=>$client, 'order'=>$order],function ($m) use ($admin_email, $admin_name,$order)
+        {
+            $m->from('noreply@academicresearchassistants.com','ARA');
+
+            $m->to($admin_email, $admin_name)->subject('New order posted successfully on ARA #'.$order->order_no);
+        });
+        }
+
+
+    }
+
+    //New transaction from api
+        public static function clientNewTransactionNotice(Transaction $transaction, User $client)
+    {
+
+        $order = Order::findorfail($transaction->order_id);
+        if ($client->domain == 1) {
+            $domain = "writemyclassessay.com";
+        }elseif ($client->domain == 2) {
+            $domain = "writemyacademicessay.com";
+        }elseif ($client->domain == 3) {
+            $domain = "writemyschoolessay.com";
+        }
+        Mail::queue('emails.newTransactionClient',['transaction'=>$transaction,'client'=>$client, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $domain)
+        {
+            $m->from('support@'.$domain, 'Academic Paper writing Platform');
+
+            $m->to($client->email, $client->first_name)->subject('Your project is now paid!');
+
+        });
+    }
+
+    public static function adminNewTransactionNotice(Transaction $transaction, User $client)
+    {
+
+        $order = Order::findorfail($transaction->order_id);
+        $notification = new Notification;
+        $notification->user_id = $client->id;
+        $notification->order_id = $order->id;
+        $notification->type = 'admin_new_order';
+        $notification->message ='New Transaction';
+        $notification->save();
+
+
+        $client = User::findorfail($order->client_ID);
+        $admins = User::where('ni_admin', 1)->get();
+        foreach ($admins as $admin) {
+            # code...
+            $admin_email = $admin->email;
+            $admin_name = $admin->first_name;
+
+            Mail::queue('emails.adminNewTransactionNotice',['transaction'=>$transaction,'client'=>$client, 'order'=>$order],function ($m) use ($admin_email, $admin_name)
+        {
+            $m->from('noreply@academicresearchassistants.com','ARA');
+
+            $m->to($admin_email, $admin_name)->subject('New order Payment transaction');
+        });
+        }
+
+
+    }
+
 }

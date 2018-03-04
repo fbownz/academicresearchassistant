@@ -23,14 +23,14 @@
                        </span>
                     </div>
                     <div class="box-body"style="border-bottom:2px solid #3c8dbc;">
-                        <p style="Margin:0;Margin-bottom:10px;color:#6a6a6a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;line-height:1.3em;text-align:center">This is to inform that {{$writer->name}} has delivered your order {{$order->title}}</p>
-                        <p style="Margin:0;Margin-bottom:10px;color:#6a6a6a;font-size:16px;font-weight:600;line-height:1.3em;text-align:center">Please go through the attachment on the Files section of the order page.</p>
+                        <p style="Margin:0;Margin-bottom:10px;color:#6a6a6a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;line-height:1.3em;text-align:center">This is to inform you that {{$writer->name}} has delivered your order {{$order->title}}</p>
+                        <p style="Margin:0;Margin-bottom:10px;color:#6a6a6a;font-size:16px;font-weight:600;line-height:1.3em;text-align:center">Please go through the through the attachment on the <strong>Files</strong> section of the order page..</p>
                         <hr style="margin-bottom: 7px">
-                        <p>Go through the order and confirm the paper has met the requirements. If not you can request further changes from the writer on the paper Messages tab</p>
+                        <p>Go through the File Attachment and confirm the paper has met the requirements. If not you can request further changes from the writer on the paper Messages tab</p>
                         <p>Contact Us by responding to this email or our online live chat on the website</p>
                         <hr>
                         <p style="text-align: center;"><span><a href="//app.{{$domain}}/dashboard/order/{{$order->id}}" style="Margin:0;border:0 solid #67c079;border-radius:5px;color:#fff;display:inline-block;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:400;line-height:1.3em;margin:0;padding:10px 17px 10px 17px;text-align:center;text-decoration:none;background:#3c8dbc;">My Order</a></span><br>
-                            <span style="display:inline-block;font-weight:700;line-height:50px;vertical-align:middle;">Thank you! </span><br>for creating an account and choosing {{$domain}} as your Custom paper provider </p>
+                            <span style="display:inline-block;font-weight:700;line-height:50px;vertical-align:middle;">Thank you! </span><br>for choosing {{$domain}} as your Custom paper provider </p>
                     </div>
                     <div class="box-footer small">
                         &copy; <?php echo date("Y"); ?>, {{$domain}} <br>

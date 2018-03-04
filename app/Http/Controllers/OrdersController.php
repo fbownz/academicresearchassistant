@@ -99,6 +99,7 @@ class OrdersController extends Controller
 
 
             $lt_orders = Order::where('user_id','>', 1)->where('is_late',1)->orderBy('created_at', 'desc')->paginate(50);
+           
             $no_late = count(Order::where('created_at', '>=', Carbon::now()->startOfMonth())->where('user_id','>', 1)->where('is_late',1)->get());
             $act_draft_orders ="";
 
@@ -119,6 +120,18 @@ class OrdersController extends Controller
 
             $list_tasks = Notification::where('status',0)->where('type',"admin_order_late")->orderBy('created_at', 'desc')->get();
             $number_tasks =$list_tasks->count() ;
+
+            $client_orders= Order::where('client_ID','>',0);
+            $unpaid_orders =array();
+            $paid_orders = array();
+            foreach ($client_orders as $order) {
+                    $transactions = $order->transactions;
+                    if ($transactions->count() > 0) {
+                      $paid_orders[] = collect($order)->put('transactions',$transactions);
+                    } else{
+                      $unpaid_orders[] = $order;
+                    }
+            }
         }
     else
         {
@@ -163,6 +176,9 @@ class OrdersController extends Controller
 
               $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
               $number_tasks =$list_tasks->count() ;
+              $client_orders = array();
+              $unpaid_orders = array();
+              $paid_orders = array();
         }
 
 
@@ -203,6 +219,9 @@ class OrdersController extends Controller
         'list_tasks' => $list_tasks,
         'number_tasks' => $number_tasks,
         'prof_comp_array' => $prof_comp_array,
+        'client_orders' => $client_orders,
+        'unpaid_orders' => $unpaid_orders,
+        'paid_orders' => $paid_orders,
         ]);
  }
      // public function sort(Request $request)
@@ -250,7 +269,7 @@ class OrdersController extends Controller
 
 
         // We only assign orders to active users who have ever placed more than one bid
-        $users_to_be_assigned = User::has('bids')->where('status', "1")->where('verified', 1)->orderBy('first_name','asc')->get();
+        $users_to_be_assigned = User::has('bids')->where('status', "1")->where('verified', 1)->where('domain',null)->orderBy('name','asc')->get();
 
         $bids_submitted = Bid::where('order_id','=',$order->id)->orderBy('created_at','asc')->get();
 
@@ -306,23 +325,24 @@ class OrdersController extends Controller
           $list_tasks = $list_order_revisions->toBase()->merge($list_order_late);
           $number_tasks =$list_tasks->count() ;
 
-          // We do a calculation to determine the maximum & min amount a writer should bid for an order.
-          if (Auth::user()->earnings()->count() > 70) {
-            //We confirm that the compensation is less than (number of pages*5)
-            //If it is less than total number of pages*5, we go ahead and put the compensation as total (number of pages*5)
-            if (($order->word_length) * 5 > $order->compensation ) {
-              $max_bid = ($order->word_length * 5);
-            } else{
-              $max_bid =  ($order->compensation);
+            // We do a calculation to determine the maximum & min amount a writer should bid for an order.
+            if (Auth::user()->earnings()->count() > 70) {
+              //We confirm that the compensation is less than (number of pages*5)
+              //If it is less than total number of pages*5, we go ahead and put the compensation as total (number of pages*5)
+              if (($order->word_length) * 5 > $order->compensation ) {
+                $max_bid = ($order->word_length * 5);
+              } else{
+                $max_bid =  ($order->compensation);
+              }
+              $bid_compensation = ($order->compensation);
+            }else {
+              if (($order->word_length) * 5 > $order->compensation ) {
+                $max_bid = ($order->compensation);
+              } else{
+                $max_bid = ($order->word_length * 5);
+              }
+              $bid_compensation = ($order->word_length * 5);
             }
-          }else {
-            if (($order->word_length) * 5 > $order->compensation ) {
-              $max_bid = ($order->compensation);
-            } else{
-              $max_bid = ($order->word_length * 5);
-            }
-          }
-          $bid_compensation = ($order->word_length * 5);
         }
 
          return view('pages.order', [
@@ -1199,7 +1219,7 @@ class OrdersController extends Controller
     // Get Writers usernames and emails
     public function getWriters()
     {
-        $writers = User::all()->where('ni_admin',null);
+        $writers = User::all()->where('ni_admin',null)->where('domain',null);
         foreach ($writers as $writer => $writer_tu) {
             if ($writer_tu->phone1) {
                 $phone = $writer_tu->phone1;

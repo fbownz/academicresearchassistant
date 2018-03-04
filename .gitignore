@@ -21,3 +21,4 @@ bootstrap/*
 gulpfile.js
 app/Http/routes.php
 app/Http/Kernel.php
+app/Http/Controllers/ClientRegistrationController.php

@@ -62,4 +62,9 @@ class Order extends Model
     {
       return $this->hasMany(Files::class);
     }
+
+    public function transactions()
+    {
+      return $this->hasMany(Transaction::class);
+    }
 }

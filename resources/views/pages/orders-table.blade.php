@@ -140,16 +140,20 @@
 	              <li style="font-size:20px"><a href="#delivered" data-toggle="tab">Delivered</a></li>
 	              <li style="font-size:20px"><a href="#approved" data-toggle="tab">Approved</a></li>
 	              <li style="font-size:20px"><a href="#late" data-toggle="tab">Late</a></li>
+	              @if(Auth::user()->ni_admin)
+	              <li style="font-size:20px"><a href="#paid" data-toggle="tab">Paid</a></li>
+	              <li style="font-size:20px"><a href="#unpaid" data-toggle="tab">Unpaid</a></li>
+	              @endif
 	              <li class="pull-right header" style="font-size:25px">Orders <i class="fa fa-th"></i></li>
 	            </ul>
 	            <div class="tab-content">
 	              <div 
-	              @if(count($re_orders) !=0)
-	              class = "tab-pane active"
-	              @else
-	              class ="tab-pane"
-	              @endif 
-	              id="revision">
+		              @if(count($re_orders) !=0)
+		              class = "tab-pane active"
+		              @else
+		              class ="tab-pane"
+		              @endif 
+		              id="revision">
 		                <div class="box-group" id="all_orders">
 	                          
 	                            <!-- Start iterating through the order data from the orderscontroller -->
@@ -192,6 +196,24 @@
 	                                        <div class="col-md-7 col-sm-6">{{$order->style}}</div>
 	                                        <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
 	                                        <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+
+
+											@if(Auth::user()->ni_admin)
+												<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+								      			 @if($order->client_ID && $order->transactions->count())
+								      			 	@if($order->transactions->last()->responseCode == "Y")
+								      			 		<div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+								      			 	@else
+								      			 		<div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+								      			 	@endif
+								      			 @elseif(!$order->client_ID)
+								      			 	<div class="col-md-7 col-sm-6">Added manually!</div>
+							      			 	 @else
+							      			 	 <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+								      			 @endif
+
+						        			@endif
+
 	                                        <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
 	                                        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
 	                                    
@@ -215,12 +237,12 @@
 	              </div>
 	              <!-- /.tab-pane -->
 	              <div 
-	              @if(count($re_orders) == 0)
-	              class = "tab-pane active"
-	              @else
-	              class ="tab-pane"
-	              @endif 
-	              id="activeorders">
+		              @if(count($re_orders) == 0)
+		              class = "tab-pane active"
+		              @else
+		              class ="tab-pane"
+		              @endif 
+		              id="activeorders">
 		                <div class="box-group" id="all_orders">
 	                            <!-- Start iterating through the order data from the orderscontroller -->
 	                            @if(count($act_orders)!=0)
@@ -263,6 +285,21 @@
 	                                        <div class="col-md-7 col-sm-6">{{$order->style}}</div>
 	                                        <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
 	                                        <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+	                                        @if(Auth::user()->ni_admin)
+												<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+								      			 @if($order->client_ID && $order->transactions->count())
+								      			 	@if($order->transactions->last()->responseCode == "Y")
+								      			 		<div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+								      			 	@else
+								      			 		<div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+								      			 	@endif
+								      			 @elseif(!$order->client_ID)
+								      			 	<div class="col-md-7 col-sm-6">Added manually!</div>
+							      			 	 @else
+							      			 	 <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+								      			 @endif
+
+						        			@endif
 	                                        <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
 	                                        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
 	                                    
@@ -323,6 +360,21 @@
 	                                        <div class="col-md-7 col-sm-6">{{$order->style}}</div>
 	                                        <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
 	                                        <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+	                                        @if(Auth::user()->ni_admin)
+												<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+								      			 @if($order->client_ID && $order->transactions->count())
+								      			 	@if($order->transactions->last()->responseCode == "Y")
+								      			 		<div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+								      			 	@else
+								      			 		<div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+								      			 	@endif
+								      			 @elseif(!$order->client_ID)
+								      			 	<div class="col-md-7 col-sm-6">Added manually!</div>
+							      			 	 @else
+							      			 	 <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+								      			 @endif
+
+						        			@endif
 	                                        <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
 	                                        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
 	                                    
@@ -386,6 +438,21 @@
 	                                        <div class="col-md-7 col-sm-6">{{$order->order_delivery_reports->last()->created_at->format('F j, Y h:i A')}}</div>
 	                                        <div class="col-md-5 col-sm-6"><strong>Deadline:</strong></div>
 	                                        <div class="col-md-7 col-sm-6">{{$timer}}</div>
+	                                        @if(Auth::user()->ni_admin)
+												<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+								      			 @if($order->client_ID && $order->transactions->count())
+								      			 	@if($order->transactions->last()->responseCode == "Y")
+								      			 		<div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+								      			 	@else
+								      			 		<div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+								      			 	@endif
+								      			 @elseif(!$order->client_ID)
+								      			 	<div class="col-md-7 col-sm-6">Added manually!</div>
+							      			 	 @else
+							      			 	 <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+								      			 @endif
+
+						        			@endif
 	                                        <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
 	                                        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
 	                                    
@@ -532,6 +599,179 @@
 	                                        <div class="col-md-7 col-sm-6">{{$order->style}}</div>
 	                                        <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
 	                                        <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+	                                        @if(Auth::user()->ni_admin)
+												<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+								      			 @if($order->client_ID && $order->transactions->count())
+								      			 	@if($order->transactions->last()->responseCode == "Y")
+								      			 		<div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+								      			 	@else
+								      			 		<div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+								      			 	@endif
+								      			 @elseif(!$order->client_ID)
+								      			 	<div class="col-md-7 col-sm-6">Added manually!</div>
+							      			 	 @else
+							      			 	 <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+								      			 @endif
+
+						        			@endif
+	                                        <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
+	                                        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
+	                                    
+	                                    
+	                                        <div class="box-footer clearfix">
+	                                          <a class="btn btn-sm btn-success btn-flat pull-left" href="orders/{{$order->id}}" >View Order</a>
+	                                        </div>
+	                                  </div>
+	                                </div>    
+	                          </div>
+	                            @endforeach
+
+
+	                          <div class="box-footer clearfix">
+	                              
+	                          </div>
+	                           @else
+	                                No Data to display
+	                                @endif
+	                  	</div>
+	              </div>
+	              <!-- /.tab-pane -->
+	              <div class="tab-pane" id="paid">
+		                <div class="box-group" id="all_orders">
+	                            <!-- Start iterating through the order data from the orderscontroller -->
+	                            @if(count($paid_orders)!=0)
+	                          <h3><small>Paid Orders</small></h3>
+	                            @foreach($paid_orders as $order)
+	                            <?php   
+	                                $deadline = Carbon::parse("$order->deadline");
+	                                //$time_now =Carbon::now();
+	                                $timer= $deadline->diffForHumans()
+	                           ?>
+	                          <div class="panel box box-success">
+	                                <div class="box-header with-border">
+	                                    <a data-toggle="collapse" data-parent="#all_orders" href="#app_{{$order->id}}">
+	                                          <h4 class="box-title">{{$order->order_no}}</h4>
+	                                          <!-- <span class="label label-success pull-right">${{$order->compensation}}</span> -->
+	                                    </a>  
+	                                </div>
+	                                <div id="app_{{$order->id}}" class="panel-collapse collapse">
+	                                  <div class="box-body">
+	                                    
+	                                        @if(Auth::user()->ni_admin)
+	                                        <div class="col-md-5 col-sm-6"><strong>Writer:</strong></div>
+	                                        <div class="col-md-7 col-sm-6"><h4>{{$order->user->first_name}}</h4></div>
+
+	                                        @endif
+	                                        <div class="col-md-5 col-sm-6"><strong>Order Type:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->type_of_product}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Order Status:</strong></div>
+	                                        <div class="col-md-7 col-sm-6"><span class="btn btn-sm btn-primary btn-flat ">{{$order->status}}</span></div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Topic:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->subject}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Pages:</strong><small>(275 Words/Page)</small></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->word_length}}, <strong>{{$order->spacing}} Spaced</strong></div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Academic Level:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->academic_level}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Deadline:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$timer}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Reference Style:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->style}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+	                                        @if(Auth::user()->ni_admin)
+												<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+								      			 @if($order->client_ID && $order->transactions->count())
+								      			 	@if($order->transactions->last()->responseCode == "Y")
+								      			 		<div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+								      			 	@else
+								      			 		<div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+								      			 	@endif
+								      			 @elseif(!$order->client_ID)
+								      			 	<div class="col-md-7 col-sm-6">Added manually!</div>
+							      			 	 @else
+							      			 	 <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+								      			 @endif
+
+						        			@endif
+	                                        <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
+	                                        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
+	                                    
+	                                    
+	                                        <div class="box-footer clearfix">
+	                                          <a class="btn btn-sm btn-success btn-flat pull-left" href="orders/{{$order->id}}" >View Order</a>
+	                                        </div>
+	                                  </div>
+	                                </div>    
+	                          </div>
+	                            @endforeach
+
+
+	                          <div class="box-footer clearfix">
+	                              <!--  -->
+	                          </div>
+	                           @else
+	                                No Data to display.
+	                                @endif
+	                  	</div>
+	              </div>
+	              <!-- /.tab-pane -->
+	              <div class="tab-pane" id="unpaid">
+		                <div class="box-group" id="all_orders">
+	                            <!-- Start iterating through the order data from the orderscontroller -->
+	                            @if(count($unpaid_orders)!=0)
+	                          <h3><small>Unpaid Orders</small></h3>
+	                            @foreach($unpaid_orders as $order)
+	                            <?php   
+	                                $deadline = Carbon::parse("$order->deadline");
+	                                //$time_now =Carbon::now();
+	                                $timer= $deadline->diffForHumans()
+	                           ?>
+	                          <div class="panel box box-success">
+	                                <div class="box-header with-border">
+	                                    <a data-toggle="collapse" data-parent="#all_orders" href="#app_{{$order->id}}">
+	                                          <h4 class="box-title">{{$order->order_no}}</h4>
+	                                          <!-- <span class="label label-success pull-right">${{$order->compensation}}</span> -->
+	                                    </a>  
+	                                </div>
+	                                <div id="app_{{$order->id}}" class="panel-collapse collapse">
+	                                  <div class="box-body">
+	                                    
+	                                        @if(Auth::user()->ni_admin)
+	                                        <div class="col-md-5 col-sm-6"><strong>Writer:</strong></div>
+	                                        <div class="col-md-7 col-sm-6"><h4>{{$order->user->first_name}}</h4></div>
+
+	                                        @endif
+	                                        <div class="col-md-5 col-sm-6"><strong>Order Type:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->type_of_product}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Order Status:</strong></div>
+	                                        <div class="col-md-7 col-sm-6"><span class="btn btn-sm btn-primary btn-flat ">{{$order->status}}</span></div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Topic:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->subject}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Pages:</strong><small>(275 Words/Page)</small></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->word_length}}, <strong>{{$order->spacing}} Spaced</strong></div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Academic Level:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->academic_level}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Deadline:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$timer}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Reference Style:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->style}}</div>
+	                                        <div class="col-md-5 col-sm-6"><strong>Number of Sources:</strong></div>
+	                                        <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
+	                                        @if(Auth::user()->ni_admin)
+												<div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
+								      			 @if($order->client_ID && $order->transactions->count())
+								      			 	@if($order->transactions->last()->responseCode == "Y")
+								      			 		<div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
+								      			 	@else
+								      			 		<div class="col-md-7 col-sm-6 text-red"><strong>Payment UnSuccessful!</strong></div>
+								      			 	@endif
+								      			 @elseif(!$order->client_ID)
+								      			 	<div class="col-md-7 col-sm-6">Added manually!</div>
+							      			 	 @else
+							      			 	 <div class="col-md-7 col-sm-6 text-red"><strong>Unpaid!</strong></div>
+								      			 @endif
+
+						        			@endif
 	                                        <!-- <div class="col-md-5 col-sm-6"><strong>Order Total:</strong></div>
 	                                        <div class="col-md-7 col-sm-6 text-green">${{$order->compensation}}</div> -->
 	                                    
@@ -549,7 +789,7 @@
 	                              {!! $lt_orders->fragment('late')->render() !!}
 	                          </div>
 	                           @else
-	                                No Data to display, Good stuff there are not late orders
+	                                No Data to display.
 	                                @endif
 	                  	</div>
 	              </div>

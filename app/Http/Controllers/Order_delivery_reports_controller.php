@@ -31,20 +31,20 @@ class Order_delivery_reports_controller extends Controller
 
     	$file = $request->file('file');
         $extension = $file->getClientOriginalExtension();
-        Storage::disk('orders')->put($file->getClientOriginalName(), File::get($file));
+        Storage::disk('orders')->put("/orders/".$file->getClientOriginalName(), File::get($file), 'public');
     	// $file_url = $request->file('file')->move(storage_path(), $request->file('file')->getClientOriginalName());
         
     	
-        $Order_delivery_report = new Order_delivery_report;
-        $Order_delivery_report->mime = $file->getClientMimeType();
-        $Order_delivery_report->original_filename = $file->getClientOriginalName();
-        $Order_delivery_report->file_name = $file->getClientOriginalName();
-    	$Order_delivery_report->order_id = $request->order_id;
-    	$Order_delivery_report->user_id = $request->user_id;
-    	$Order_delivery_report->is_complete = $request->is_complete;
+        $order_delivery_report = new Order_delivery_report;
+        $order_delivery_report->mime = $file->getClientMimeType();
+        $order_delivery_report->original_filename = $file->getClientOriginalName();
+        $order_delivery_report->file_name = $file->getClientOriginalName();
+    	$order_delivery_report->order_id = $request->order_id;
+    	$order_delivery_report->user_id = $request->user_id;
+    	$order_delivery_report->is_complete = $request->is_complete;
     	$current_order->is_complete = $request->is_complete;
 
-    	$Order_delivery_report->save();
+    	$order_delivery_report->save();
 
     	if ($request->is_complete) {
     		$current_order->status = "Delivered";
@@ -56,10 +56,13 @@ class Order_delivery_reports_controller extends Controller
     	
     	$current_order->update();
         //We send a message to the writer and the admin that we've received their paper
-        //We check if the order has a client_ID and we send the clientDelivery cemail.
-        NotificationController::clientOrderDeliveryNotice($user, $current_order);
-        NotificationController::orderDeliveryNotice($user, $current_order);
-        NotificationController::adminOrderDeliveryNotice($user, $current_order);
+        // We check if the order has a client_ID and we send the clientDelivery cemail.
+        if ($current_order->client_ID) {
+         NotificationController::clientOrderDeliveryNotice($user, $current_order, $order_delivery_report);   
+        }
+
+        // NotificationController::orderDeliveryNotice($user, $current_order);
+        // NotificationController::adminOrderDeliveryNotice($user, $current_order);
     	return back()->with('message', 'Paper uploaded Successfully');
     	
     }
@@ -73,15 +76,21 @@ class Order_delivery_reports_controller extends Controller
         // I made the changes
 
         $update_date = Carbon::create(2016, 5, 11, 11,00,00);
-        if ($file_uploaded->updated_at > $update_date ) 
+        $s3_update_time = Carbon::create(2018, 1, 31, 19,04,16, 'Africa/Nairobi');
+        if ( $file_uploaded->updated_at > $s3_update_time) 
         {
             $disk = 'orders';
+            $file = Storage::disk($disk)->get("/orders/".$file_uploaded->file_name);
+        }
+        elseif ($file_uploaded->updated_at > $update_date ) {
+            $disk = 'old_orders';
+            $file = Storage::disk($disk)->get($file_uploaded->file_name);
         }
         else
         {
             $disk = 'local';
+            $file = Storage::disk($disk)->get($file_uploaded->file_name);
         }
-        $file = Storage::disk($disk)->get($file_uploaded->file_name);
 
         return (new Response($file, 200))
             ->header('Content-Type',$file_uploaded->mime);
