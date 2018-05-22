@@ -107,10 +107,10 @@
 									$msg_profpic = $user->prof_pic_url;
 								}
 								$s_d = $user->earnings()->count() - $user->fines()->count();
-								if (!$s_d) {
+								if (!$s_d > 0) {
 									$r_5 = 0;
 								}
-								else{
+								elseif($s_d > 0){
 					            	$r = $s_d/$user->earnings()->count();
 					            	$r_5 = round($r*5,2);
 								}
@@ -428,10 +428,8 @@
 						<?
 							$bid_user = $bid->user;
 							$s_d = $bid_user->earnings()->count() - $bid_user->fines()->count();
-							if (!$s_d) {
-								$r_5 = 0;
-							}
-							else{
+							$r_5 = 0;
+							if($s_d > 0){
 				            $r = $s_d/$bid_user->earnings()->count();
 				            $r_5 = round($r*5,2);
 							}
@@ -461,7 +459,8 @@
 			                    	<br>
 			                    </span>
 			                    <span class="text-green pull-{{$a}}">
-			                    	<b>{{$r_5}}</b><i class="fa fa-star"></i>
+			                    	<b>{{$r_5}}</b>
+									<i class="fa fa-star"></i>
 			                    </span>
 
 			                    <span class="direct-chat-timestamp pull-{{$b}}">{{$bid->created_at->format('F j, Y H:i A')}}</span>

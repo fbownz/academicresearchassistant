@@ -36,7 +36,7 @@
                         </p>
 
                         <hr/>
-                        <p style="text-align: center;"><span><a href="app.{{$domain}}/dashboard" style="Margin:0;border:0 solid #67c079;border-radius:5px;color:#fff;display:inline-block;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:400;line-height:1.3em;margin:0;padding:10px 17px 10px 17px;text-align:center;text-decoration:none;background:#3c8dbc;">My Orders</a></span><br>
+                        <p style="text-align: center;"><span><a href="http://app.{{$domain}}/dashboard" style="Margin:0;border:0 solid #67c079;border-radius:5px;color:#fff;display:inline-block;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:400;line-height:1.3em;margin:0;padding:10px 17px 10px 17px;text-align:center;text-decoration:none;background:#3c8dbc;">My Orders</a></span><br>
                             <span style="display:inline-block;font-weight:700;line-height:50px;vertical-align:middle;">Thank you! </span><br>for  choosing {{$domain}} as your Custom paper provider <br/> We are glad to tell you more! Just contact our Support</p>
                             <hr/>
                             <div class="card-body small">
@@ -45,6 +45,7 @@ You can follow up on the progress and/or chat with your writer to check how much
 It`s important since the writer will be making revisions and gives you 100% quality work. Once you have accepted the paper it is no longer refundable.
 Note: using {{$domain}}'s freelance board is completely secure and confidential. Your profile, orders or any other data you share with us cannot be viewed by other clients.
                             </div>
+
                     </div>
                     <div class="box-footer small">
                         &copy; <?php echo date("Y"); ?>, {{$domain}} <br>

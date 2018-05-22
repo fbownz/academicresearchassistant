@@ -421,7 +421,7 @@
 	                                    	
 	                                        @if(Auth::user()->ni_admin)
 	                                        <div class="col-md-5 col-sm-6"><strong>Writer:</strong></div>
-	                                        <div class="col-md-7 col-sm-6"><h4>{{$order->user->first_name}}</h4></div>
+	                                        <div class="col-md-7 col-sm-6"><h4>@if($order->user){{$order->user->first_name}}@else{{$order->status}}@endif</h4></div>
 
 	                                        @endif
 	                                        <div class="col-md-5 col-sm-6"><strong>Order Type:</strong></div>

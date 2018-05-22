@@ -393,10 +393,8 @@ use App\User;
             @if(!Auth::user()->ni_admin)
                 <?
                   $s_d = Auth::user()->earnings()->count() - Auth::user()->fines()->count(); 
-                  if (!$s_d) {
-                    $r_5 = 0;
-                  }
-                  else{
+                  $r_5 = 0;
+		if ($s_d > 0){
                     $r = $s_d/Auth::user()->earnings()->count();
                     $r_5 = round($r*5,2);
                   }

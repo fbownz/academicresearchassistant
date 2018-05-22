@@ -21,7 +21,7 @@
                        <span style="font-size: 18px; line-height: 40px; color:#00ff04; border-bottom:#00ff04 solid">There is a new Bid on your order {{$order->order_no}}</span>
                     </div>
                     <div class="box-body"style="border-bottom:2px solid #3c8dbc;">
-                        <p style="Margin:0;Margin-bottom:10px;color:#6a6a6a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;line-height:1.3em;text-align:center">This is to inform that {{$writer->name}} is ready to start working on order {{$order->title}}</p>
+                        <p style="Margin:0;Margin-bottom:10px;color:#6a6a6a;font-family:Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;line-height:1.3em;text-align:center">This is to inform that {{$writer->name}} is ready to start working on your order {{$order->title}}</p>
                         <p style="Margin:0;Margin-bottom:10px;color:#6a6a6a;font-size:16px;font-weight:600;line-height:1.3em;text-align:center">Please review the details below</p>
                         <hr style="margin-bottom: 7px">
                         <div class="bid" style="background-color: #aad4ec;
@@ -51,7 +51,7 @@
                         text-align: center;
                         text-transform: uppercase;"
                         >
-                        TO RECEIVE YOUR PAPER, PLEASE FOLLOW THESE SIMPLE STEPS:</p>
+                        Select a Writer to start working on your paper by following these simple steps:</p>
                         <p style="color: #3c8dbc;
                         font-family: Helvetica,Arial,sans-serif;
                         font-size: 18px;
@@ -81,7 +81,7 @@
                             font-weight: 400;
                             line-height: 1.3em;
                             text-align: center;">
-                            Check this writer's bid, and click on the "Assign" button if all details match your specific requirements.</p>
+                            Check this writer's bid, and "Assign" them your order if all details match your paper requirements.</p>
                         </p>
                         <p style="color: #3c8dbc;
                         font-family: Helvetica,Arial,sans-serif;
@@ -144,7 +144,7 @@
                             font-weight: 400;
                             line-height: 1.3em;
                             text-align: center;">
-                                Confirm the delivered paper is up to your standard and Release the payment to the writer after the order is all done
+                                Confirm the delivered paper is up to your standard and "Approve" the paper or request a revision.
                             </p>
                             <p style="    color: #6a6a6a;
                             font-family: Helvetica,Arial,sans-serif;
@@ -155,11 +155,9 @@
                             margin-bottom: 0;
                             padding: 0;
                             text-align: center;">
-                            Choose the payment method best for you. <br />
-
-Your money is safe - you pay the writer only after your requirements are met</p>
+                            Click view bids below to see all the writers who are ready to start working on your paper. </p>
                         <hr>
-                        <p style="text-align: center;"><span><a href="app.{{$domain}}/bids/{{$order->id}}" style="Margin:0;border:0 solid #67c079;border-radius:5px;color:#fff;display:inline-block;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:400;line-height:1.3em;margin:0;padding:10px 17px 10px 17px;text-align:center;text-decoration:none;background:#3c8dbc;">Pay Now</a></span><br>
+                        <p style="text-align: center;"><span><a href="http://app.{{$domain}}/bids/{{$order->id}}" style="Margin:0;border:0 solid #67c079;border-radius:5px;color:#fff;display:inline-block;font-family:Helvetica,Arial,sans-serif;font-size:24px;font-weight:400;line-height:1.3em;margin:0;padding:10px 17px 10px 17px;text-align:center;text-decoration:none;background:#3c8dbc;">View Bids</a></span><br>
                             <span style="display:inline-block;font-weight:700;line-height:50px;vertical-align:middle;">Thank you! </span><br>for creating an account and choosing {{$domain}} as your Custom paper provider </p>
                     </div>
                     <div class="box-footer small">

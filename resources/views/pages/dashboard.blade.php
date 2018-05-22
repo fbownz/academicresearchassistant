@@ -200,7 +200,15 @@
                               <div class="box-header with-border">
                                 <a data-toggle="collapse" data-parent="#all_orders" href="#{{$order->id}}">
                                       <h4 class="box-title">{{$order->order_no}}</h4>
-                                      <!-- <span class="label label-success pull-right">${{$order->compensation}}</span> -->
+                                      <span class="label label-success pull-right">
+					@if($order->transactions->count() > 0)
+						${{$order->compensation}}
+					@elseif(!$order->client_ID)
+						${{$order->compensation}}
+					@else
+						UnVerified
+					@endif
+					</span> 
                                   </a>  
                               </div>
                               <div id="{{$order->id}}" class="panel-collapse collapse">
@@ -222,7 +230,7 @@
                                       <div class="col-md-7 col-sm-6">{{$order->no_of_sources}}</div>
                                       @if(Auth::user()->ni_admin)
                                         <div class="col-md-5 col-sm-6"><strong>Payment Status</strong></div>
-                                             @if($order->client_ID && $order->transactions->count())
+                                             @if($order->client_ID && $order->transactions->count() > 0)
                                               @if($order->transactions->last()->responseCode == "Y")
                                                 <div class="col-md-7 col-sm-6 text-green"><strong>Paid: ${{$order->transactions->last()->total}}</strong></div>
                                               @else
