@@ -909,7 +909,8 @@ class PagesController extends Controller
         $subject_infos = DB::table('orders')->where('user_id',$user->id)->where('approved', 1)->select('subject', DB::raw('count(*) as total'))->groupBy('subject')->orderBy('total','desc')->get();
 
           $s_d = $user->earnings()->count() - $user->fines()->count();
-          if (!$s_d) {
+         $rating_5 =0;
+	 if (!$s_d > 0) {
             $rating_100 = 0;
             $rating_5 = 0;
             }
@@ -1036,11 +1037,11 @@ class PagesController extends Controller
             $a_number = '';
             //We count fines and 5 star ratings
             $s_d = $user->earnings()->count() - $user->fines()->count();
-            if (!$s_d) {
+	    $rating_5= 0;
+	    if (!$s_d > 0) {
               $rating_5 = 0;
               $rating_100 =0;
-            }
-            else {
+             }else {
                 $rating = $s_d/$user->earnings()->count();
                 $rating_5 = round($rating*5,2);
                 $rating_100 = round($rating*100,2);

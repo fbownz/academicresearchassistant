@@ -55,12 +55,34 @@ class NotificationController extends Controller
         $send_sms =self::sendSMSnotice($user,$txt);
 
     }
-    public static function bidAcceptedWriterAdminnotice(User $writer, Order $order)
+
+    public static function orderReassignedNotice(User $user, Order $order)
     {
 
-       
-        //Because of the new clients, and bids & messages, we should first check if an order is active/ before fetching user ID.
+        $notification = new Notification;
+        $notification->user_id = $user->id;
+        $notification->order_id = $order->id;
+        $notification->type = 'order_bid_accepted';
+        $notification->message ='Re-Assigned';
 
+        // $notification->save();
+        // $deadline = Carbon::parse($order->deadline)->format('F j, Y H:i A');
+
+        Mail::queue('emails.orderReAssigned',['user'=>$user, 'order'=>$order],function ($m) use ($user, $order)
+        {
+            $m->from('noreply@academicresearchassistants.com','ARA');
+
+            $m->to($user->email, $user->first_name)->subject('Academicresearch: Re-Assigned order #'.$order->order_no);
+        });
+
+
+        //We send an sms notification to the User for the assigned order;
+        $txt = $user->first_name.' your order '.$order->order_no.' has been Re-Assigned. Academicresearchassistants.com';
+        $send_sms =self::sendSMSnotice($user,$txt);
+
+    }
+    public static function bidAcceptedWriterAdminnotice(User $writer, Order $order)
+    {
         $notification = new Notification;
         //We check the status of the order if it's Active and add user_id
         //That means we will also add a client_id on notifications, which we have done
@@ -179,7 +201,7 @@ class NotificationController extends Controller
 
         $notification->save();
          
-        Mail::queue($e_template,['user'=>$user, 'order'=>$order,'notification'=>$notification],function ($m) use ($user, $order)
+        Mail::send($e_template,['user'=>$user, 'order'=>$order,'notification'=>$notification],function ($m) use ($user, $order)
         {
             $m->from('noreply@academicresearchassistants.com','ARA');
 
@@ -499,6 +521,27 @@ class NotificationController extends Controller
         });
     }
 
+    // We save the record on the database for the admin side
+    public static function clientBidRequestadmindnotice(User $user,Order $order)
+    {
+
+        $notification = new Notification;
+        $notification->user_id = $user->id;
+        $notification->order_id = $order->order_id;
+        $notification->type = 'writer_bid_request';
+        $notification->message ='New Client Bid request on order '.$order->order_no;
+
+        $notification->save();
+
+                Mail::queue('emails.bid_request',['user'=>$user, 'order'=>$order], function($m)use ($user, $order)
+        {
+            $m->from('noreply@academicresearchassistants.com', 'ARA');
+
+            $m->to($user->email, $user->first_name)->subject('You have a new Bid request on Order '.$order->order_no);
+
+        });
+    }
+
 
     public static function paymentApprovedNotice(User $user)
     {
@@ -733,7 +776,7 @@ class NotificationController extends Controller
         }elseif ($client->domain == 3) {
             $domain = "writemyschoolessay.com";
         }
-        Mail::queue('emails.newOrderClient',['client'=>$client, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $order, $domain)
+        Mail::send('emails.newOrderClient',['client'=>$client, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $order, $domain)
         {
             $m->from('support@'.$domain, 'Academic Paper writing Platform');
 
@@ -783,7 +826,7 @@ class NotificationController extends Controller
         }elseif ($client->domain == 3) {
             $domain = "writemyschoolessay.com";
         }
-        Mail::queue('emails.newTransactionClient',['transaction'=>$transaction,'client'=>$client, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $domain)
+        Mail::send('emails.newTransactionClient',['transaction'=>$transaction,'client'=>$client, 'order'=>$order,'domain'=>$domain], function($m)use ($client, $domain)
         {
             $m->from('support@'.$domain, 'Academic Paper writing Platform');
 
@@ -811,7 +854,7 @@ class NotificationController extends Controller
             $admin_email = $admin->email;
             $admin_name = $admin->first_name;
 
-            Mail::queue('emails.adminNewTransactionNotice',['transaction'=>$transaction,'client'=>$client, 'order'=>$order],function ($m) use ($admin_email, $admin_name)
+            Mail::send('emails.adminNewTransactionNotice',['transaction'=>$transaction,'client'=>$client, 'order'=>$order],function ($m) use ($admin_email, $admin_name)
         {
             $m->from('noreply@academicresearchassistants.com','ARA');
 

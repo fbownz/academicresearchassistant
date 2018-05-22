@@ -1249,7 +1249,7 @@ class OrdersController extends Controller
             $order->deadline = $request->deadline;
             $order->client_deadline = $request->deadline;
         }
-        $order->is_late = null;
+        // $order->is_late = null;
         $order->update();
 
         if($order->user_id){
@@ -1274,6 +1274,14 @@ class OrdersController extends Controller
     {
         // We check if the Admin is requesting the order to be made Available
         if ($request->status == "Available") {
+
+        //We also check if the order is currently assigned.
+          if ($order->user_id) {
+              $user = $order->user;
+              //we notify the current writer that their order has been made available or Reassigned to a different writer
+              NotificationController::orderReassignedNotice($user, $order);
+          }
+
             $order->user_id = null; //We remove the current writer
             $order->status = $request->status;
             $order->compensation = null;
@@ -1284,6 +1292,13 @@ class OrdersController extends Controller
             OrderreportsController::store_report($request);
             return back()->with('message', 'Order made Available Successfully');
 
+        }
+
+        //We check if the order is currently assigned & if its an active status request
+        if ($order->user_id && $request->status == "Active") {
+            $user = $order->user;
+            //we notify the current writer that their order has been made available or Reassigned to a different writer
+            NotificationController::orderReassignedNotice($user, $order);
         }
 
         $order->user_id = $request->writer;
