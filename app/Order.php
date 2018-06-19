@@ -67,4 +67,8 @@ class Order extends Model
     {
       return $this->hasMany(Transaction::class);
     }
+   public function clientfeedback()
+	{
+		return $this->hasMany(ClientFeedback::class);
+	}
 }

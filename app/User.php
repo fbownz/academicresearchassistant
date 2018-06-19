@@ -79,8 +79,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Files::class);
     }
-    public function client_feedbacks(){
-      return $this->hasMany(ClientFeedback::class);
+    public function clientfeedback(){
+      return $this->hasMany(ClientFeedback::class,'writer_id');
     }
 	//implementing JWT Auth
 	public function getJWTIdentifier()

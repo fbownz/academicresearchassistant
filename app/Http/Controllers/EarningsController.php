@@ -102,6 +102,11 @@ class EarningsController extends Controller
             return back()->with('message', 'Fine Applied Successfully');
 
     }
+    public function delete_fine(Fine $fine)
+    {
+        $fine->delete();
+        return back()->with('message','The Fine has been Deleted Successfully') ;
+    }
     public function show()
     {
                     

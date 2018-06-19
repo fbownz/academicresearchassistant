@@ -114,6 +114,9 @@
 					            	$r = $s_d/$user->earnings()->count();
 					            	$r_5 = round($r*5,2);
 								}
+								if(count($user->clientfeedback)){
+									$r_5 = round($user->clientfeedback->avg('rating'),2);
+								}
 								?>
 								<div class="direct-chat-msg
 									@if($user->ni_admin || $user->domain)
@@ -138,7 +141,7 @@
 
 										@else
 											{{$user->name}}
-										@endif </span> 
+										@endif </span>
 										<span class="text-green @if($user->ni_admin)
 											display-none
 											@else
@@ -146,13 +149,14 @@
 											@endif">
 			                    			&nbsp;<b>{{$r_5}}</b><i class="fa fa-star"></i>
 			                    		</span>
-											
+
 					                    <span class="direct-chat-timestamp @if($user->ni_admin)
 											pull-left
 											@else
 											pull-right
-											@endif"><!-- {{$note->created_at->format('F j, Y H:i A')}} -->
-											{{$when}}
+											@endif">
+											{{$when}},
+											{{$note->created_at->format('F j, Y H:i A')}}
 										</span>
 			                  		</div>
 									<img class="direct-chat-img" src="{{$msg_profpic}}" alt="{{$user->id}} Prof Pic">
@@ -407,88 +411,35 @@
 				</div>
 			@endif
 
-			@if($order->status == 'Available')
-				<div class="box box-success">
-			@else
-				<div class="box box-success collapsed-box">
-			@endif
-		            <div class="box-header with-border">
-		              <h3 class="box-title">Bids placed on this Order {{count($bids)}}</h3>
-
-		              <div class="box-tools pull-right">
-		                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-		                </button>
-		              </div>
-		              <!-- /.box-tools -->
-		            </div>
-	            	<!-- /.box-header -->
-
-		            <div class="box-body">
-		              @foreach($bids as $bid)
-						<?
-							$bid_user = $bid->user;
-							$s_d = $bid_user->earnings()->count() - $bid_user->fines()->count();
-							$r_5 = 0;
-							if($s_d > 0){
-				            $r = $s_d/$bid_user->earnings()->count();
-				            $r_5 = round($r*5,2);
-							}
-
-							if ($bid->id & 1)
-							{
-								$a = "left" ;
-								$b = "right";
-							}
-
-							else
-							{
-								$a = "right";
-								$b = "left";
-							}
-						?>
-						<div class="box-body direct-chat-msg {{$a}}">
-							<div class="direct-chat-info clearfix">
-			                    <span class="direct-chat-name control-label text-light-blue pull-{{$a}}">
-			                    	<a href="/writer/{{$bid_user->id}}">
-			                    	@if(Auth::user()->ni_admin ==1)
-			                    		{{$bid_user->first_name}} {{$bid_user->last_name}}
-			                    	@else
-			                    		{{$bid_user->name}}
-		                    		@endif
-			                    	</a>
-			                    	<br>
-			                    </span>
-			                    <span class="text-green pull-{{$a}}">
-			                    	<b>{{$r_5}}</b>
-									<i class="fa fa-star"></i>
-			                    </span>
-
-			                    <span class="direct-chat-timestamp pull-{{$b}}">{{$bid->created_at->format('F j, Y H:i A')}}</span>
-		                  	</div>
-							<img class="direct-chat-img" src="{{$bid_user->prof_pic_url}}" alt="{{$bid_user->id}} Prof Pic">
-							<div class="direct-chat-text">
-				                    ${{$bid->bid_ammount}}<br/>
-				                    {{$bid->bid_msg}}
-			              	</div>
-		                      @if($bid->user_id == Auth::user()->id)
-		                      <a class="btn btn-danger pull-right btn-xs" href="../../bids/delete/{{$bid->id}}">
-									Delete
-								</a>
-								@elseif(Auth::user()->ni_admin)
-								<a class="btn btn-danger pull-right btn-xs" href="/bids/delete/{{$bid->id}}">
-									Delete
-								</a>
+							@if(Auth::User()->ni_admin && count($order->clientfeedback))
+								<div class="box box-info box-solid collapsed-box"  id="reviews">
+									<div class="box-header with-border">
+										<h4><i class="icon fa fa-thumbs-up"></i>
+											Client Feedback
+										</h4>
+										<div class="box-tools pull-right">
+											<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+															</button>
+										</div>
+									</div>
+									<div class="box-body">
+										@foreach($order->clientfeedback as $review)
+										<div class="callout callout-info">
+											<h5>Review #{{$review->id}}</h5>
+											<b>Rating</b><br>
+													{{$review->rating}}<i class="fa fa-star"></i><br>
+											<b>Feedback</b><br>
+													{{$review->feedback}}<br>
+											<b>Writer Rated</b><br>
+													{{$review->writer->first_name}}
+										</div>
+										@endforeach
+									</div>
+								</div>
 							@endif
-
-						</div>
-					  @endforeach
-		            </div>
-		            <!-- /.box-body -->
-	            </div>
-
 			@if(Auth::user()->ni_admin && count($order->fines))
 
-				<div class="box box-danger box-solid"  id="fines">
+				<div class="box box-danger box-solid collapsed-box"  id="fines">
 					<div class="box-header with-border">
 						<h4><i class="icon fa fa-warning"></i>
 							Order Fines!
@@ -508,21 +459,98 @@
 					        -${{$fine->total_fine}}<br>
 							<strong>Writer Fined</strong><br>
 					        {{$fine->user->first_name}}
+					<a class="btn btn-success pull-right btn-xs" href="../../fine/delete/{{$fine->id}}" style="text-decoration: none;">
+						Remove Fine
+					</a>
 			            </div>
-			            <a class="btn btn-danger pull-right btn-xs" href="../../fine/delete/{{$bid->id}}">
-									Remove Fine
-								</a>
 						@endforeach
 					</div>
 				</div>
 			@endif
+			@if($order->status == 'Available')
+				<div class="box box-success">
+			@else
+				<div class="box box-success collapsed-box">
+			@endif
+					<div class="box-header with-border">
+						<h3 class="box-title">Bids placed on this Order {{count($bids)}}</h3>
+
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+							</button>
+						</div>
+						<!-- /.box-tools -->
+					</div>
+					<!-- /.box-header -->
+
+					<div class="box-body">
+						@foreach($bids as $bid)
+							<?
+								$bid_user = $bid->user;
+								$s_d = $bid_user->earnings()->count() - $bid_user->fines()->count();
+								$r_5 = 0;
+								if($s_d > 0){
+											$r = $s_d/$bid_user->earnings()->count();
+											$r_5 = round($r*5,2);
+								}
+								if(count($bid_user->clientfeedback)){
+									$r_5 = round($bid_user->clientfeedback->avg('rating'),2);
+								}
+
+								if ($bid->id & 1)
+								{
+									$a = "left" ;
+									$b = "right";
+								}
+
+								else
+								{
+									$a = "right";
+									$b = "left";
+								}
+							?>
+							<div class="box-body direct-chat-msg {{$a}}">
+								<div class="direct-chat-info clearfix">
+														<span class="direct-chat-name control-label text-light-blue pull-{{$a}}">
+															<a href="/writer/{{$bid_user->id}}">
+															@if(Auth::user()->ni_admin ==1)
+																{{$bid_user->first_name}} {{$bid_user->last_name}}
+															@else
+																{{$bid_user->name}}
+															@endif
+															</a>
+															<br>
+														</span>
+														<span class="text-green pull-{{$a}}">
+															<b>{{$r_5}}</b>
+															<i class="fa fa-star"></i>
+														</span>
+
+														<span class="direct-chat-timestamp pull-{{$b}}">{{$bid->created_at->format('F j, Y H:i A')}}</span>
+													</div>
+											<img class="direct-chat-img" src="{{$bid_user->prof_pic_url}}" alt="{{$bid_user->id}} Prof Pic">
+											<div class="direct-chat-text">
+															${{$bid->bid_ammount}}<br/>
+															{{$bid->bid_msg}}
+												</div>
+														@if($bid->user_id == Auth::user()->id || Auth::user()->ni_admin)
+														<a class="btn btn-danger pull-right btn-xs" href="../../bids/delete/{{$bid->id}}">
+															Delete
+														</a>
+														@endif
+
+							</div>
+							@endforeach
+					</div>
+				<!-- /.box-body -->
+		</div>
 		</div>
 		@if($order->status == 'Available' && ! Auth::User()->ni_admin)
 		<div class="col-md-12">
 		@else
 		<div class="col-md-4">
 		@endif
-	@if(Auth::user()->ni_admin == 1)		
+	@if(Auth::user()->ni_admin == 1)
 	 <div class="box box-success">
 		<div class="box-header with-border">
                                         <h4><i class="fa fa-user-circle-o"></i>
@@ -555,10 +583,10 @@
 			                    	<b>{{$order->prev_order_rating}}</b><i class="fa fa-star"></i>
 			                    </span>
                                         </div>
-                                       
-                                     
-                                      
-                                       
+
+
+
+
                                         <div class="col-md-4">
                                                 Phone:
                                         </div>
@@ -575,8 +603,8 @@
 					</div>
 					@endif
 
-				
-						
+
+
                                 </div>
 				@endif
 </div>
@@ -622,8 +650,34 @@
 				@endif
 			</div>
 			@endif
-			@if($order->user_id == Auth::User()->id)
-				<div class="box box-danger box-solid"  id="fines">
+			@if($order->user_id == Auth::User()->id && count($order->clientfeedback))
+				<div class="box box-info box-solid collapsed-box"  id="reviews">
+					<div class="box-header with-border">
+						<h4><i class="icon fa fa-thumbs-up"></i>
+							Order Reviews!
+						</h4>
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+											</button>
+						</div>
+					</div>
+					<div class="box-body">
+						@foreach($order->clientfeedback as $review)
+						<div class="callout callout-info">
+							<h5>Review #{{$review->id}}</h5>
+							<strong>Rating</strong><br>
+									{{$review->rating}}<i class="fa fa-star"></i><br>
+							<strong>Feedback</strong><br>
+									{{$review->feedback}}<br>
+							<strong>Writer Rated</strong><br>
+									{{$review->writer->first_name}}
+						</div>
+						@endforeach
+					</div>
+				</div>
+			@endif
+			@if($order->user_id == Auth::User()->id && count($order->fines))
+				<div class="box box-danger box-solid collapsed-box"  id="fines">
 					<div class="box-header with-border">
 						<h4><i class="icon fa fa-warning"></i>
 							Order Fines!
@@ -648,7 +702,7 @@
 					</div>
 				</div>
 			@endif
-			@if(Auth::user()->ni_admin ==1 && $order->approved !== 1)
+			@if(Auth::user()->ni_admin ==1 && $order->approved != 1)
 			<div class="box box-success">
 				<div class="box-header with-border">
 					<h4><i class="fa fa-pencil-square-o"></i>
